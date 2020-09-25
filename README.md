@@ -45,17 +45,17 @@ UMD包可被直接用作一个[`<script>` 标签](https://unpkg.com/@reduxjs/too
 
 因此，该程序包的 scope 特意做了限制。它确实 _没_ 处理比如 “可重用的封装Redux模块”，数据缓存，文件夹或文件结构，管理存储中的实体关系等概念。
 
-## What's Included
+## 包含内容
 
 Redux工具包 包含了如下API:
 
-- `configureStore()`: wraps `createStore` to provide simplified configuration options and good defaults. It can automatically combine your slice reducers, adds whatever Redux middleware you supply, includes `redux-thunk` by default, and enables use of the Redux DevTools Extension.
-- `createReducer()`: that lets you supply a lookup table of action types to case reducer functions, rather than writing switch statements. In addition, it automatically uses the [`immer` library](https://github.com/mweststrate/immer) to let you write simpler immutable updates with normal mutative code, like `state.todos[3].completed = true`.
-- `createAction()`: generates an action creator function for the given action type string. The function itself has `toString()` defined, so that it can be used in place of the type constant.
-- `createSlice()`: accepts an object of reducer functions, a slice name, and an initial state value, and automatically generates a slice reducer with corresponding action creators and action types.
-- `createAsyncThunk`: accepts an action type string and a function that returns a promise, and generates a thunk that dispatches `pending/resolved/rejected` action types based on that promise
-- `createEntityAdapter`: generates a set of reusable reducers and selectors to manage normalized data in the store
-- The `createSelector` utility from the [Reselect](https://github.com/reduxjs/reselect) library, re-exported for ease of use.
+- `configureStore()`: 包装 `createStore` 以提供简化的配置选项和良好的默认预设。它可以自动组合你的切片 reducers，添加您提供的任何 Redux 中间件，默认情况下包含 `redux-thunk` ，并允许使用 Redux DevTools 扩展。
+- `createReducer()`: 为 case reducer 函数提供 action types 的查找表，而不是编写switch语句。此外，它会自动使用[`immer` 库](https://github.com/mweststrate/immer)来让您使用普通的可变代码编写更简单的 immutable 更新，例如 `state.todos [3] .completed = true `。
+- `createAction()`: 为给定的 action type string 生成一个 action creator 函数。函数本身定义了 `toString()`，因此它可以用来代替 type 常量。
+- `createSlice()`: 接受一个 reducer 函数的对象、分片名称和初始状态值，并且自动生成具有相应 action creators 和 action types 的分片reducer。
+- `createAsyncThunk`: 接受一个 action type string 和一个返回 promise 的函数，并生成一个发起基于该 promise 的`pending/fulfilled/rejected` action types 的 thunk。
+- `createEntityAdapter`: 生成一组可重用的 reducers 和 selectors，以管理存储中的规范化数据
+- `createSelector` 组件 来自 [Reselect](https://github.com/reduxjs/reselect) 库，为了易用再导出。
 
 ## 文档
 

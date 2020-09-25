@@ -19,21 +19,19 @@ hide_title: true
 
 因此，该程序包的 scope 特意做了限制。它确实 _没_ 处理比如 “可重用的封装Redux模块”，数据缓存，文件夹或文件结构，管理存储中的实体关系等概念。
 
-That said, **these tools should be beneficial to all Redux users**. Whether you're a brand new Redux user setting up your
-first project, or an experienced user who wants to simplify an existing application, **Redux Toolkit** can help
-you make your Redux code better.
+也就是说，**这些工具将会对所有Redux用户都有益**。无论你是要设置自己的第一个项目的全新的 Redux 用户，或是想简化现有应用程序的有经验的用户，**Redux工具包**可以帮助你让你的 Redux 代码更好。
 
-## What's Included
+## 包含内容
 
 Redux工具包 包含了如下API:
 
-- [`configureStore()`](../api/configureStore.mdx): wraps `createStore` to provide simplified configuration options and good defaults. It can automatically combine your slice reducers, adds whatever Redux middleware you supply, includes `redux-thunk` by default, and enables use of the Redux DevTools Extension.
-- [`createReducer()`](../api/createReducer.mdx): that lets you supply a lookup table of action types to case reducer functions, rather than writing switch statements. In addition, it automatically uses the [`immer` library](https://github.com/mweststrate/immer) to let you write simpler immutable updates with normal mutative code, like `state.todos[3].completed = true`.
-- [`createAction()`](../api/createAction.mdx): generates an action creator function for the given action type string. The function itself has `toString()` defined, so that it can be used in place of the type constant.
-- [`createSlice()`](../api/createSlice.mdx): accepts an object of reducer functions, a slice name, and an initial state value, and automatically generates a slice reducer with corresponding action creators and action types.
-- [`createAsyncThunk`](../api/createAsyncThunk.mdx): accepts an action type string and a function that returns a promise, and generates a thunk that dispatches `pending/fulfilled/rejected` action types based on that promise
-- [`createEntityAdapter`](../api/createEntityAdapter.mdx): generates a set of reusable reducers and selectors to manage normalized data in the store
-- The [`createSelector` utility](../api/createSelector.mdx) from the [Reselect](https://github.com/reduxjs/reselect) library, re-exported for ease of use.
+- [`configureStore()`](../api/configureStore.mdx): 包装 `createStore` 以提供简化的配置选项和良好的默认预设。它可以自动组合你的切片 reducers，添加您提供的任何 Redux 中间件，默认情况下包含 `redux-thunk` ，并允许使用 Redux DevTools 扩展。
+- [`createReducer()`](../api/createReducer.mdx): 为 case reducer 函数提供 action types 的查找表，而不是编写switch语句。此外，它会自动使用[`immer` 库](https://github.com/mweststrate/immer)来让您使用普通的可变代码编写更简单的 immutable 更新，例如 `state.todos [3] .completed = true `。
+- [`createAction()`](../api/createAction.mdx): 为给定的 action type string 生成一个 action creator 函数。函数本身定义了 `toString()`，因此它可以用来代替 type 常量。
+- [`createSlice()`](../api/createSlice.mdx): 接受一个 reducer 函数的对象、分片名称和初始状态值，并且自动生成具有相应 action creators 和 action types 的分片reducer。
+- [`createAsyncThunk`](../api/createAsyncThunk.mdx): 接受一个 action type string 和一个返回 promise 的函数，并生成一个发起基于该 promise 的`pending/fulfilled/rejected` action types 的 thunk。
+- [`createEntityAdapter`](../api/createEntityAdapter.mdx): 生成一组可重用的 reducers 和 selectors，以管理存储中的规范化数据
+- [`createSelector` 组件](../api/createSelector.mdx) 来自 [Reselect](https://github.com/reduxjs/reselect) 库，为了易用再导出。
 
 ## 安装
 
@@ -62,6 +60,7 @@ UMD包可被直接用作一个[`<script>` 标签](https://unpkg.com/@reduxjs/too
 
 ## 帮助和讨论
 
-The **[#redux channel](https://discord.gg/0ZcbPKXt5bZ6au5t)** of the **[Reactiflux Discord community](http://www.reactiflux.com)** is our official resource for all questions related to learning and using Redux. Reactiflux is a great place to hang out, ask questions, and learn - come join us!
 
-You can also ask questions on [Stack Overflow](https://stackoverflow.com) using the **[#redux tag](https://stackoverflow.com/questions/tagged/redux)**.
+**[Reactiflux Discord 社区](http://www.reactiflux.com)** 的 **[#redux 频道](https://discord.gg/0ZcbPKXt5bZ6au5t)** 是我们学习和使用 Redux 有关所有问题的官方资源。 Reactiflux是一个聚会，提问和学习的好地方 - 快来加入我们吧！
+
+你也可以使用 **[#redux 标签](https://stackoverflow.com/questions/tagged/redux)** 在 [Stack Overflow](https://stackoverflow.com) 向我们提问。
