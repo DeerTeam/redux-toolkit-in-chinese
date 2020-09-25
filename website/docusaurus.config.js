@@ -56,8 +56,8 @@ module.exports = {
   baseUrl: '/',
   favicon: 'img/favicon/favicon.ico',
   tagline:
-    '一个官方提供用于Redux高效开发，有态度的、功能齐全的工具包',
-  title: 'Redux工具包',
+    '一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包',
+  title: 'Redux工具包 中文版',
   url: 'https://redux-toolkit.js.org',
   customFields: {
     repoUrl: 'https://github.com/reduxjs/redux-toolkit'
@@ -69,7 +69,7 @@ module.exports = {
     },
     image: 'img/redux-logo-landscape.png',
     navbar: {
-      title: 'Redux工具包',
+      title: 'Redux工具包 中文版',
       logo: {
         alt: 'Redux Logo',
         src: 'img/redux.svg'

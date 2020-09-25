@@ -10,9 +10,9 @@ const features = [
   {
     content: (
       <p>
-        Includes utilities to simplify common use cases like{' '}
-        <strong>store setup, creating reducers, immutable update logic</strong>,
-        and more.
+        包含了简化通用用例的组件如{' '}
+        <strong>store 安装, 创建 reducers, immutable 更新逻辑</strong>,
+        以及更多.
       </p>
     ),
     image: (
@@ -24,14 +24,14 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Simple',
+    title: '简易的',
   },
   {
     content: (
       <p>
-        Provides <strong>good defaults for store setup out of the box</strong>,
-        and includes{' '}
-        <strong>the most commonly used Redux addons built-in</strong>.
+        提供了 <strong>预设了良好的开箱即用的 store 安装</strong>,
+        同时还有{' '}
+        <strong>内置最常用的 Redux 插件</strong>.
       </p>
     ),
     image: (
@@ -41,14 +41,14 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Opinionated',
+    title: '有想法的',
   },
   {
     content: (
       <p>
-        Takes inspiration from libraries like Immer and Autodux to let you{' '}
-        <strong>write "mutative" immutable update logic</strong>, and even{' '}
-        <strong>create entire "slices" of state automatically</strong>.
+        设计灵感来源于像 Immer 和 Autodux 这样的库让你{' '}
+        <strong>编写"可变的" immutable 更新逻辑</strong>，甚至于{' '}
+        <strong>自动创建完整的状态"切片"</strong>.
       </p>
     ),
     image: (
@@ -67,13 +67,13 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Powerful',
+    title: '强劲的',
   },
   {
     content: (
       <p>
-        Lets you focus on the core logic your app needs, so you can{' '}
-        <strong>do more work with less code</strong>.
+        让你更关注你的APP需要的核心逻辑上，以至你能{' '}
+        <strong>用更少的代码做更多的事</strong>.
       </p>
     ),
     image: (
@@ -82,13 +82,13 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Effective',
+    title: '高效的',
   },
 ]
 
 const otherLibraries = [
   {
-    content: 'A predictable state container for JavaScript applications',
+    content: 'Redux 是 JavaScript 状态容器，提供可预测化的状态管理',
     title: 'Redux',
     link: 'https://redux.js.org',
     image: (
@@ -104,7 +104,7 @@ const otherLibraries = [
     ),
   },
   {
-    content: 'Official React bindings for Redux',
+    content: 'Redux 官方提供的 React 绑定库',
     title: 'React-Redux',
     link: 'https://react-redux.js.org',
     image: (

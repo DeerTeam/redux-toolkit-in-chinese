@@ -1,10 +1,10 @@
-# Redux工具包（Redux Toolkit）
+# Redux工具包（Redux Toolkit） 中文版
 
 [![build status](https://img.shields.io/travis/reduxjs/redux-toolkit/master.svg?style=flat-square)](https://travis-ci.org/reduxjs/redux-toolkit)
 [![npm version](https://img.shields.io/npm/v/@reduxjs/toolkit.svg?style=flat-square)](https://www.npmjs.com/package/@reduxjs/toolkit)
 [![npm downloads](https://img.shields.io/npm/dm/@reduxjs/toolkit.svg?style=flat-square&label=RTK+downloads)](https://www.npmjs.com/package/@reduxjs/toolkit)
 
-**一个官方提供用于Redux高效开发，有态度的、功能齐全的工具包**
+**一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包**
 
 (前身为 "Redux Starter Kit")
 
