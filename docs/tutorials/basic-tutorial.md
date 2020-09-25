@@ -1,23 +1,23 @@
 ---
 id: basic-tutorial
-title: Basic Tutorial
-sidebar_label: Basic Tutorial
+title: 基础教程
+sidebar_label: 基础教程
 hide_title: true
 ---
 
-# Basic Tutorial: Introducing Redux Toolkit
+# 基础教程: 介绍 Redux工具包
 
 Welcome to Redux Toolkit ! This tutorial will show you the basic functions that are included with Redux Toolkit (also known as "RTK" for short).
 
-This tutorial assumes that you are already familiar with the concepts of the core Redux library, as well as how to use it with React. If you aren't, please take some time to read through the [Redux docs](https://redux.js.org) and [React-Redux docs](https://react-redux.js.org) first, as the explanations here focus on how RTK usage differs from "typical" Redux code.
+This tutorial assumes that you are already familiar with the concepts of the core Redux library, as well as how to use it with React. If you aren't, please take some time to read through the [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) first, as the explanations here focus on how RTK usage differs from "typical" Redux code.
 
-## Introduction: Writing a Counter Application
+## 介绍: 编写一个计数应用
 
 We'll start by looking at the smallest Redux example: a simple counter application.
 
-### Redux "Counter-Vanilla" Example
+### Redux "Counter-Vanilla" 示例
 
-The Redux docs have a ["counter-vanilla" example](https://redux.js.org/introduction/examples#counter-vanilla) that shows how to create a simple Redux store with a reducer that stores a single number and responds to `"INCREMENT"` and `"DECREMENT"` action types. You can see the [the complete code as a CodeSandbox here](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/counter-vanilla), but here's the important section:
+The Redux docs have a ["counter-vanilla" 示例](https://redux.js.org/introduction/examples#counter-vanilla) that shows how to create a simple Redux store with a reducer that stores a single number and responds to `"INCREMENT"` and `"DECREMENT"` action types. You can see the [the complete code as a CodeSandbox here](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/counter-vanilla), but here's the important section:
 
 ```js
 function counter(state, action) {

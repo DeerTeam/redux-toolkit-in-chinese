@@ -1,11 +1,11 @@
 ---
 id: quick-start
-title: Quick Start
-sidebar_label: Quick Start
+title: 快速开始
+sidebar_label: 快速开始
 hide_title: true
 ---
 
-# Quick Start
+# 快速开始
 
 ## Purpose
 

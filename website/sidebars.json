@@ -1,12 +1,12 @@
 {
-  "docs": {
-    "Introduction": ["introduction/quick-start"],
-    "Tutorials": [
+  "文档": {
+    "介绍": ["introduction/quick-start"],
+    "教程": [
       "tutorials/basic-tutorial",
       "tutorials/intermediate-tutorial",
       "tutorials/advanced-tutorial"
     ],
-    "Using Redux Toolkit": ["usage/usage-guide", "usage/usage-with-typescript"],
+    "使用 Redux工具包": ["usage/usage-guide", "usage/usage-with-typescript"],
     "API Reference": [
       {
         "type": "category",

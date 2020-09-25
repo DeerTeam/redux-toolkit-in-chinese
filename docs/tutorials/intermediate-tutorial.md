@@ -1,13 +1,13 @@
 ---
 id: intermediate-tutorial
-title: Intermediate Tutorial
-sidebar_label: Intermediate Tutorial
+title: 中级教程
+sidebar_label: 中级教程
 hide_title: true
 ---
 
-# Intermediate Tutorial: Redux Toolkit in Action
+# 中级教程: 让 Redux工具包 动起来
 
-In the [Basic Tutorial](./basic-tutorial.md), you saw the main API functions that are included in Redux Toolkit, and some short examples of why and how to use them. You also saw that you can use Redux and RTK from a plain JS script tag in an HTML page, without using React, NPM, Webpack, or any build tools.
+In the [基础教程](./basic-tutorial.md), you saw the main API functions that are included in Redux Toolkit, and some short examples of why and how to use them. You also saw that you can use Redux and RTK from a plain JS script tag in an HTML page, without using React, NPM, Webpack, or any build tools.
 
 In this tutorial, you'll see how to use those APIs in a small React app. Specifically, we're going to convert the [original Redux "todos" example app](https://redux.js.org/introduction/examples#todos) to use RTK instead.
 
@@ -47,10 +47,10 @@ Since the original todos example is in the Redux repo, we start by copying the R
 In the Basic Tutorial, we just linked to Redux Toolkit as an individual script tag. But, in a typical application, you need to add RTK as a package dependency in your project. This can be done with either the NPM or Yarn package managers:
 
 ```bash
-# If you're using NPM:
+# 如果你正在使用 NPM:
 npm install @reduxjs/toolkit
 
-# Or for Yarn:
+# 或者 Yarn:
 yarn add @reduxjs/toolkit
 ```
 
