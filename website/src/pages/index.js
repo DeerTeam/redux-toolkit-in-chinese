@@ -149,7 +149,7 @@ function Home() {
               )}
               to={useBaseUrl('introduction/quick-start')}
             >
-              Get Started
+              开始吧
             </Link>
           </div>
         </div>
@@ -182,7 +182,7 @@ function Home() {
               <div className="row">
                 <div className="col">
                   <h2 className={`text--center ${styles.secondTitle}`}>
-                    Other Libraries from the Redux Team
+                    来自Redux开发团队的其它库
                   </h2>
                 </div>
               </div>
