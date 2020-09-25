@@ -57,7 +57,7 @@ module.exports = {
   favicon: 'img/favicon/favicon.ico',
   tagline:
     '一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包',
-  title: 'Redux工具包 中文版',
+  title: 'Redux工具包 中文文档',
   url: 'https://redux-toolkit.js.org',
   customFields: {
     repoUrl: 'https://github.com/reduxjs/redux-toolkit'
@@ -69,7 +69,7 @@ module.exports = {
     },
     image: 'img/redux-logo-landscape.png',
     navbar: {
-      title: 'Redux工具包 中文版',
+      title: 'Redux工具包 中文文档',
       logo: {
         alt: 'Redux Logo',
         src: 'img/redux.svg'
@@ -77,7 +77,7 @@ module.exports = {
       items: [
         {
           to: 'introduction/quick-start',
-          label: 'Quick Start',
+          label: '快速开始',
           position: 'right'
         },
         { to: 'api/configureStore', label: 'API', position: 'right' },
@@ -96,10 +96,10 @@ module.exports = {
       },
       links: [
         {
-          title: 'Docs',
+          title: '文档',
           items: [
             {
-              label: 'Quick Start',
+              label: '快速开始',
               to: 'introduction/quick-start'
             },
             {
@@ -109,7 +109,7 @@ module.exports = {
           ]
         },
         {
-          title: 'Community',
+          title: '社区',
           items: [
             {
               label: 'Stack Overflow',
@@ -122,7 +122,7 @@ module.exports = {
           ]
         },
         {
-          title: 'More',
+          title: '更多',
           items: [
             {
               label: 'GitHub',
@@ -133,7 +133,7 @@ module.exports = {
                 <a href="https://www.netlify.com">
                   <img
                     src="https://www.netlify.com/img/global/badges/netlify-light.svg"
-                    alt="Deploys by Netlify"
+                    alt="由Netlify部署"
                   />
                 </a>
               `
@@ -153,7 +153,7 @@ module.exports = {
       items: [
         {
           to: 'introduction/quick-start',
-          label: 'Quick Start',
+          label: '快速开始',
           position: 'right'
         },
         { to: 'api/configureStore', label: 'API', position: 'right' },
