@@ -7,10 +7,10 @@
       "tutorials/advanced-tutorial"
     ],
     "使用 Redux工具包": ["usage/usage-guide", "usage/usage-with-typescript"],
-    "API Reference": [
+    "API 参考": [
       {
         "type": "category",
-        "label": "Store Setup",
+        "label": "Store 安装",
         "collapsed": false,
         "items": [
           "api/configureStore",
@@ -21,7 +21,7 @@
       },
       {
         "type": "category",
-        "label": "Reducers and Actions",
+        "label": "Reducers 和 Actions",
         "collapsed": false,
         "items": [
           "api/createReducer",
@@ -33,7 +33,7 @@
       },
       {
         "type": "category",
-        "label": "Other",
+        "label": "其它",
         "collapsed": false,
         "items": ["api/createSelector", "api/other-exports"]
       }

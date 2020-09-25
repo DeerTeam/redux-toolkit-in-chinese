@@ -261,7 +261,7 @@ While the Redux Toolkit `createReducer` function can be really helpful, keep in 
 - The "mutative" code only works correctly inside of our `createReducer` function
 - Immer won't let you mix "mutating" the draft state and also returning a new state value
 
-See the [`createReducer` API reference](../api/createReducer.mdx) for more details.
+See the [`createReducer` API 参考](../api/createReducer.mdx) for more details.
 
 ## Writing Action Creators
 
@@ -288,7 +288,7 @@ addTodo({ text: 'Buy milk' })
 // {type : "ADD_TODO", payload : {text : "Buy milk"}})
 ```
 
-`createAction` also accepts a "prepare callback" argument, which allows you to customize the resulting `payload` field and optionally add a `meta` field. See the [`createAction` API reference](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents) for details on defining action creators with a prepare callback.
+`createAction` also accepts a "prepare callback" argument, which allows you to customize the resulting `payload` field and optionally add a `meta` field. See the [`createAction` API 参考](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents) for details on defining action creators with a prepare callback.
 
 ### Using Action Creators as Action Types
 

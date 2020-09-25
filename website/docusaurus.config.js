@@ -103,7 +103,7 @@ module.exports = {
               to: 'introduction/quick-start'
             },
             {
-              label: 'API Reference',
+              label: 'API 参考',
               to: 'api/configureStore'
             }
           ]

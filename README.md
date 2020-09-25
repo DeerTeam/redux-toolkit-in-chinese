@@ -6,21 +6,21 @@
 
 **一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包**
 
-(前身为 "Redux Starter Kit")
+(前身为 "Redux快速入门包[Redux Starter Kit]")
 
 ## 安装
 
 ### 使用 Create React App
 
-The recommended way to start new apps with React and Redux Toolkit is by using the [official Redux+JS template](https://github.com/reduxjs/cra-template-redux) for [Create React App](https://github.com/facebook/create-react-app), which takes advantage of React Redux's integration with React components.
+推荐用 React 和 Redux工具包 创建新应用的方式是，使用基于集成了React Redux 和 React 组件[Create React App](https://github.com/facebook/create-react-app)的[官方 Redux+JS 模板](https://github.com/reduxjs/cra-template-redux)
 
 ```sh
 npx create-react-app my-app --template redux
 ```
 
-### An Existing App
+### 一个现有的应用
 
-Redux Toolkit is available as a package on NPM for use with a module bundler or in a Node application:
+Redux工具包 如今可作为一个NPM包打包进一个模块或一个Node应用：
 
 ```bash
 # NPM
@@ -30,24 +30,24 @@ npm install @reduxjs/toolkit
 yarn add @reduxjs/toolkit
 ```
 
-It is also available as a precompiled UMD package that defines a `window.RTK` global variable.
-The UMD package can be used as a [`<script>` tag](https://unpkg.com/@reduxjs/toolkit/dist/redux-toolkit.umd.js) directly.
+同时它也可以作为一个定义为`window.RTK`全局变量的预编译UMD包。
+UMD包可被直接用作一个[`<script>` 标签](https://unpkg.com/@reduxjs/toolkit/dist/redux-toolkit.umd.js)
 
 ## 目的
 
-The **Redux工具包** package is intended to be the standard way to write Redux logic. It was originally created to help address three common concerns about Redux:
+**Redux工具包** 致力于成为编写 Redux 逻辑的标准方式。它最初是为了帮助解决有关 Redux 的三个常见问题而创建的：
 
-- "Configuring a Redux store is too complicated"
-- "I have to add a lot of packages to get Redux to do anything useful"
-- "Redux requires too much boilerplate code"
+- "配置一个 Redux store 过于复杂"
+- "做任何 Redux 的事情我都需要添加很多包"
+- "Redux 需要太多的样板代码"
 
-We can't solve every use case, but in the spirit of [`create-react-app`](https://github.com/facebook/create-react-app) and [`apollo-boost`](https://dev-blog.apollodata.com/zero-config-graphql-state-management-27b1f1b3c2c3), we can try to provide some tools that abstract over the setup process and handle the most common use cases, as well as include some useful utilities that will let the user simplify their application code.
+我们不能解决每个用户案例，但本着 [`create-react-app`](https://github.com/facebook/create-react-app) 和 [`apollo-boost`](https://dev-blog.apollodata.com/zero-config-graphql-state-management-27b1f1b3c2c3) 的精神，我们能够尝试提供一些抽象出安装过程及处理最常见用户案例的工具，同时也包含一些会让用户简化他们代码的有用的组件
 
-Because of that, this package is deliberately limited in scope. It does _not_ address concepts like "reusable encapsulated Redux modules", data caching, folder or file structures, managing entity relationships in the store, and so on.
+因此，该程序包的 scope 特意做了限制。它确实 _没_ 处理比如 “可重用的封装Redux模块”，数据缓存，文件夹或文件结构，管理存储中的实体关系等概念。
 
 ## What's Included
 
-Redux工具包包含了如下API:
+Redux工具包 包含了如下API:
 
 - `configureStore()`: wraps `createStore` to provide simplified configuration options and good defaults. It can automatically combine your slice reducers, adds whatever Redux middleware you supply, includes `redux-thunk` by default, and enables use of the Redux DevTools Extension.
 - `createReducer()`: that lets you supply a lookup table of action types to case reducer functions, rather than writing switch statements. In addition, it automatically uses the [`immer` library](https://github.com/mweststrate/immer) to let you write simpler immutable updates with normal mutative code, like `state.todos[3].completed = true`.
@@ -59,4 +59,4 @@ Redux工具包包含了如下API:
 
 ## 文档
 
-The Redux Toolkit docs are available at **https://redux-toolkit-cn.netlify.app**.
+查看 Redux工具包 中文文档 可访问 **https://redux-toolkit-cn.netlify.app**.
