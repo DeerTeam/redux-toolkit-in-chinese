@@ -60,3 +60,8 @@ Redux工具包 包含了如下API:
 ## 文档
 
 查看 Redux工具包 中文文档 可访问 **https://redux-toolkit-cn.netlify.app**.
+
+## 翻译人员
+
+- [Matthew Lee](https://github.com/mathxlee)
+- [shenjoel](https://github.com/shenjoel)
