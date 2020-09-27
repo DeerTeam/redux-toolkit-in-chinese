@@ -123,6 +123,10 @@ module.exports = {
             {
               label: 'Discord',
               href: 'https://discord.gg/0ZcbPKXt5bZ6au5t'
+            },
+            {
+              label: 'Redux工具包 中文文档',
+              href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese'
             }
           ]
         },
@@ -132,6 +136,10 @@ module.exports = {
             {
               label: 'GitHub',
               href: 'https://www.github.com/reduxjs/redux-toolkit'
+            },
+            {
+              label: 'GitHub(中文文档)',
+              href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese'
             },
             {
               html: `
