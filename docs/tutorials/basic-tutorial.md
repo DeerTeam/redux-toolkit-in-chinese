@@ -7,17 +7,17 @@ hide_title: true
 
 # 基础教程: 介绍 Redux工具包
 
-Welcome to Redux Toolkit ! This tutorial will show you the basic functions that are included with Redux Toolkit (also known as "RTK" for short).
+欢迎使用 Redux工具包 ！这个教程将为你展示 Redux工具包（也可以简称RTK） 所包含的基础功能。
 
-This tutorial assumes that you are already familiar with the concepts of the core Redux library, as well as how to use it with React. If you aren't, please take some time to read through the [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) first, as the explanations here focus on how RTK usage differs from "typical" Redux code.
+本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux工具包 与传统的 Redux 代码在用法上的不同点。
 
 ## 介绍: 编写一个计数应用
 
-We'll start by looking at the smallest Redux example: a simple counter application.
+接下来开始看一个最简单的 Redux 例子：一个简单的计数器应用
 
 ### Redux "Counter-Vanilla" 示例
 
-The Redux docs have a ["counter-vanilla" 示例](https://redux.js.org/introduction/examples#counter-vanilla) that shows how to create a simple Redux store with a reducer that stores a single number and responds to `"INCREMENT"` and `"DECREMENT"` action types. You can see the [the complete code as a CodeSandbox here](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/counter-vanilla), but here's the important section:
+在 Redux 的文档中有一个 ["纯计数器" 示例](https://redux.js.org/introduction/examples#counter-vanilla) ，展示了如何配合 reducer 去创建一个用于存储单个数字及响应 `"INCREMENT"` 和 `"DECREMENT"` action 类型的简单的 Redux store。你可以查看 [在CodeSandbox的完整代码](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/counter-vanilla)，下面展示的是重要的代码片段：
 
 ```js
 function counter(state, action) {
@@ -42,13 +42,13 @@ document.getElementById('increment').addEventListener('click', function() {
 })
 ```
 
-This section creates a reducer function called `counter`, ensures it uses a default state value of `0`, listens for `"INCREMENT"` and `"DECREMENT"` action types, and dispatches the `"INCREMENT"` action type when the button is clicked.
+代码片段表示创建了一个叫 `counter` 的 reducer 函数，首先确保它默认的状态值是 `0`，接着根据 action 类型监听 `"INCREMENT"` 和 `"DECREMENT"` ，最后在点击按钮时发起了 `"INCREMENT"` action 类型。
 
-### A More Typical Counter Example
+### 一个更典型的计数器示例
 
-While this example is simple, it's also somewhat unrealistic. Most Redux apps are written using ES6 syntax, including default arguments for function parameters that are undefined. It's also common practice to write ["action creator" functions](https://redux.js.org/basics/actions#action-creators) instead of writing the action objects directly in the code, and to write out the action types as constants instead of plain strings each time.
+尽管这个例子挺简单，但是它在真实场景中不一定这么实现。大多数的 Redux 应用都是使用 ES6 的语法来写的，因此函数的参数默认值是 undefined 。最常见的做法是编写 ["action creator" 函数](https://redux.js.org/basics/actions#action-creators)  而不是直接在代码中编写 action 对象、编写整个 action 类型作为常量而不是每次都是纯字符串。
 
-Let's rewrite the above example using those approaches to see what it would look like:
+让我们使用这样的实现方式，重写一下上面的那个例子，看看会是什么样：
 
 ```js
 const INCREMENT = 'INCREMENT'
@@ -80,15 +80,15 @@ document.getElementById('increment').addEventListener('click', () => {
 })
 ```
 
-Since the example is small, that doesn't make too much of a difference in appearance. Size-wise, we saved a couple lines by using a default argument, but writing those action creator functions made things bigger. And, there's some duplication here. Writing `const INCREMENT = 'INCREMENT'` just looks silly :) Especially when it's only being used in two places - the action creator and the reducer.
+因为这个例子很小，表面上看起来好像没有太大的区别。在代码大小方面，通过使用默认参数，我们节省了几行代码，但是编写 action creator 函数让代码量变得更大了。而且，这里有一些重复代码。编写 `const INCREMENT = 'INCREMENT'` 看起来很傻 :) 特别是当它只在 action creator 和 reducer 两个地方用到。
 
-In addition, switch statements bother many people. It would be nice if we could replace it with some kind of a lookup table instead.
+此外，switch 语句让很多人困扰。如果我们能用某种查找表的方式代替它就好了。
 
-### Introducing: `configureStore`
+### 介绍： `configureStore`
 
-Redux Toolkit includes several functions to help simplify your Redux code. The first function we'll look at is [`configureStore`](../api/configureStore.mdx).
+Redux工具包包含了一些能够简化你的 Redux 代码的函数。我们看到的第一个函数是  [`configureStore`](../api/configureStore.mdx) 。
 
-Normally, you create a Redux store by calling `createStore()` and passing in your root reducer function. Redux Toolkit has a `configureStore()` function that wraps `createStore()` to do the same thing, but also sets up some useful development tools for you as part of the store creation process.
+通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的根 reducer 函数。Redux工具包有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
 
 We can easily replace the existing `createStore` call with `configureStore` instead. `configureStore` accepts a single object with named fields, instead of multiple function arguments, so we need to pass our reducer function as a field named `reducer`:
 
