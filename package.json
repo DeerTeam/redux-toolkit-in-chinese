@@ -1,8 +1,8 @@
 {
   "name": "@reduxjs/toolkit",
   "version": "1.4.0",
-  "description": "The official, opinionated, batteries-included toolset for efficient Redux development",
-  "repository": "https://github.com/reduxjs/redux-toolkit",
+  "description": "redux工具包 中文文档",
+  "repository": "https://github.com/DeerTeam/redux-toolkit-in-chinese",
   "keywords": [
     "redux",
     "react",
@@ -20,7 +20,7 @@
   "module": "dist/redux-toolkit.esm.js",
   "unpkg": "dist/redux-toolkit.umd.min.js",
   "types": "dist/typings.d.ts",
-  "author": "Mark Erikson <mark@isquaredsoftware.com>",
+  "author": "Matthew Lee <math.lee@qq.com>",
   "license": "MIT",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.0",

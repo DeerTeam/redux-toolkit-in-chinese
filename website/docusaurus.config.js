@@ -60,7 +60,7 @@ module.exports = {
   title: 'Redux工具包 中文文档',
   url: 'https://redux-toolkit.js.org',
   customFields: {
-    repoUrl: 'https://github.com/reduxjs/redux-toolkit'
+    repoUrl: 'https://github.com/DeerTeam/redux-toolkit-in-chinese'
   },
   themeConfig: {
     metadatas: [{ name: 'twitter:card', content: 'summary' }],
@@ -82,8 +82,13 @@ module.exports = {
         },
         { to: 'api/configureStore', label: 'API', position: 'right' },
         {
+          href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese',
+          label: 'GitHub(中文仓库)',
+          position: 'right'
+        },
+        {
           href: 'https://github.com/reduxjs/redux-toolkit',
-          label: 'GitHub',
+          label: 'GitHub(English version)',
           position: 'right'
         }
       ]
@@ -158,8 +163,13 @@ module.exports = {
         },
         { to: 'api/configureStore', label: 'API', position: 'right' },
         {
+          href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese',
+          label: 'GitHub(中文仓库)',
+          position: 'right'
+        },
+        {
           href: 'https://github.com/reduxjs/redux-toolkit',
-          label: 'GitHub',
+          label: 'GitHub(English version)',
           position: 'right'
         }
       ]
