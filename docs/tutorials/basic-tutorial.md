@@ -11,7 +11,7 @@ hide_title: true
 
 本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux工具包 与传统的 Redux 代码在用法上的不同点。
 
-## 介绍: 编写一个计数应用
+## 介绍：编写一个计数应用
 
 接下来开始看一个最简单的 Redux 例子：一个简单的计数器应用
 
@@ -84,7 +84,7 @@ document.getElementById('increment').addEventListener('click', () => {
 
 此外，switch 语句让很多人困扰。如果我们能用某种查找表的方式代替它就好了。
 
-### 介绍： `configureStore`
+### 介绍：`configureStore`
 
 Redux工具包包含了一些能够简化你的 Redux 代码的函数。我们看到的第一个函数是  [`configureStore`](../api/configureStore.mdx) 。
 
@@ -104,7 +104,7 @@ const store = configureStore({
 
 这看起来可能没太大不同。但是，在底层实现里，store 已经被配置启用，使用 [Redux开发工具扩展](https://github.com/zalmoxisus/redux-devtools-extension)  可以看到发起 action 的历史行为以及 store 状态改变是如何改变的，并且还 [默认包含的一些Redux中间件](../api/getDefaultMiddleware.mdx) 。我们将在下一个教程中更详细地介绍这些内容。
 
-### 介绍: `createAction`
+### 介绍：`createAction`
 
 接下来，我们来看一看 [`createAction`](../api/createAction.mdx).
 
@@ -171,7 +171,7 @@ document.getElementById('increment').addEventListener('click', () => {
 
 这里又节省了几行代码，至少我们没有到处重复 `INCREMENT` 这个单词了。
 
-### 介绍: `createReducer`
+### 介绍：`createReducer`
 
 现在让我们来看看 reducer 函数。尽管你可以在一个 Redux reducer 中使用像 `if` 条件语句和循环这样的任何条件逻辑，最常见的实现是检查 `action.type` 字段然后为每个 action type 做特定的逻辑。一个 reducer 也将提供一个初始化的状态值，如果 action 不是它所关心的则返回现有的状态。
 
@@ -198,7 +198,7 @@ const counter = createReducer(0, {
 
 要查看到目前为止的完整代码，请参见[在 CodeSandbox 展示了 `createAction` 和 `createReducer` 的用法](https://codesandbox.io/s/counter-vanilla-redux-toolkit-sjouq)。
 
-### 介绍: `createSlice`
+### 介绍：`createSlice`
 
 让我们回顾一下目前的计数器例子：
 
