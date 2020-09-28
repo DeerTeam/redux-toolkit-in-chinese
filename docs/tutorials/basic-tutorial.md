@@ -15,7 +15,7 @@ hide_title: true
 
 接下来开始看一个最简单的 Redux 例子：一个简单的计数器应用
 
-### Redux "Counter-Vanilla" 示例
+### Redux "纯计数器" 示例
 
 在 Redux 的文档中有一个 ["纯计数器" 示例](https://redux.js.org/introduction/examples#counter-vanilla) ，展示了如何配合 reducer 去创建一个用于存储单个数字及响应 `"INCREMENT"` 和 `"DECREMENT"` action 类型的简单的 Redux store。你可以查看 [在CodeSandbox的完整代码](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/counter-vanilla)，下面展示的是重要的代码片段：
 
@@ -90,28 +90,29 @@ Redux工具包包含了一些能够简化你的 Redux 代码的函数。我们�
 
 通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的根 reducer 函数。Redux工具包有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
 
-We can easily replace the existing `createStore` call with `configureStore` instead. `configureStore` accepts a single object with named fields, instead of multiple function arguments, so we need to pass our reducer function as a field named `reducer`:
+我们可以很容易的用 `configureStore` 替换现有的 `createStore` 调用。`configureStore` 接受一个具有指定字段的对象，而不是多个函数参数，因此我们需要将 reducer 函数作为一个名为 `reducer` 的字段传递：
 
 ```js
-// Before:
+// 之前:
 const store = createStore(counter)
 
-// After:
+// 之后:
 const store = configureStore({
   reducer: counter
 })
 ```
 
-This probably doesn't look like much is different. But, under the hood, the store has been configured to enable using the [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension) to view the history of dispatched actions and how the store state changed, and has had [some Redux middleware included by default](../api/getDefaultMiddleware.mdx). We'll look at these in more detail in the next tutorial.
+这看起来可能没太大不同。但是，在底层实现里，store 已经被配置启用，使用 [Redux开发工具扩展](https://github.com/zalmoxisus/redux-devtools-extension)  可以看到发起 action 的历史行为以及 store 状态改变是如何改变的，并且还 [默认包含的一些Redux中间件](../api/getDefaultMiddleware.mdx) 。我们将在下一个教程中更详细地介绍这些内容。
 
-### Introducing: `createAction`
+### 介绍: `createAction`
 
-Next up, let's look at [`createAction`](../api/createAction.mdx).
+接下来，我们来看一看 [`createAction`](../api/createAction.mdx).
 
-`createAction` accepts an action type string as an argument, and returns an action creator function that uses that type string. (Yes, this means the name is a bit incorrect - we're creating an "action creator function", not an "action object", but it's shorter and easier to remember than `createActionCreator`.) So, these two examples are equivalent:
+`createAction` 接受一个 action 类型字符串作为参数，并返回一个使用该类型字符串的 action creator 函数。（我们正在创建一个 "action creator 函数"，而不是 "action 对象" - 让这个函数名看起来好像有点不正确），但它比 `createActionCreator` 更短更容易记住。因此，这两个例子是等价的:
+
 
 ```js
-// Original approach: write the action type and action creator by hand
+// 原本的实现: 纯手工编写 action type 和 action creator
 const INCREMENT = 'INCREMENT'
 
 function incrementOriginal() {
@@ -121,14 +122,16 @@ function incrementOriginal() {
 console.log(incrementOriginal())
 // {type: "INCREMENT"}
 
-// Or, use `createAction` to generate the action creator:
+// 或者，使用 `createAction` 来生成 action creator:
 const incrementNew = createAction('INCREMENT')
 
 console.log(incrementNew())
 // {type: "INCREMENT"}
 ```
 
-But what if we need to reference the action type string in a reducer? With `createAction`, you can do that in two ways. First, the action creator's `toString()` method has been overridden, and will return the action type string. Second, the type string is also available as a `.type` field on the function:
+但是如果我们需要在 reducer 中引用 action type 字符串呢？有两种方式你可以配合 `createAction` 做到这一点。第一种，action creator 的 `toString()` 方法已经被重写，而且将返回 action type 字符串。第二种，type 字符串也可以在函数里作为一个 `.type` 字段：
+
+
 
 ```js
 const increment = createAction('INCREMENT')
@@ -140,7 +143,7 @@ console.log(increment.type)
 // "INCREMENT"
 ```
 
-We can use `createAction` to simplify the previous counter example.
+我们可以使用 `createAction` 来简化前一个计数器的例子。
 
 ```js
 const increment = createAction('INCREMENT')
@@ -166,13 +169,13 @@ document.getElementById('increment').addEventListener('click', () => {
 })
 ```
 
-That saved us a few lines again, and at least we're not repeating the word `INCREMENT` everywhere.
+这里又节省了几行代码，至少我们没有到处重复 `INCREMENT` 这个单词了。
 
-### Introducing: `createReducer`
+### 介绍: `createReducer`
 
-Now, let's look at the reducer function. While you can use any conditional logic you want in a Redux reducer, including `if` statements and loops, the most common approach is to check the `action.type` field and do some specific logic for each action type. A reducer will also provide an initial state value, and return the existing state if the action isn't something it cares about.
+现在让我们来看看 reducer 函数。尽管你可以在一个 Redux reducer 中使用像 `if` 条件语句和循环这样的任何条件逻辑，最常见的实现是检查 `action.type` 字段然后为每个 action type 做特定的逻辑。一个 reducer 也将提供一个初始化的状态值，如果 action 不是它所关心的则返回现有的状态。
 
-Redux Toolkit includes a [`createReducer` function](../api/createReducer.mdx) that lets you write reducers using a "lookup table" object, where each key in the object is a Redux action type string, and the values are reducer functions. We can use it to directly replace the existing `counter` function definition. Since we need to use the action type strings as the keys, we can use the [ES6 object "computed property" syntax](http://javascript.info/object#computed-properties) to create keys from the type string variables.
+Redux工具包 包含了一个 [`createReducer` 函数](../api/createReducer.mdx) ，它让使用"查找表"对象的方式编写 reducer，其中对象的每一个 key 都是一个 Redux action type 字符串，value 是 reducer 函数。我们可以直接使用它来替代现有的 `counter` 函数定义。由于我们需要使用 action type 字符串作为 key，所以我们可以使用 [ES6 object "computed property" syntax](http://javascript.info/object#computed-properties) 从 type 字符串变量来创建 key。
 
 ```js
 const increment = createAction('INCREMENT')
@@ -184,7 +187,7 @@ const counter = createReducer(0, {
 })
 ```
 
-Or, since the computed properties syntax will call `toString()` on whatever variable is inside, we can just use the action creator functions directly without the `.type` field:
+或者，由于计算属性语法将在其中任何变量上调用 `toString()` ，我们可以只是直接使用 action creator 函数而不用 `.type` 字段：
 
 ```js
 const counter = createReducer(0, {
@@ -193,11 +196,11 @@ const counter = createReducer(0, {
 })
 ```
 
-To see the complete code so far, see [this CodeSandbox showing the use of `createAction` and `createReducer`](https://codesandbox.io/s/counter-vanilla-redux-toolkit-sjouq).
+要查看到目前为止的完整代码，请参见[在 CodeSandbox 展示了 `createAction` 和 `createReducer` 的用法](https://codesandbox.io/s/counter-vanilla-redux-toolkit-sjouq)。
 
-### Introducing: `createSlice`
+### 介绍: `createSlice`
 
-Let's review what the counter example looks like at this point:
+让我们回顾一下目前的计数器例子：
 
 ```js
 const increment = createAction('INCREMENT')
@@ -217,13 +220,13 @@ document.getElementById('increment').addEventListener('click', () => {
 })
 ```
 
-That's not bad, but we can make one more major change to this. Why do we even need to generate the action creators separately, or write out those action type strings? The really important part here is the reducer functions.
+这样看并不糟糕，但是我们可以再做一个主要的改变。为什么我们甚至需要单独生成 action creator，或者写出那些 action type 字符串呢？这里真正重要的部分是 reducer 函数。
 
-That's where the [`createSlice` function](../api/createSlice.mdx) comes in. It allows us to provide an object with the reducer functions, and it will automatically generate the action type strings and action creator functions based on the names of the reducers we listed.
+这就是 [`createSlice` 函数](../api/createSlice.mdx) 的作用。它允许我们提供一个带有 reducer 函数的对象，并且它将根据我们列出的 reducer 的名称自动生成 action type 字符串和 action creator 函数。
 
-`createSlice` returns a "slice" object that contains the generated reducer function as a field named `reducer`, and the generated action creators inside an object called `actions`.
+`createSlice` 返回一个 "分片" 对象，该对象包含生成的 reducer 函数作为一个名为 `reducer` 的字段，以及在一个名为 `actions` 的对象中生成的 action creator。
 
-Here's what our counter example would look like using `createSlice` instead:
+下面是使用了 `createSlice` 的计数器例子：
 
 ```js
 const counterSlice = createSlice({
@@ -244,25 +247,25 @@ document.getElementById('increment').addEventListener('click', () => {
 })
 ```
 
-Most of the time, you'll probably want to use ES6 destructuring syntax to pull out the action creator functions as variables, and possibly the reducer as well:
+大多数时候，你可能会想使用ES6的解构语法来提取 action creator 函数作为变量，也可能是 reducer:
 
 ```js
 const { actions, reducer } = counterSlice
 const { increment, decrement } = actions
 ```
 
-## Summary
+## 总结
 
-Let's recap what the functions do:
+让我们来回顾一下这些函数的作用：
 
-- `configureStore`: creates a Redux store instance like the original `createStore` from Redux, but accepts a named options object and sets up the Redux DevTools Extension automatically
-- `createAction`: accepts an action type string, and returns an action creator function that uses that type
-- `createReducer`: accepts an initial state value and a lookup table of action types to reducer functions, and creates a reducer that handles all of those action types
-- `createSlice`: accepts an initial state and a lookup table with reducer names and functions, and automatically generates action creator functions, action type strings, and a reducer function.
+- `configureStore`: 像从 Redux 最初的 `createStore` 一样，创建一个 Redux store 实例， 但是接受一个命名选项对象，并自动设置 Redux DevTools 扩展
+- `createAction`: 接受一个 action type 字符串，并使用该 type 返回一个使用该类型的 action creator 函数
+- `createReducer`: 为 reducer 函数接受一个初始状态值和 action type 的查找表，并创建一个 reducer 来处理所有这些 action type
+- `createSlice`: 接受一个初始状态和一个包含 reducer 名称和函数的查找表，并自动生成 action creator 函数、action type 字符串和一个 reducer 函数
 
-Notice that none of these changed anything about how Redux works. We're still creating a Redux store, dispatching action objects that describe "what happened", and returning updated state using a reducer function. Also, notice that the Redux Toolkit functions can be used no matter what approach was used to build the UI, since they just handle the "plain Redux store" part of the code. Our example used the store with a "vanilla JS" UI, but we could use this same store with React, Angular, Vue, or any other UI layer.
+注意，这些都没有改变 Redux 的工作方式。我们仍然在创建一个 Redux store，发起了"发生了什么"的 action 对象，并使用一个 reducer 函数返回更新后的状态。另外，请注意，无论使用什么方法来构建 UI，都可以使用 Redux工具箱 里的函数，因为它们只处理代码的 "纯Redux store" 部分。我们的例子使用了 "纯JS"UI（无框架） 的 store，但是我们可以将这个store 与React、Angular、Vue或任何其他UI层一起使用。
 
-Finally, if you look carefully at the example, you'll see that there's one place where we've written some async logic - the "increment async" button:
+最后，如果你仔细看这个例子，你会看到有一个地方，我们写了一些异步逻辑 - "增量异步" 按钮:
 
 ```js
 document.getElementById('incrementAsync').addEventListener('click', function() {
@@ -272,9 +275,10 @@ document.getElementById('incrementAsync').addEventListener('click', function() {
 })
 ```
 
-You can see that we're keeping the async handling separate from the reducer logic, and we dispatch an action when the store needs to be updated. Redux Toolkit doesn't change anything about that.
+您可以看到，我们将异步处理与 reducer 逻辑分离，并且在需要更新 store 时发起一个 action。Redux工具包 并不会改变这一点。
 
-Here's the complete example in a sandbox:
+
+下面是我们在 sandbox 中的完整示例:
 
 <iframe src="https://codesandbox.io/embed/counter-vanilla-createslice-redux-toolkit-6gkxx?fontsize=14&hidenavigation=1&theme=dark&view=editor"
      style={{ width: '100%', height: '500px', border: 0, borderRadius: '4px', overflow: 'hidden' }} 
@@ -283,4 +287,4 @@ Here's the complete example in a sandbox:
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
 
-Now that you know the basics of each function, the next step is to try using them in a _slightly_ larger example to see more of how they work. We'll cover that in the [Intermediate Tutorial](./intermediate-tutorial.md).
+现在您已经了解了每个函数的基本知识，为了了解它们是如何工作的，下一步应该尝试在一个 _稍微_ 更大的示例中使用它们。我们将在 [中级教程](./intermediate-tutorial.md) 中讨论这个问题。
