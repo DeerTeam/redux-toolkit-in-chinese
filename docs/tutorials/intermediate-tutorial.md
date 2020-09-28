@@ -7,15 +7,16 @@ hide_title: true
 
 # 中级教程: 让 Redux工具包 动起来
 
-In the [基础教程](./basic-tutorial.md), you saw the main API functions that are included in Redux Toolkit, and some short examples of why and how to use them. You also saw that you can use Redux and RTK from a plain JS script tag in an HTML page, without using React, NPM, Webpack, or any build tools.
+在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux工具包 中包含的主要的API函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个HTML页面的 script 标签就能使用 Redux 和 RTK。
 
-In this tutorial, you'll see how to use those APIs in a small React app. Specifically, we're going to convert the [original Redux "todos" example app](https://redux.js.org/introduction/examples#todos) to use RTK instead.
+在这个教程中，你将看到在一个简单的 React 应用中如何使用这些API。尤其是我们将转换这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 而用 RTK 替代。
 
-This will show several concepts:
+我们将会展示几个概念:
 
-- How to convert "plain Redux" code to use RTK
-- How to use RTK in a typical React+Redux app
-- How some of the more powerful features of RTK can be used to simplify your Redux code
+- 如何将 "纯 Redux" 代码转换使用 RTK
+- 如何在一个典型的 React+Redux 应用中使用 RTK
+- 如何使用 RTK 里一些更强大的特性来简化你的 Redux 代码
+
 
 Also, while this isn't specific to RTK, we'll look at a couple ways you can improve your React-Redux code as well.
 
@@ -23,7 +24,7 @@ The complete source code for the converted application from this tutorial is ava
 
 > - Commit message here
 
-## Reviewing the Redux Todos Example
+## 回顾 Redux Todos 示例
 
 If we inspect [the current "todos" example source code](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src), we can observe a few things:
 
@@ -37,7 +38,7 @@ On the one hand, this is a small example app. It's meant to illustrate the basic
 
 ## Initial Conversion Steps
 
-### Adding Redux Toolkit to the Project
+### 在项目中添加 Redux工具包
 
 Since the original todos example is in the Redux repo, we start by copying the Redux "todos" source code to a fresh Create-React-App project, and adding Prettier to the project to help make sure the code is formatted consistently. There's also a [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) file to enable us to use "absolute import paths" that start from the `/src` folder.
 
@@ -89,11 +90,11 @@ If you have [the Redux DevTools browser extension](https://github.com/zalmoxisus
 
 ![Redux DevTools Extension screenshot showing initial state](/assets/tutorials/intermediate/int-tut-01-redux-devtools.png)
 
-## Creating the Todos Slice
+## 创建 Todos 分片
 
-The first big step for rewriting the app is to convert the todos logic into a new "slice".
+第一个重写应用的重大步骤，就是将 todos 逻辑转化成一个新的 "分片"。
 
-### Understanding Slices
+### 理解"分片"
 
 Right now, the todos code is split into two parts. The reducer logic is in `reducers/todos.js`, while the action creators are in `actions/index.js`. In a larger app, we might even see the action type constants in their own file, like `constants/todos.js`, so they can be reused in both places.
 
@@ -677,9 +678,9 @@ Now, let's see the final version of the code in action!
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
 
-## Summary
+## 总结
 
-In this tutorial, you saw:
+在该教程中，你看到了：
 
 - How to use RTK in a typical React application, including adding the package, writing "slice" files, and dispatching actions from React components
 - How to use "mutable" reducers, prepare action payloads, and write selector functions

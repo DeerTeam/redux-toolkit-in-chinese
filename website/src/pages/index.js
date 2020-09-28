@@ -48,7 +48,7 @@ const features = [
       <p>
         设计灵感来源于像 Immer 和 Autodux 这样的库让你{' '}
         <strong>编写"可变的" immutable 更新逻辑</strong>，甚至于{' '}
-        <strong>自动创建完整的状态"切片"</strong>.
+        <strong>自动创建完整的状态"分片"</strong>.
       </p>
     ),
     image: (
