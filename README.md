@@ -65,3 +65,4 @@ Redux工具包 包含了如下API:
 
 - [Matthew Lee](https://github.com/mathxlee)
 - [shenjoel](https://github.com/shenjoel)
+- [Aubrey](https://github.com/AubreyDDun)
