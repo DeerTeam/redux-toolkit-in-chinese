@@ -154,7 +154,7 @@ module.exports = {
           ]
         }
       ],
-      copyright: `Copyright © 2015–${new Date().getFullYear()} Dan Abramov and the Redux documentation authors. 中文由DeerTeam前端团队翻译。`
+      copyright: `Copyright © 2015–${new Date().getFullYear()} Dan Abramov and the Redux documentation authors. 中文由[DeerTeam](https://github.com/DeerTeam)前端团队翻译制作。`
     },
     image: 'img/redux-logo-landscape.png',
     navbar: {

@@ -5,7 +5,7 @@ sidebar_label: 中级教程
 hide_title: true
 ---
 
-# 中级教程: 让 Redux工具包 动起来
+# 中级教程: 把 Redux工具包 实践起来
 
 在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux工具包 中包含的主要的API函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个HTML页面的 script 标签就能使用 Redux 和 RTK。
 
@@ -17,26 +17,25 @@ hide_title: true
 - 如何在一个典型的 React+Redux 应用中使用 RTK
 - 如何使用 RTK 里一些更强大的特性来简化你的 Redux 代码
 
+另外，虽然这不是RTK特有的，但我们还将研究几种改进你的 React-Redux 代码的方法。
 
-Also, while this isn't specific to RTK, we'll look at a couple ways you can improve your React-Redux code as well.
+从本教程实现成应用的完整源代码在 [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example) 可以获得。我们将回顾整个实现过程。相关有意义的个人提交将像如下高亮的引用块显示：
 
-The complete source code for the converted application from this tutorial is available at [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example). We'll be walking through the conversion process as shown in this repo's history. Links to meaningful individual commits will be highlighted in quote blocks, like this:
-
-> - Commit message here
+> - 这里是提交信息
 
 ## 回顾 Redux Todos 示例
 
-If we inspect [the current "todos" example source code](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src), we can observe a few things:
+如果我们查看 [当前 `todos` 示例源代码](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src)，我们可以观察到以下几点：
 
-- The [`todos` reducer function](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) is doing immutable updates "by hand", by copying nested JS objects and arrays
-- The [`actions` file](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js) has hand-written action creator functions, and the action type strings are being duplicated between the actions file and the reducer files
-- The code is laid out using a ["folder-by-type" structure](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go), with separate files for `actions` and `reducers`
+- [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的JS对象和数组来 "手工" 进行 immutable 更新
+- The [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js) has hand-written action creator functions, and the action type strings are being duplicated between the actions file and the reducer files
+- The code is laid out using a ["folder-by-type" 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go), with separate files for `actions` and `reducers`
 - The React components are written using a strict version of the ["container/presentational" pattern](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0), where [the "presentational" components are in one folder](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components), and the [Redux "container" connection definitions are in a different folder](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
 - Some of the code isn't following some of the recommended Redux "best practices" patterns. We'll look at some specific examples as we go through this tutorial.
 
-On the one hand, this is a small example app. It's meant to illustrate the basics of actually using React and Redux together, and not necessarily be used as "the right way" to do things in a full-scale production application. On the other hand, most people will use patterns they see in docs and examples, and there's definitely room for improvement here.
+一方面，这是一个小小的示例应用。它的意图是说明实际中一起使用 React 和 Redux 的基础知识，并不是一定要在一个全面的生产的应用中作为"正确的方式"来使用。另一方面，大多数人会使用他们在文档和示例中看到的模式，这里面肯定有改进的空间。
 
-## Initial Conversion Steps
+## 初始转换步骤
 
 ### 在项目中添加 Redux工具包
 
@@ -45,7 +44,8 @@ Since the original todos example is in the Redux repo, we start by copying the R
 > - [Initial commit](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1).
 > - [Add jsconfig.json to support absolute imports](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
 
-In the Basic Tutorial, we just linked to Redux Toolkit as an individual script tag. But, in a typical application, you need to add RTK as a package dependency in your project. This can be done with either the NPM or Yarn package managers:
+在基础教程中，我们只是作为一个独立的 script 标签链接到 Redux Toolkit。单身，在一个典型的应用中，你需要将 RTK 作为一个包引用添加到你的项目。你可以使用 NPM 或者 Yarn
+任意一种包管理器：
 
 ```bash
 # 如果你正在使用 NPM:
@@ -667,9 +667,9 @@ If we do that, the final source code structure looks like this:
     - `index.js`
   - `index.js`
 
-Everyone has different preferences on what makes a "maintainable" folder structure, but overall that result looks pretty consistent and easy to follow.
+对于"可维护"的文件夹结构，每个人都有不同的偏好，但总体而言，结果看起来相当一致，易于遵循。
 
-Now, let's see the final version of the code in action!
+现在，让我们来看看代码的最终版本！
 
 <iframe src="https://codesandbox.io/embed/rtk-convert-todos-example-uqqy3?fontsize=14&hidenavigation=1&module=%2Fsrc%2Ffeatures%2Ftodos%2FtodosSlice.js&theme=dark&view=editor"
      style={{ width: '100%', height: '500px', border: 0, borderRadius: '4px', overflow: 'hidden' }}
@@ -682,11 +682,11 @@ Now, let's see the final version of the code in action!
 
 在该教程中，你看到了：
 
-- How to use RTK in a typical React application, including adding the package, writing "slice" files, and dispatching actions from React components
-- How to use "mutable" reducers, prepare action payloads, and write selector functions
-- Some techniques for simplifying React-Redux code, like using the "object shorthand" form of `mapDispatch`
-- Examples of using a "feature folder" structure for organizing your code.
+- 如何在一个典型的 React 应用中使用 RTK，包括添加包、编写"切片"文件以及从 React 组件发起 action
+- 如何使用 "可变" reducer，准备 action payload，并编写选择器函数
+- 一些简化 React-Redux 代码的技术，比如使用 `mapDispatch` 的"对象简写"形式
+- 使用 "功能文件夹" 结构组织代码的例子。
 
-Hopefully that has helped illustrate how to actually use these methods in practice.
+希望这有助于说明如何在实践中实际使用这些方法。
 
-Next up, the [Advanced Tutorial](./advanced-tutorial.md) looks at how to use RTK in an app that does async data fetching and uses TypeScript.
+接下来，[高级教程](./advanced-tutorial.md) 将介绍如何在一个应用程序中使用RTK来完成异步数据抓取并使用TypeScript。
