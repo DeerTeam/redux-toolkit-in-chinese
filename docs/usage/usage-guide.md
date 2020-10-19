@@ -185,16 +185,16 @@ function todosReducer(state = [], action) {
 ```js
 const todosReducer = createReducer([], {
   ADD_TODO: (state, action) => {
-    // "mutate" the array by calling push()
+    // 调用 push() "mutate" 数组
     state.push(action.payload)
   },
   TOGGLE_TODO: (state, action) => {
     const todo = state[action.payload.index]
-    // "mutate" the object by overwriting a field
+    // 通过重写一个字段 "mutate" 对象
     todo.completed = !todo.completed
   },
   REMOVE_TODO: (state, action) => {
-    // Can still return an immutably-updated value if we want to
+    // 如有需要，你还是可以返回一个 immutably-updated 值
     return state.filter((todo, i) => i !== action.payload.index)
   }
 })
@@ -238,16 +238,16 @@ updateValue(state, action) {
 const keyName = "ADD_TODO4";
 
 const reducerObject = {
-	// Explicit quotes for the key name, arrow function for the reducer
+	// 给 key 加引号，用箭头函数写 reducer
 	"ADD_TODO1" : (state, action) => { }
 
-	// Bare key with no quotes, function keyword
+	// key 没有引号，使用 function 关键词
 	ADD_TODO2 : function(state, action){  }
 
-	// Object literal function shorthand
+	// 对象字面函数简写
 	ADD_TODO3(state, action) { }
 
-	// Computed property
+	// 可变属性
 	[keyName] : (state, action) => { }
 }
 ```
@@ -308,10 +308,10 @@ console.log(actionCreator.type);
 // "SOME_ACTION_TYPE"
 
 const reducer = createReducer({}, {
-    // actionCreator.toString() will automatically be called here
+    // 在这里，actionCreator.toString() 会被自动调用
     [actionCreator] : (state, action) => {}
 
-    // Or, you can reference the .type field:
+    // 或者，你可以引用 .type 字段：
     [actionCreator.type] : (state, action) => { }
 });
 ```
@@ -325,15 +325,15 @@ const actionCreator = createAction('SOME_ACTION_TYPE')
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
-    // ERROR: this won't work correctly!
+    // 错误：将无法正确运行！
     case actionCreator: {
       break
     }
-    // CORRECT: this will work as expected
+    // 正确：会按照预期运行
     case actionCreator.toString(): {
       break
     }
-    // CORRECT: this will also work right
+    // 正确：也可以正确运行
     case actionCreator.type: {
       break
     }
@@ -390,7 +390,7 @@ const initialState = []
 export default function postsReducer(state = initialState, action) {
   switch (action.type) {
     case CREATE_POST: {
-      // omit implementation
+      // 省略实现
     }
     default:
       return state
@@ -422,7 +422,7 @@ const initialState = []
 export default function postsReducer(state = initialState, action) {
   switch (action.type) {
     case CREATE_POST: {
-      // Omit actual code
+      // 省略实际代码
       break
     }
     default:
@@ -503,11 +503,11 @@ const postsSlice = createSlice({
   }
 })
 
-// Extract the action creators object and the reducer
+// 提取 action creators 对象和 reducer
 const { actions, reducer } = postsSlice
-// Extract and export each action creator by name
+// 按照 name 提取和导出每个 action creator
 export const { createPost, updatePost, deletePost } = actions
-// Export the reducer, either as a default or named export
+// 以 default 或具名 export 导出 reducer
 export default reducer
 ```
 
@@ -567,7 +567,7 @@ Thunk 通常会派发普通 action，比如 `dispatch(dataLoaded(response.data))
 典型的包含 thunk 的分片文件是这样的：
 
 ```js
-// First, define the reducer and action creators via `createSlice`
+// 首先，通过 `createSlice` 定义 reducer 和 action creator
 const usersSlice = createSlice({
   name: 'users',
   initialState: {
@@ -576,7 +576,7 @@ const usersSlice = createSlice({
   },
   reducers: {
     usersLoading(state, action) {
-      // Use a "state machine" approach for loading state instead of booleans
+      // 使用“状态机”的方法加载 state 以替代布尔值
       if (state.loading === 'idle') {
         state.loading = 'pending'
       }
@@ -590,10 +590,10 @@ const usersSlice = createSlice({
   }
 })
 
-// Destructure and export the plain action creators
+// 解构和导出纯 action creators
 export const { usersLoading, usersReceived } = usersSlice.actions
 
-// Define a thunk that dispatches those action creators
+// 定义一个 thunk 派发那些 action creators
 const fetchUsers = () => async dispatch => {
   dispatch(usersLoading())
   const response = await usersAPI.fetchAll()
@@ -654,7 +654,7 @@ const fetchIssuesCount = (org, repo) => async dispatch => {
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { userAPI } from './userAPI'
 
-// First, create the thunk
+// 首先，创建 thunk
 const fetchUserById = createAsyncThunk(
   'users/fetchByIdStatus',
   async (userId, thunkAPI) => {
@@ -663,23 +663,23 @@ const fetchUserById = createAsyncThunk(
   }
 )
 
-// Then, handle actions in your reducers:
+// 然后，在 reducer 中处理 action：
 const usersSlice = createSlice({
   name: 'users',
   initialState: { entities: [], loading: 'idle' },
   reducers: {
-    // standard reducer logic, with auto-generated action types per reducer
+    // 标准 reducer 逻辑，每个 reducer 都有自动生成的 action types
   },
   extraReducers: {
-    // Add reducers for additional action types here, and handle loading state as needed
+    // 在此处为其他 action type 添加 reducers，并根据需要处理加载状态
     [fetchUserById.fulfilled]: (state, action) => {
-      // Add user to the state array
+      // 添加 user 到 state 数组
       state.entities.push(action.payload)
     }
   }
 })
 
-// Later, dispatch the thunk as needed in the app
+// 稍后，根据需要在应用中 dispatch  thunk
 dispatch(fetchUserById(123))
 ```
 
@@ -725,7 +725,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      // reduce the collection by the id property into a shape of { 1: { ...user }}
+      // 通过 id 属性将集合 reduce 为 { 1: { ...user }}
       const byId = action.payload.users.reduce((byId, user) => {
         byId[user.id] = user
         return byId
@@ -753,7 +753,7 @@ const userEntity = new schema.Entity('users')
 
 export const fetchUsers = createAsyncThunk('users/fetchAll', async () => {
   const response = await userAPI.fetchAll()
-  // Normalize the data before passing it to our reducer
+  // 在传入到 reducer 之前规范化数据
   const normalized = normalize(response.data, [userEntity])
   return normalized.entities
 })
@@ -790,22 +790,22 @@ import userAPI from './userAPI'
 
 export const fetchUsers = createAsyncThunk('users/fetchAll', async () => {
   const response = await userAPI.fetchAll()
-  // In this case, `response.data` would be:
+  // 在这种情况下，`response.data` 会是：
   // [{id: 1, first_name: 'Example', last_name: 'User'}]
   return response.data
 })
 
 export const updateUser = createAsyncThunk('users/updateOne', async arg => {
   const response = await userAPI.updateUser(arg)
-  // In this case, `response.data` would be:
+  // 在这种情况下，`response.data` 会是：
   // { id: 1, first_name: 'Example', last_name: 'UpdatedLastName'}
   return response.data
 })
 
 export const usersAdapter = createEntityAdapter()
 
-// By default, `createEntityAdapter` gives you `{ ids: [], entities: {} }`.
-// If you want to track 'loading' or other keys, you would initialize them here:
+// 默认情况下，`createEntityAdapter` 会给你 `{ ids: [], entities: {} }`。
+// 如果你想追踪 'loading' 或者其他 key，你可以在这里初始化它们：
 // `getInitialState({ loading: false, activeRequestId: null })`
 const initialState = usersAdapter.getInitialState()
 
@@ -849,7 +849,7 @@ import {
 import fakeAPI from '../../services/fakeAPI'
 import { normalize, schema } from 'normalizr'
 
-// Define normalizr entity schemas
+// 定义 normalizr entity schemas
 export const userEntity = new schema.Entity('users')
 export const commentEntity = new schema.Entity('comments', {
   commenter: userEntity
@@ -865,7 +865,7 @@ export const fetchArticle = createAsyncThunk(
   'articles/fetchArticle',
   async id => {
     const data = await fakeAPI.articles.show(id)
-    // Normalize the data so reducers can load a predictable payload, like:
+    // 规范化数据，以便 reducers 可以加载可预测的 payload，比如：
     // `action.payload = { users: {}, articles: {}, comments: {} }`
     const normalized = normalize(data, articleEntity)
     return normalized.entities
@@ -878,7 +878,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchArticle.fulfilled]: (state, action) => {
-      // Handle the fetch result by inserting the articles here
+      // 通过在此处插入 articles 处理请求结果
       articlesAdapter.upsertMany(state, action.payload.articles)
     }
   }
@@ -900,7 +900,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      // And handle the same fetch result by inserting the users here
+      // 通过在此处插入 users 处理相同的请求结果
       usersAdapter.upsertMany(state, action.payload.users)
     })
   }
@@ -922,7 +922,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchArticle.fulfilled]: (state, action) => {
-      // Same for the comments
+      // comments 也一样
       commentsAdapter.upsertMany(state, action.payload.comments)
     }
   }
@@ -939,7 +939,7 @@ export default reducer
 Entity adapter 提供了 selector factory 可为你生成最常用的 selector。以上面的例子为例，我们可以将添加 selector 到 `usersSlice`，如下所示：
 
 ```js
-// Rename the exports for readability in component usage
+// 为了组件中使用的可读性重命名 export
 export const {
   selectById: selectUserById,
   selectIds: selectUserIds,
@@ -983,7 +983,7 @@ export function UsersList() {
 默认情况下，`createEntityAdapter` 假设你的数据在 `entity.id` 字段中具有唯一的ID。如果你的数据集将其ID存储在其他字段中，则可以传入 `selectId` 参数，以返回适当的字段。
 
 ```js
-// In this instance, our user data always has a primary key of `idx`
+// 在这个例子中，user 数据始终具有主键 `idx`
 const userData = {
   users: [
     { idx: 1, first_name: 'Test' },
@@ -991,8 +991,8 @@ const userData = {
   ]
 }
 
-// Since our primary key is `idx` and not `id`,
-// pass in an ID selector to return that field instead
+// 因为主键是 `idx` 而不是 `id`，
+// 所以传给ID选择器返回对应字段以替代
 export const usersAdapter = createEntityAdapter({
   selectId: user => user.idx
 })
@@ -1003,7 +1003,7 @@ export const usersAdapter = createEntityAdapter({
 `createEntityAdapter` 提供了一个 `sortComparer` 参数，你可以利用该参数对 state 中的 `ids` 集合进行排序。当你要保证顺序并且数据没有预排序时，这可能会非常有用。
 
 ```js
-// In this instance, our user data always has a primary key of `idx`
+// 在这种情况下，user 数据始终具有主键 `idx`
 const userData = {
   users: [
     { id: 1, first_name: 'Test' },
@@ -1011,9 +1011,9 @@ const userData = {
   ]
 }
 
-// Sort by `first_name`. `state.ids` would be ordered as
-// `ids: [ 2, 1 ]`, since 'B' comes before 'T'.
-// When using the provided `selectAll` selector, the result would be sorted:
+// 根据 `first_name`，`state.ids` 会被重排为
+// `ids: [ 2, 1 ]`，因为 'B' 在 'T' 前面。
+// 当使用给定的 `selectAll` 选择器，结果会被排序为：
 // [{ id: 2, first_name: 'Banana' }, { id: 1, first_name: 'Test' }]
 export const usersAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.first_name.localeCompare(b.first_name)
@@ -1033,11 +1033,11 @@ configureStore({
   //...
   middleware: getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
+      // 忽略这些 action types
       ignoredActions: ['your/action/type'],
-      // Ignore these field paths in all actions
+      // 忽略所有 action 中的这些字段路径
       ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
-      // Ignore these paths in the state
+      // 忽略 state 中的这些路径 paths in the state
       ignoredPaths: ['items.dates']
     }
   })
@@ -1120,7 +1120,7 @@ const middleware = [
   ...getDefaultMiddleware({
     serializableCheck: {
       ignoredActions: [
-        // just ignore every redux-firebase and react-redux-firebase action type
+        // 只需忽略每个 redux-firebase 和 react-redux-firebase action type
         ...Object.keys(rfConstants.actionTypes).map(
           type => `${rfConstants.actionsPrefix}/${type}`
         ),
