@@ -7,28 +7,28 @@ hide_title: true
 
 # 使用指南
 
-The Redux core library is deliberately unopinionated. It lets you decide how you want to handle everything, like store setup, what your state contains, and how you want to build your reducers.
+Redux 核心库有意地不要求你按照它的方式使用它。它让你自行决定如何处理一切，比如 store 体系，要管理什么状态，以及你希望如何构建你的 reducer。
 
-This is good in some cases, because it gives you flexibility, but that flexibility isn't always needed. Sometimes we just want the simplest possible way to get started, with some good default behavior out of the box. Or, maybe you're writing a larger application and finding yourself writing some similar code, and you'd like to cut down on how much of that code you have to write by hand.
+在某些情况下，这是很好的，它富有灵活性，但灵活性并不总是必须的。有时，我们只是希望以最简单可行的方式上手，并具有一些良好的默认行为，开箱即用。 或者，可能你在开发一个比较大的应用并发现自己在写一些类似的代码，你希望能够减少必须手写的代码量。
 
-如[快速开始](../introduction/quick-start.md)这个页面所述, the goal of Redux Toolkit is to help simplify common Redux use cases. It is not intended to be a complete solution for everything you might want to do with Redux, but it should make a lot of the Redux-related code you need to write a lot simpler (or in some cases, eliminate some of the hand-written code entirely).
+如[快速开始](../introduction/quick-start.md)这个页面所述，Redux 工具包的目标是帮助简化常见的 Redux 使用案例。它并非旨在为你可能需要使用 Redux 做的所有事情提供一个完整的解决方案，但是它应该尽可能使很多 Redux 相关的代码变得更简单（或者在一些情况下，完全消除手写代码）。
 
-Redux Toolkit exports several individual functions that you can use in your application, and adds dependencies on some other packages that are commonly used with Redux. This lets you decide how to use these in your own application, whether it be a brand new project or updating a large existing app.
+Redux 工具包导出了可以在应用中使用的几个单独的功能，并添加对 Redux 常用的软件包的依赖。这使你可以决定如何在自己的应用中使用它们，不管是全新项目还是更新大型的已有项目。
 
-Let's look at some of the ways that Redux Toolkit can help make your Redux-related code better.
+让我们来看看 Redux 工具包帮助改善 Redux 相关代码的一些方法。
 
-## Store Setup
+## 设置 Store
 
-Every Redux app needs to configure and create a Redux store. This usually involves several steps:
+每一个 Redux 应用都需要配置和构建 Redux store。通常包含几个步骤：
 
-- Importing or creating the root reducer function
-- Setting up middleware, likely including at least one middleware to handle asynchronous logic
-- Configuring the [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
-- Possibly altering some of the logic based on whether the application is being built for development or production.
+- 引入或创建 root reducer 方法。
+- 配置 middleware ，比如至少包含一个处理异步逻辑的 middleware。
+- 配置 [Redux DevTools 拓展](https://github.com/zalmoxisus/redux-devtools-extension)。
+- 基于应用是构建于开发模式还是生产模式，可能需要改变一些逻辑。
 
-### Manual Store Setup
+### 手动设置 Store
 
-The following example from the [Configuring Your Store](https://redux.js.org/recipes/configuring-your-store) page in the Redux docs shows a typical store setup process:
+接下来的例子摘取自 Redux 文档的[配置你的 Store](https://redux.js.org/recipes/configuring-your-store)，它展示了一个典型的 store 设置过程。
 
 ```js
 import { applyMiddleware, createStore } from 'redux'
@@ -56,28 +56,29 @@ export default function configureStore(preloadedState) {
 }
 ```
 
-This example is readable, but the process isn't always straightforward:
+这个例子虽然可读，但是过程并不直截了当：
 
-- The basic Redux `createStore` function takes positional arguments: `(rootReducer, preloadedState, enhancer)`. Sometimes it's easy to forget which parameter is which.
-- The process of setting up middleware and enhancers can be confusing, especially if you're trying to add several pieces of configuration.
-- The Redux DevTools Extension docs initially suggest using [some hand-written code that checks the global namespace to see if the extension is available](https://github.com/zalmoxisus/redux-devtools-extension#11-basic-store). Many users copy and paste those snippets, which make the setup code harder to read.
+- 基本的 Redux `createStore` 函数采用指定位置的参数：`(rootReducer, preloadedState, enhancer)`。有时候很容易忘了到底哪个参数应该是哪个。
+- 设置 middleware 和 enhancers 让人感到困惑，特别是如果你要添加几项配置进去。
+- Redux Devtools 拓展文档原本建议使用[手写代码检查全局命名空间以查看扩展是否可用](https://github.com/zalmoxisus/redux-devtools-extension#11-basic-store)。很多使用者复制粘贴了那些片段，导致代码更难读。
 
-### Simplifying Store Setup with `configureStore`
 
-`configureStore` helps with those issues by:
+### 使用 `configureStore` 简化 Store 设置
 
-- Having an options object with "named" parameters, which can be easier to read.
-- Letting you provide arrays of middleware and enhancers you want to add to the store, and calling `applyMiddleware` and `compose` for you automatically
-- Enabling the Redux DevTools Extension automatically
+`configureStore` 帮助解决这些问题：
 
-In addition, `configureStore` adds some middleware by default, each with a specific goal:
+- 接受一个带有“具名”参数的配置对象，这样能更方便阅读。
+- 你可以提供想要添加到 store 的 middleware 和 enhancer 的数组，它会自动调用 `applyMiddleware` 和 `compose`。
+- 自动开启 Redux DevTools 扩展
 
-- [`redux-thunk`](https://github.com/reduxjs/redux-thunk) is the most commonly used middleware for working with both synchronous and async logic outside of components
-- In development, middleware that check for common mistakes like mutating the state or using non-serializable values.
+另外，`configureStore` 默认添加了一些 middleware，每一个都有特殊的作用：
 
-This means the store setup code itself is a bit shorter and easier to read, and also that you get good default behavior out of the box.
+- [`redux-thunk`](https://github.com/reduxjs/redux-thunk) 是用于组件外部的同步和异步逻辑的最常用的 middleware。
+- 在开发中，用来检查常规错误的 middleware，例如改变状态或者使用不可序列化的值。
 
-The simplest way to use it is to just pass the root reducer function as a parameter named `reducer`:
+这意味着设置 store 的代码变得更简短并且更容易阅读，而且你也可以获得开箱即用的良好的默认行为。
+
+使用它的最简单的方法是将root reducer 函数做为名为 `reducer` 的参数传递：
 
 ```js
 import { configureStore } from '@reduxjs/toolkit'
@@ -90,7 +91,7 @@ const store = configureStore({
 export default store
 ```
 
-You can also pass an object full of ["slice reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic), and `configureStore` will call [`combineReducers`](https://redux.js.org/api/combinereducers) for you:
+你可以传递一个全是 ["slice reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 的对象，`configureStore` 会为此调用 [`combineReducers`](https://redux.js.org/api/combinereducers)：
 
 ```js
 import usersReducer from './usersReducer'
@@ -104,9 +105,9 @@ const store = configureStore({
 })
 ```
 
-Note that this only works for one level of reducers. If you want to nest reducers, you'll need to call `combineReducers` yourself to handle the nesting.
+请注意，这只适用于一级的 reducer。如果想要嵌套 reducer，则需要自行调用 `combineReducers` 来处理嵌套。
 
-If you need to customize the store setup, you can pass additional options. Here's what the hot reloading example might look like using Redux Toolkit:
+如果需要自定义 store 设置，你可以传递其他配置项。这是使用 Redux 工具包的热重载的例子：
 
 ```js
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
@@ -131,26 +132,26 @@ export default function configureAppStore(preloadedState) {
 }
 ```
 
-If you provide the `middleware` argument, `configureStore` will only use whatever middleware you've listed. If you want to have some custom middleware _and_ the defaults all together, you can call [`getDefaultMiddleware`](../api/getDefaultMiddleware.mdx) and include the results in the `middleware` array you provide.
+如果你提供了 `middleware` 参数，则 `configureStore` 将仅使用你列出的 middleware。如果你想同时拥有自定义的 _以及_ 默认的 middleware，你可以调用 [`getDefaultMiddleware`](../api/getDefaultMiddleware.mdx) 并将结果包括在你提供的 `middleware` 数组中。
 
-## Writing Reducers
+## 编写 Reducer
 
-[Reducers](https://redux.js.org/basics/reducers) are the most important Redux concept. A typical reducer function needs to:
+[Reducer](https://redux.js.org/basics/reducers) 是最重要的 Redux 概念。典型的 reducer 函数需要：
 
-- Look at the `type` field of the action object to see how it should respond
-- Update its state immutably, by making copies of the parts of the state that need to change and only modifying those copies.
+- 查看 action 对象的 `type` 字段，以了解它将如何响应
+- 通过创建需要改变的部分 state 的副本并仅修改这部分副本，来不变地更新它的 state。
 
-While you can [use any conditional logic you want](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/#switch-statements) in a reducer, the most common approach is a `switch` statement, because it's a straightforward way to handle multiple possible values for a single field. However, many people don't like switch statements. The Redux docs show an example of [writing a function that acts as a lookup table based on action types](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers), but leave it up to users to customize that function themselves.
+你可以在一个 reducer 里[如你所愿地使用条件逻辑](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/#switch-statements)，最常用的方法是 `switch` 语句，因为这是处理单个字段的多种可能值的最直接的办法。不过，很多人不喜欢 switch 语句，Redux 文档展示了[编写一个基于 action type 的充当查找表的函数](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers) 的例子，但由使用者自行定制该功能了。
 
-The other common pain points around writing reducers have to do with updating state immutably. JavaScript is a mutable language, [updating nested immutable data by hand is hard](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns), and it's easy to make mistakes.
+围绕编写 reducer 常见的痛点与不变地更新 state 有关。JavaScript 是一种可变语言，[手动更新嵌套的 immutable 数据非常困难](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns)，并且很容易出错。
 
-### Simplifying Reducers with `createReducer`
+### 使用 `createReducer` 简化 Reducer
 
-Since the "lookup table" approach is popular, Redux Toolkit includes a `createReducer` function similar to the one shown in the Redux docs. However, our `createReducer` utility has some special "magic" that makes it even better. It uses the [Immer](https://github.com/mweststrate/immer) library internally, which lets you write code that "mutates" some data, but actually applies the updates immutably. This makes it effectively impossible to accidentally mutate state in a reducer.
+由于“查找表”的办法很流行，于是 Redux 工具包就包含了一个类似于 Redux 文档中所展示的 `createReducer` 函数。但是，我们的 `createReducer` 因其更具特殊“魔法”的效果而使它更好。它内置地使用了 [Immer](https://github.com/mweststrate/immer) 库，能让你“改变”了某些数据的代码实际上是在不变地应用更新。这使得不可能意外地改变 reducer 里的 state。
 
-In general, any Redux reducer that uses a `switch` statement can be converted to use `createReducer` directly. Each `case` in the switch becomes a key in the object passed to `createReducer`. Immutable update logic, like spreading objects or copying arrays, can probably be converted to direct "mutation". It's also fine to keep the immutable updates as-is and return the updated copies, too.
+通常，任何使用 `switch` 语句的 Redux reducer 都可以直接转换为使用 `createReducer`。每个 switch 里的 `case` 会变成传递给 `createReducer` 的对象的 key 。Immutable 的更新逻辑（例如展开对象或者复制数组）能直接转换为 "mutation"。也可以保持 immutable 更新原样，并返回更新后的副本。
 
-Here's some examples of how you can use `createReducer`. We'll start with a typical "todo list" reducer that uses switch statements and immutable updates:
+这里是一些些如何使用 `createReducer` 的例子。我们将从典型的运用了 switch 语句和 immutable 更新的 “todo list” reducer 开始：
 
 ```js
 function todosReducer(state = [], action) {
@@ -178,29 +179,29 @@ function todosReducer(state = [], action) {
 }
 ```
 
-Notice that we specifically call `state.concat()` to return a copied array with the new todo entry, `state.map()` to return a copied array for the toggle case, and use the object spread operator to make a copy of the todo that needs to be updated.
+注意，我们特意调用 `state.concat()` 来返回带有新 todo 事项的复制数组，在 toggle 的情况下中调用 `state.map()` 以返回复制数组，并使用对象展开运算符复制需要更新的 todo 。
 
-With `createReducer`, we can shorten that example considerably:
+我们可以用 `createReducer` 大大简化这个例子：
 
 ```js
 const todosReducer = createReducer([], {
   ADD_TODO: (state, action) => {
-    // "mutate" the array by calling push()
+    // 调用 push() "mutate" 数组
     state.push(action.payload)
   },
   TOGGLE_TODO: (state, action) => {
     const todo = state[action.payload.index]
-    // "mutate" the object by overwriting a field
+    // 通过重写一个字段 "mutate" 对象
     todo.completed = !todo.completed
   },
   REMOVE_TODO: (state, action) => {
-    // Can still return an immutably-updated value if we want to
+    // 如有需要，你还是可以返回一个 immutably-updated 值
     return state.filter((todo, i) => i !== action.payload.index)
   }
 })
 ```
 
-The ability to "mutate" the state is especially helpful when trying to update deeply nested state. This complex and painful code:
+尝试更新深层嵌套的 state 时，"mutate" state 的能力显得非常重要。这是一段复杂又痛苦的代码：
 
 ```js
 case "UPDATE_VALUE":
@@ -219,7 +220,7 @@ case "UPDATE_VALUE":
   }
 ```
 
-Can be simplified down to just:
+可以简化为这样：
 
 ```js
 updateValue(state, action) {
@@ -228,46 +229,46 @@ updateValue(state, action) {
 }
 ```
 
-Much better!
+好多了！
 
-### Defining Functions in Objects
+### 定义对象中的函数
 
-In modern JavaScript, there are several legal ways to define both keys and functions in an object (and this isn't specific to Redux), and you can mix and match different key definitions and function definitions. For example, these are all legal ways to define a function inside an object:
+在现代 JavaScript 中，有几种合法的方法在对象中定义键和函数（这点并不特定于 Redux），并且你可以混合和搭配不同键定义和函数定义。例如，以下是在对象中定义函数的所有合法的方法：
 
 ```js
 const keyName = "ADD_TODO4";
 
 const reducerObject = {
-	// Explicit quotes for the key name, arrow function for the reducer
+	// 给 key 加引号，用箭头函数写 reducer
 	"ADD_TODO1" : (state, action) => { }
 
-	// Bare key with no quotes, function keyword
+	// key 没有引号，使用 function 关键词
 	ADD_TODO2 : function(state, action){  }
 
-	// Object literal function shorthand
+	// 对象字面函数简写
 	ADD_TODO3(state, action) { }
 
-	// Computed property
+	// 可变属性
 	[keyName] : (state, action) => { }
 }
 ```
 
-Using the ["object literal function shorthand"](https://www.sitepoint.com/es6-enhanced-object-literals/) is probably the shortest code, but feel free to use whichever of those approaches you want.
+使用 ["对象字面函数简写"](https://www.sitepoint.com/es6-enhanced-object-literals/) 可能是最短的代码，但你可以随意使用任意一种写法。
 
-### Considerations for Using `createReducer`
+### 使用 `createReducer` 的注意事项
 
-While the Redux Toolkit `createReducer` function can be really helpful, keep in mind that:
+尽管 Redux 工具包的 createReducer 函数确实很有帮助，但请记住：
 
-- The "mutative" code only works correctly inside of our `createReducer` function
-- Immer won't let you mix "mutating" the draft state and also returning a new state value
+- “mutative” 代码仅在 `createReducer` 函数内部正常工作
+- Immer 不会让您混合“改变”草稿状态并返回新的状态值
 
-See the [`createReducer` API 参考](../api/createReducer.mdx) for more details.
+更多详情请参照 [`createReducer` API 参考](../api/createReducer.mdx)。
 
-## Writing Action Creators
+## 编写 Action Creators
 
-Redux encourages you to [write "action creator" functions](https://blog.isquaredsoftware.com/2016/10/idiomatic-redux-why-use-action-creators/) that encapsulate the process of creating an action object. While this is not strictly required, it's a standard part of Redux usage.
+Redux 鼓励你 [编写 “action creator” 函数](https://blog.isquaredsoftware.com/2016/10/idiomatic-redux-why-use-action-creators/) 以封装 action 对象的创建过程。尽管并非严格要求，但这是 Redux 使用的标准部分。
 
-Most action creators are very simple. They take some parameters, and return an action object with a specific `type` field and the parameters inside the action. These parameters are typically put in a field called `payload`, which is part of the [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) convention for organizing the contents of action objects. A typical action creator might look like:
+大部分 action creator 是非常简单的。它们带有一些参数，并且返回一个包含了特定 `type` 字段以及 action 内部参数的 action 对象。这些参数通常被放在一个称为 `payload` 的字段里，该字段是 [Flux 标准 Action](https://github.com/redux-utilities/flux-standard-action) 约定的一部分，用来组织 action 对象的内容。典型的 action creator 可能是这样的：
 
 ```js
 function addTodo(text) {
@@ -278,9 +279,9 @@ function addTodo(text) {
 }
 ```
 
-### Defining Action Creators with `createAction`
+### 使用 `createAction` 定义 Action Creators
 
-Writing action creators by hand can get tedious. Redux Toolkit provides a function called `createAction`, which simply generates an action creator that uses the given action type, and turns its argument into the `payload` field:
+手写 action creator 可能会很乏味。Redux 工具包提供了一个名为 `createAction` 的函数，它仅生成一个使用给定的 action type 的 action creator，并将参数转换为 `payload` 字段。
 
 ```js
 const addTodo = createAction('ADD_TODO')
@@ -288,15 +289,15 @@ addTodo({ text: 'Buy milk' })
 // {type : "ADD_TODO", payload : {text : "Buy milk"}})
 ```
 
-`createAction` also accepts a "prepare callback" argument, which allows you to customize the resulting `payload` field and optionally add a `meta` field. See the [`createAction` API 参考](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents) for details on defining action creators with a prepare callback.
+`createAction` 还接受一个 "prepare callback" 的参数，它允许你自定义结果 `payload` 字段并可选地添加一个 `meta` 字段。 想要了解带有 prepare callback 定义 action creator 的详细信息，请参阅[`createAction` API 参考](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents)。
 
-### Using Action Creators as Action Types
+### 使用 Action Creators 作为 Action Types
 
-Redux reducers need to look for specific action types to determine how they should update their state. Normally, this is done by defining action type strings and action creator functions separately. Redux Toolkit `createAction` function uses a couple tricks to make this easier.
+Redux reducer 需要寻找特定的 action type 来确定如何更新其状态。通常，这是通过分别定义 action type 字符串和 action creator 函数来完成的。Redux 工具包的 `createAction` 函数使用了一些技巧来简化此过程。
 
-First, `createAction` overrides the `toString()` method on the action creators it generates. **This means that the action creator itself can be used as the "action type" reference in some places**, such as the keys provided to `createReducer`.
+首先，`createAction` 会覆盖它生成的 action creator 的 `toString()` 方法。**这意味着 action creator 本身可以在某些地方用作 "action type" 引用**，比如提供给 `createReducer` 的键。
 
-Second, the action type is also defined as a `type` field on the action creator.
+其次，action type 还被定义为 action creator 的 `type` 字段。
 
 ```js
 const actionCreator = createAction("SOME_ACTION_TYPE");
@@ -308,32 +309,32 @@ console.log(actionCreator.type);
 // "SOME_ACTION_TYPE"
 
 const reducer = createReducer({}, {
-    // actionCreator.toString() will automatically be called here
+    // 在这里，actionCreator.toString() 会被自动调用
     [actionCreator] : (state, action) => {}
 
-    // Or, you can reference the .type field:
+    // 或者，你可以引用 .type 字段：
     [actionCreator.type] : (state, action) => { }
 });
 ```
 
-This means you don't have to write or use a separate action type variable, or repeat the name and value of an action type like `const SOME_ACTION_TYPE = "SOME_ACTION_TYPE"`.
+这意味着你不必编写或使用单独的 action type 变量，或者是重复 action type 的 name 和 value，例如 `const SOME_ACTION_TYPE = "SOME_ACTION_TYPE"`。
 
-Unfortunately, the implicit conversion to a string doesn't happen for switch statements. If you want to use one of these action creators in a switch statement, you need to call `actionCreator.toString()` yourself:
+不幸的是，switch 语句不会隐式转化为字符串。如果要在 switch 语句中使用某个 action creator，你需要自行调用 `actionCreator.toString()`：
 
 ```js
 const actionCreator = createAction('SOME_ACTION_TYPE')
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
-    // ERROR: this won't work correctly!
+    // 错误：将无法正确运行！
     case actionCreator: {
       break
     }
-    // CORRECT: this will work as expected
+    // 正确：会按照预期运行
     case actionCreator.toString(): {
       break
     }
-    // CORRECT: this will also work right
+    // 正确：也可以正确运行
     case actionCreator.type: {
       break
     }
@@ -341,11 +342,11 @@ const reducer = (state = {}, action) => {
 }
 ```
 
-If you are using Redux Toolkit with TypeScript, note that the TypeScript compiler may not accept the implicit `toString()` conversion when the action creator is used as an object key. In that case, you may need to either manually cast it to a string (`actionCreator as string`), or use the `.type` field as the key.
+如果你将 Redux 工具包和 TypeScript 一起使用，请注意，将 action creator 作为 object 的 key 时，TypeScript 编译器可能不接受隐式的 `toString()` 转换。
 
-## Creating Slices of State
+## 创建 State 分片
 
-Redux state is typically organized into "slices", defined by the reducers that are passed to `combineReducers`:
+Redux state 通常组织为 “分片（slice）”, 由传递给 `combineReducers` 的 reducer 定义:
 
 ```js
 import { combineReducers } from 'redux'
@@ -358,13 +359,13 @@ const rootReducer = combineReducers({
 })
 ```
 
-In this example, both `users` and `posts` would be considered "slices". Both of the reducers:
+在这个例子中，`users` 和 `posts` 都会被视为 “分片”，这两个 reducer：
 
-- "Own" a piece of state, including what the initial value is
-- Define how that state is updated
-- Define which specific actions result in state updates
+- “拥有”状态，包括初始值
+- 定义状态如何更新
+- 定义了哪些 action 将导致状态更新
 
-The common approach is to define a slice's reducer function in its own file, and the action creators in a second file. Because both functions need to refer to the same action types, those are usually defined in a third file and imported in both places:
+通常，分片的 reducer 函数是在自己的文件中定义的，并在其他文件中定义 action creator。由于两个函数都需要引用相同的 action type，因此通常会定义第三个文件中定义它们，然后在前面所说的两个地方中引用：
 
 ```js
 // postsConstants.js
@@ -390,7 +391,7 @@ const initialState = []
 export default function postsReducer(state = initialState, action) {
   switch (action.type) {
     case CREATE_POST: {
-      // omit implementation
+      // 省略实现
     }
     default:
       return state
@@ -398,13 +399,11 @@ export default function postsReducer(state = initialState, action) {
 }
 ```
 
-The only truly necessary part here is the reducer itself. Consider the other parts:
+这里唯一真正必要的部分是 reducer 本身。考虑其他部分：
 
-- We could have written the action types as inline strings in both places.
-- The action creators are good, but they're not _required_ to use Redux - a component could skip supplying a `mapDispatch` argument to `connect`, and just call `this.props.dispatch({type : "CREATE_POST", payload : {id : 123, title : "Hello World"}})` itself.
-- The only reason we're even writing multiple files is because it's common to separate code by what it does
-
-The ["ducks" file structure](https://github.com/erikras/ducks-modular-redux) proposes putting all of your Redux-related logic for a given slice into a single file, like this:
+- 我们可以在两个地方都将 action type 编写为内联字符串。
+- Action creator 很好，但是使用 Redux 不是必需的——一个组件可以跳过向 `connect` 提供 `mapDispatch` 参数，而只需要自行调用 `this.props.dispatch({type : "CREATE_POST", payload : {id : 123, title : "Hello World"}})`。
+- 我们要编写多个文件的唯一原因，是按其功能拆分代码是很常见的。
 
 ```js
 // postsDuck.js
@@ -424,7 +423,7 @@ const initialState = []
 export default function postsReducer(state = initialState, action) {
   switch (action.type) {
     case CREATE_POST: {
-      // Omit actual code
+      // 省略实际代码
       break
     }
     default:
@@ -433,13 +432,13 @@ export default function postsReducer(state = initialState, action) {
 }
 ```
 
-That simplifies things because we don't need to have multiple files, and we can remove the redundant imports of the action type constants. But, we still have to write the action types and the action creators by hand.
+这简化了事情，因为我们不需要多个文件，并且可以删掉 action type 常量的多余引入。但是我们仍须手动编写 action type 和 action creator。
 
-### Simplifying Slices with `createSlice`
+### 使用 `createSlice` 简化分片
 
-To simplify this process, Redux Toolkit includes a `createSlice` function that will auto-generate the action types and action creators for you, based on the names of the reducer functions you provide.
+为了简化此过程，Redux 工具包包含一个 `createSlice` 函数，该函数可以基于你提供的 reducer 函数名自动化生成 action type 和 action creator。
 
-Here's how that posts example would look with `createSlice`:
+这里是一个使用 `createSlice` 的 posts 的例子：
 
 ```js
 const postsSlice = createSlice({
@@ -471,7 +470,7 @@ console.log(createPost({ id: 123, title: 'Hello World' }))
 // {type : "posts/createPost", payload : {id : 123, title : "Hello World"}}
 ```
 
-`createSlice` looked at all of the functions that were defined in the `reducers` field, and for every "case reducer" function provided, generates an action creator that uses the name of the reducer as the action type itself. So, the `createPost` reducer became an action type of `"posts/createPost"`, and the `createPost()` action creator will return an action with that type.
+`createSlice` 会查看 `reducers` 字段中定义的所有函数，并为提供的每个 "case reducer" 函数生成一个 action creator，该 action creator 会将 reducer 的名称作为 action type 本身。
 
 ```js
 const postsSlice = createSlice({
@@ -490,9 +489,9 @@ console.log(createPost({ id: 123, title: 'Hello World' }))
 // {type : "posts/createPost", payload : {id : 123, title : "Hello World"}}
 ```
 
-### Exporting and Using Slices
+### 导出和使用分片
 
-Most of the time, you'll want to define a slice, and export its action creators and reducers. The recommended way to do this is using ES6 destructuring and export syntax:
+大多数时候，你会需要定义一个分片，并导出其 action creator 和 reducer。推荐的作法是使用ES6解构和导出语法：
 
 ```js
 const postsSlice = createSlice({
@@ -505,71 +504,71 @@ const postsSlice = createSlice({
   }
 })
 
-// Extract the action creators object and the reducer
+// 提取 action creators 对象和 reducer
 const { actions, reducer } = postsSlice
-// Extract and export each action creator by name
+// 按照 name 提取和导出每个 action creator
 export const { createPost, updatePost, deletePost } = actions
-// Export the reducer, either as a default or named export
+// 以 default 或具名 export 导出 reducer
 export default reducer
 ```
 
-You could also just export the slice object itself directly if you prefer.
+如果愿意，你也可以直接导出分片对象本身。
 
-Slices defined this way are very similar in concept to the ["Redux Ducks" pattern](https://github.com/erikras/ducks-modular-redux) for defining and exporting action creators and reducers. However, there are a couple potential downsides to be aware of when importing and exporting slices.
+以这种方式定义的分片，在概念上与用于定义和导出 action creator 和 reducer 的 ["Redux Ducks" 模式](https://github.com/erikras/ducks-modular-redux)非常相似。但是，在导入和导出分片时，需要注意几个潜在的缺点。
 
-First, **Redux action types are not meant to be exclusive to a single slice**. Conceptually, each slice reducer "owns" its own piece of the Redux state, but it should be able to listen to any action type and update its state appropriately. For example, many different slices might want to respond to a "user logged out" action by clearing data or resetting back to initial state values. Keep that in mind as you design your state shape and create your slices.
+首先，**Redux action type 并不意味着单个分片是排他的**。从概念上说，每个分片 reducer “拥有”自己的 Redux 状态，但是它应该能够监听任何 action type 并适当地更新其状态。例如，许多不同的分片可能会希望通过清除数据或者重置到初始状态值来响应“用户注销”的操作。在设置 state 形态和创建分片的时候，请留意这一点。
 
-Second, **JS modules can have "circular reference" problems if two modules try to import each other**. This can result in imports being undefined, which will likely break the code that needs that import. Specifically in the case of "ducks" or slices, this can occur if slices defined in two different files both want to respond to actions defined in the other file.
+其次，**JS 模块在两个模块相互引用的时候可能有“循环引用”的问题**。这可能会导致引入 undefined，很可能使那些需要导入的代码崩溃。特别是在“鸭子”或者分片的情况下，如果在两个不同的文件中定义的分片都希望响应另一个文件中定义的 action，则这种情况就会发生。
 
-This CodeSandbox example demonstrates the problem:
+这个 CodeSandbox 示例演示了这个问题：
 
 <iframe src="https://codesandbox.io/embed/rw7ppj4z0m" style={{ width: '100%', height: '500px', border: 0, borderRadius: '4px', overflow: 'hidden' }} sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-If you encounter this, you may need to restructure your code in a way that avoids the circular references. This will usually require extracting shared code to a separate common file that both modules can import and use. In this case, you might define some common action types in a separate file using `createAction`, import those action creators into each slice file, and handle them using the `extraReducers` argument.
+如果遇到这种情况，则需要以避免循环引用的方式重构代码。这通常需要将共享代码提取到一个单独的通用文件中，两个模块均可以引入和使用。在这种情况下，你可以在单独的文件中用 `createAction` 定义一些常用的 action type，将这些 action creator 引入到每个分片文件中，并用 `extraReducers` 参数进行处理。
 
-The article [How to fix circular dependency issues in JS](https://medium.com/visual-development/how-to-fix-nasty-circular-dependency-issues-once-and-for-all-in-javascript-typescript-a04c987cf0de) has additional info and examples that can help with this issue.
+[JS里如何解决循环依赖的问题](https://medium.com/visual-development/how-to-fix-nasty-circular-dependency-issues-once-and-for-all-in-javascript-typescript-a04c987cf0de)包含其他信息及示例可以帮助解决此问题。
 
-## Asynchronous Logic and Data Fetching
+## 异步逻辑和数据获取
 
-### Using Middleware to Enable Async Logic
+### 使用 middleware 启用异步逻辑
 
-By itself, a Redux store doesn't know anything about async logic. It only knows how to synchronously dispatch actions, update the state by calling the root reducer function, and notify the UI that something has changed. Any asynchronicity has to happen outside the store.
+就其本身而言，Redux store 对于异步逻辑一无所知。它仅知道如何同步调度 action，如何调用 root reducer 函数来更新状态，以及如何通知 UI 某些改变。任何异步都必须在 store 外部发生。
 
-But, what if you want to have async logic interact with the store by dispatching or checking the current store state? That's where [Redux middleware](https://redux.js.org/advanced/middleware) come in. They extend the store, and allow you to:
+但是，如果要让异步逻辑通过派发或者检查当前 store 状态与 store 交互呢？这就是 [Redux middleware](https://redux.js.org/advanced/middleware) 的用处。它们拓展了 store，允许你：
 
-- Execute extra logic when any action is dispatched (such as logging the action and state)
-- Pause, modify, delay, replace, or halt dispatched actions
-- Write extra code that has access to `dispatch` and `getState`
-- Teach `dispatch` how to accept other values besides plain action objects, such as functions and promises, by intercepting them and dispatching real action objects instead
+- 派发任何 action 时执行额外的逻辑（比如记录 action 和状态）
+- 暂停，更改，延迟，替换，或者停止派发 action
+- 编写可以访问 `dispatch` 和 `getState` 的额外代码
+- 通过截取并派发真实的 action 对象，教 `dispatch` 如何接受普通 action 对象以外的其他值（比如函数和 promise）
 
-[The most common reason to use middleware is to allow different kinds of async logic to interact with the store](https://redux.js.org/faq/actions#how-can-i-represent-side-effects-such-as-ajax-calls-why-do-we-need-things-like-action-creators-thunks-and-middleware-to-do-async-behavior). This allows you to write code that can dispatch actions and check the store state, while keeping that logic separate from your UI.
+[使用 middleware 最常见的原因是允许不同类型的异步逻辑与 store 进行交互](https://redux.js.org/faq/actions#how-can-i-represent-side-effects-such-as-ajax-calls-why-do-we-need-things-like-action-creators-thunks-and-middleware-to-do-async-behavior)。这允许你可以编写可派发 action 并且检查 store 状态的代码，同时保持逻辑与UI分离。
 
-There are many kinds of async middleware for Redux, and each lets you write your logic using different syntax. The most common async middleware are:
+Redux 有多种异步 middleware，每种 middleware 都可以让你以不同的语法编写逻辑。最常见的异步 middleware 是：
 
-- [`redux-thunk`](https://github.com/reduxjs/redux-thunk), which lets you write plain functions that may contain async logic directly
-- [`redux-saga`](https://github.com/redux-saga/redux-saga), which uses generator functions that return descriptions of behavior so they can be executed by the middleware
-- [`redux-observable`](https://github.com/redux-observable/redux-observable/), which uses the RxJS observable library to create chains of functions that process actions
+- [`redux-thunk`](https://github.com/reduxjs/redux-thunk)，让你能直接编写包含异步逻辑的简单函数
+- [`redux-saga`](https://github.com/redux-saga/redux-saga)，使用 generator 函数返回行为描述，以便可以由 middleware 执行
+- [`redux-observable`](https://github.com/redux-observable/redux-observable/)，它使用 RxJS observable 库来创建处理 action 的函数链
 
-[Each of these libraries has different use cases and tradeoffs](https://redux.js.org/faq/actions#what-async-middleware-should-i-use-how-do-you-decide-between-thunks-sagas-observables-or-something-else).
+[这些库都有不同的用例和权衡](https://redux.js.org/faq/actions#what-async-middleware-should-i-use-how-do-you-decide-between-thunks-sagas-observables-or-something-else).
 
-**We recommend [using the Redux Thunk middleware as the standard approach](https://github.com/reduxjs/redux-thunk)**, as it is sufficient for most typical use cases (such as basic AJAX data fetching). In addition, use of the `async/await` syntax in thunks makes them easier to read.
+**我们建议 [使用 Redux Thunk middleware 作为标准方法](https://github.com/reduxjs/redux-thunk)**，因为它能满足大多典型用例（比如基础 AJAX 数据获取）。另外，thunk 所使用的 `async/await` 语法使其更易于阅读。
 
-**The Redux Toolkit `configureStore` function [automatically sets up the thunk middleware by default](../api/getDefaultMiddleware.mdx)**, so you can immediately start writing thunks as part of your application code.
+**Redux 工具包的 `configureStore` 函数[默认情况下会自动设置 thunk middleware](../api/getDefaultMiddleware.mdx)**，因此你可以立即开始将 thunk 编写为应用代码的一部分。
 
-### Defining Async Logic in Slices
+### 在分片中定义异步逻辑
 
-Redux Toolkit does not currently provide any special APIs or syntax for writing thunk functions. In particular, **they cannot be defined as part of a `createSlice()` call**. You have to write them separate from the reducer logic, exactly the same as with plain Redux code.
+Redux 工具包当前不提供任何特殊的 API 或语法来编写 thunk 函数。 特别是, **不能将它们定义为 `createSlice()` 调用的一部分**。您必须将它们与 reducer 逻辑分开编写，与使用普通 Redux 代码完全相同。
 
-Thunks typically dispatch plain actions, such as `dispatch(dataLoaded(response.data))`.
+Thunk 通常会派发普通 action，比如 `dispatch(dataLoaded(response.data))`。
 
-Many Redux apps have structured their code using a "folder-by-type" approach. In that structure, thunk action creators are usually defined in an "actions" file, alongside the plain action creators.
+许多 Redux 应用都使用“按照类型分文件夹”的方法组织其代码。在这种结构下，通常在 "action" 文件中与普通 action creator 一起定义 thunk action creator。
 
-Because we don't have separate "actions" files, **it makes sense to write these thunks directly in our "slice" files**. That way, they have access to the plain action creators from the slice, and it's easy to find where the thunk function lives.
+因为我们没有单独的 "action" 文件，**所以将这些 thunk 直接编写在“分片”文件中是有意义的**。这样，他们就可以从分片中访问简单的 action creator，并且能够很容易地找到 thunk 函数所在位置。
 
-A typical slice file that includes thunks would look like this:
+典型的包含 thunk 的分片文件是这样的：
 
 ```js
-// First, define the reducer and action creators via `createSlice`
+// 首先，通过 `createSlice` 定义 reducer 和 action creator
 const usersSlice = createSlice({
   name: 'users',
   initialState: {
@@ -578,7 +577,7 @@ const usersSlice = createSlice({
   },
   reducers: {
     usersLoading(state, action) {
-      // Use a "state machine" approach for loading state instead of booleans
+      // 使用“状态机”的方法加载 state 以替代布尔值
       if (state.loading === 'idle') {
         state.loading = 'pending'
       }
@@ -592,10 +591,10 @@ const usersSlice = createSlice({
   }
 })
 
-// Destructure and export the plain action creators
+// 解构和导出纯 action creators
 export const { usersLoading, usersReceived } = usersSlice.actions
 
-// Define a thunk that dispatches those action creators
+// 定义一个 thunk 派发那些 action creators
 const fetchUsers = () => async dispatch => {
   dispatch(usersLoading())
   const response = await usersAPI.fetchAll()
@@ -603,17 +602,17 @@ const fetchUsers = () => async dispatch => {
 }
 ```
 
-### Redux Data Fetching Patterns
+### Redux 数据获取模式
 
-Data fetching logic for Redux typically follows a predictable pattern:
+Redux 的数据获取逻辑通常遵循可预测的模式：
 
-- A "start" action is dispatched before the request, to indicate that the request is in progress. This may be used to track loading state to allow skipping duplicate requests or show loading indicators in the UI.
-- The async request is made
-- Depending on the request result, the async logic dispatches either a "success" action containing the result data, or a "failure" action containing error details. The reducer logic clears the loading state in both cases, and either processes the result data from the success case, or stores the error value for potential display.
+- 在请求之前派发 "start" action，以指示请求正在进行。可用于追踪加载中状态，以允许跳过重复的请求或者在UI上显示加载中的指示符。
+- 发出异步请求
+- 根据请求结果，异步逻辑会派发包含成结果数据的“成功” action 或者是包含了错误详情的“失败” action。在两种情况下，reducer 逻辑都会清除加载中状态，处理请求成功时的结果数据或者为潜在显示存储错误值。
 
-These steps are not required, but are [recommended in the Redux tutorials as a suggested pattern](https://redux.js.org/advanced/async-actions).
+这些步骤不是必需的，但[在 Redux 教程中推荐将它们作为建议的模式](https://redux.js.org/advanced/async-actions)。
 
-A typical implementation might look like:
+典型的实现可能如下所示：
 
 ```js
 const getRepoDetailsStarted = () => ({
@@ -638,25 +637,25 @@ const fetchIssuesCount = (org, repo) => async dispatch => {
 }
 ```
 
-However, writing code using this approach is tedious. Each separate type of request needs repeated similar implementation:
+但是，用这种方法编写代码很繁琐。每个单独的请求类型需要重复类似的实现：
 
-- Unique action types need to be defined for the three different cases
-- Each of those action types usually has a corresponding action creator function
-- A thunk has to be written that dispatches the correct actions in the right sequence
+- 三种不同的情况下都需要定义各不相同的 action type
+- 这些 action type 通常都具有相应的 action creator 函数
+- 必须编写一个 thunk，以正确的顺序派发正确的 action
 
-`createAsyncThunk` abstracts this pattern by generating the action types and action creators and generating a thunk that dispatches those actions.
+`createAsyncThunk` 通过生成 action type 和 action creator 并生成派发这些 action 的 thunk 来抽象该模式。
 
-### Async Requests with `createAsyncThunk`
+### 使用 `createAsyncThunk` 的异步请求
 
-As a developer, you are probably most concerned with the actual logic needed to make an API request, what action type names show up in the Redux action history log, and how your reducers should process the fetched data. The repetitive details of defining the multiple action types and dispatching the actions in the right sequence aren't what matters.
+作为开发者，你可能最关心发出API请求所需的实际逻辑，Redux action 历史记录中显示哪些 action type 名称以及 reducer 如何处理获取到的数据。
 
-`createAsyncThunk` simplifies this process - you only need to provide a string for the action type prefix and a payload creator callback that does the actual async logic and returns a promise with the result. In return, `createAsyncThunk` will give you a thunk that will take care of dispatching the right actions based on the promise you return, and action types that you can handle in your reducers:
+`createAsyncThunk` 简化了这一过程——你只需要提供一个用作 action type 前缀的字符串和一个 payload creator 回调即可，该回调执行实际的异步逻辑并返回包含结果的 promise。作为回报，`createAsyncThunk` 将会为你提供一个 thunk，它将根据你返回的 promise 以及你可以在 reducer 中处理的 action type 来调度正确的 action。
 
 ```js {5-11,22-25,30}
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { userAPI } from './userAPI'
 
-// First, create the thunk
+// 首先，创建 thunk
 const fetchUserById = createAsyncThunk(
   'users/fetchByIdStatus',
   async (userId, thunkAPI) => {
@@ -665,29 +664,29 @@ const fetchUserById = createAsyncThunk(
   }
 )
 
-// Then, handle actions in your reducers:
+// 然后，在 reducer 中处理 action：
 const usersSlice = createSlice({
   name: 'users',
   initialState: { entities: [], loading: 'idle' },
   reducers: {
-    // standard reducer logic, with auto-generated action types per reducer
+    // 标准 reducer 逻辑，每个 reducer 都有自动生成的 action types
   },
   extraReducers: {
-    // Add reducers for additional action types here, and handle loading state as needed
+    // 在此处为其他 action type 添加 reducers，并根据需要处理加载状态
     [fetchUserById.fulfilled]: (state, action) => {
-      // Add user to the state array
+      // 添加 user 到 state 数组
       state.entities.push(action.payload)
     }
   }
 })
 
-// Later, dispatch the thunk as needed in the app
+// 稍后，根据需要在应用中 dispatch  thunk
 dispatch(fetchUserById(123))
 ```
 
-The thunk action creator accepts a single argument, which will be passed as the first argument to your payload creator callback.
+Thunk action creator 接受一个参数，它将作为第一个参数被传递给你的 payload creator 回调。
 
-The payload creator will also receive a `thunkAPI` object containing the parameters that are normally passed to a standard Redux thunk function, as well as an auto-generated unique random request ID string and an [`AbortController.signal` object](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal):
+Payload creator 还会接收一个 `thunkAPI` 对象，其中包含通常会传递给标准 Redux thunk 函数的参数，以及自动生成的唯一随机请求ID字符串和一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal)：
 
 ```ts
 interface ThunkAPI {
@@ -699,15 +698,15 @@ interface ThunkAPI {
 }
 ```
 
-You can use any of these as needed inside the payload callback to determine what the final result should be.
+你可以根据需要使用 payload 回调中的任意一个来确定最终结果是什么。
 
-## Managing Normalized Data
+## 管理规范化数据
 
-Most applications typically deal with data that is deeply nested or relational. The goal of normalizing data is to efficiently organize the data in your state. This is typically done by storing collections as objects with the key of an `id`, while storing a sorted array of those `ids`. For a more in-depth explanation and further examples, there is a great reference in the [Redux docs page on "Normalizing State Shape"](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
+大多数应用通常要处理深层嵌套或相关的数据。标准化数据的目的是为了有效地组织 state 中的数据。通常，这是通过使用 `id` 的键将集合存储为对象，同时存储这些 `ids` 的排序数组来完成的。有关更深入的解释和更多示例，[Redux 文档中“规范化 State 形态”页面](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)上有很好的参考。
 
-### Normalizing by hand
+### 手动规范化
 
-Normalizing data doesn't require any special libraries. Here's a basic example of how you might normalize the response from a `fetchAll` API request that returns data in the shape of `{ users: [{id: 1, first_name: 'normalized', last_name: 'person'}] }`, using some hand-written logic:
+规范化数据不需要任何特殊的库。这是一个基本示例，说明如何使用一些手写的逻辑规范化来自 `fetchAll` API 请求的响应，该请求以 `{ users: [{id: 1, first_name: 'normalized', last_name: 'person'}] }` 返回数据：
 
 ```js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
@@ -727,7 +726,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      // reduce the collection by the id property into a shape of { 1: { ...user }}
+      // 通过 id 属性将集合 reduce 为 { 1: { ...user }}
       const byId = action.payload.users.reduce((byId, user) => {
         byId[user.id] = user
         return byId
@@ -739,11 +738,11 @@ export const slice = createSlice({
 })
 ```
 
-Although we're capable of writing this code, it does become repetitive, especially if you're handling multiple types of data. In addition, this example only handles loading entries into the state, not updating them.
+尽管我们有能力编写这些代码，但是它确实具有重复性，特别是在处理多种类型数据时。另外，这个例子只是处理了将 entry 加载到 state ，而没有更新它们。
 
-### Normalizing with `normalizr`
+### 使用 `normalizr` 规范化
 
-[`normalizr`](https://github.com/paularmstrong/normalizr) is a popular existing library for normalizing data. You can use it on its own without Redux, but it is very commonly used with Redux. The typical usage is to format collections from an API response and then process them in your reducers.
+[`normalizr`](https://github.com/paularmstrong/normalizr) 是一个用于规范化数据的受欢迎的现有库。你可以在没有 Redux 的情况下单独使用它，但是在 Redux 非常常用。典型的用法是格式化 API 响应数据，然后在 reducer 中进行处理。
 
 ```js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
@@ -755,7 +754,7 @@ const userEntity = new schema.Entity('users')
 
 export const fetchUsers = createAsyncThunk('users/fetchAll', async () => {
   const response = await userAPI.fetchAll()
-  // Normalize the data before passing it to our reducer
+  // 在传入到 reducer 之前规范化数据
   const normalized = normalize(response.data, [userEntity])
   return normalized.entities
 })
@@ -776,11 +775,11 @@ export const slice = createSlice({
 })
 ```
 
-As with the hand-written version, this doesn't handle adding additional entries into the state, or updating them later - it's just loading in everything that was received.
+与手写版本一样，它并不会处理向 state 中添加其他 entry 或是稍后对其更新的过程——它只是加载收到的所有内容。
 
-### Normalizing with `createEntityAdapter`
+### 使用 `createEntityAdapter` 规范化
 
-Redux Toolkit's `createEntityAdapter` API provides a standardized way to store your data in a slice by taking a collection and putting it into the shape of `{ ids: [], entities: {} }`. Along with this predefined state shape, it generates a set of reducer functions and selectors that know how to work with the data.
+Redux 工具包的 `createEntityAdapter` API 提供了一种标准化的方式，可以通过获取集合并将其设置为 `{ ids: [], entities: {} }` 的形式，将数据存储在分片中。连同此预定义的 state 形态，它生成了一组知道如何处理数据的 reducer 函数和选择器。
 
 ```js
 import {
@@ -792,22 +791,22 @@ import userAPI from './userAPI'
 
 export const fetchUsers = createAsyncThunk('users/fetchAll', async () => {
   const response = await userAPI.fetchAll()
-  // In this case, `response.data` would be:
+  // 在这种情况下，`response.data` 会是：
   // [{id: 1, first_name: 'Example', last_name: 'User'}]
   return response.data
 })
 
 export const updateUser = createAsyncThunk('users/updateOne', async arg => {
   const response = await userAPI.updateUser(arg)
-  // In this case, `response.data` would be:
+  // 在这种情况下，`response.data` 会是：
   // { id: 1, first_name: 'Example', last_name: 'UpdatedLastName'}
   return response.data
 })
 
 export const usersAdapter = createEntityAdapter()
 
-// By default, `createEntityAdapter` gives you `{ ids: [], entities: {} }`.
-// If you want to track 'loading' or other keys, you would initialize them here:
+// 默认情况下，`createEntityAdapter` 会给你 `{ ids: [], entities: {} }`。
+// 如果你想追踪 'loading' 或者其他 key，你可以在这里初始化它们：
 // `getInitialState({ loading: false, activeRequestId: null })`
 const initialState = usersAdapter.getInitialState()
 
@@ -832,13 +831,13 @@ export default reducer
 export const { removeUser } = slice.actions
 ```
 
-You can [view the full code of this example usage on CodeSandbox](https://codesandbox.io/s/rtk-entities-basic-example-1xubt)
+你可以[在 CodeSandbox 中查看完整的使用示例](https://codesandbox.io/s/rtk-entities-basic-example-1xubt)。
 
-### Using `createEntityAdapter` with Normalization Libraries
+### 将 `createEntityAdapter` 和规范化库一起使用
 
-If you're already using `normalizr` or another normalization library, you could consider using it along with `createEntityAdapter`. To expand on the examples above, here is a demonstration of how we could use `normalizr` to format a payload, then leverage the utilities `createEntityAdapter` provides.
+如果你已经使用 `normalizr` 或其他规范化库，则可以考虑将其与 `createEntityAdapter` 一起使用。为了扩展上述示例，这里展示了如何使用 `normalizr` 格式化 payload，然后利用 `createEntityAdapter` 提供的实用程序。
 
-By default, the `setAll`, `addMany`, and `upsertMany` CRUD methods expect an array of entities. However, they also allow you to pass in an object that is in the shape of `{ 1: { id: 1, ... }}` as an alternative, which makes it easier to insert pre-normalized data.
+默认情况下，`setAll` ，`addMany` 和 `upsertMany` CRUD 方法需要一个 entry 数组。不过，它们还允许传入呈 `{ 1: { id: 1, ... }}` 形式的对象作为替代，这样可以更简单地插入预规范化数据。
 
 ```js
 // features/articles/articlesSlice.js
@@ -851,7 +850,7 @@ import {
 import fakeAPI from '../../services/fakeAPI'
 import { normalize, schema } from 'normalizr'
 
-// Define normalizr entity schemas
+// 定义 normalizr entity schemas
 export const userEntity = new schema.Entity('users')
 export const commentEntity = new schema.Entity('comments', {
   commenter: userEntity
@@ -867,7 +866,7 @@ export const fetchArticle = createAsyncThunk(
   'articles/fetchArticle',
   async id => {
     const data = await fakeAPI.articles.show(id)
-    // Normalize the data so reducers can load a predictable payload, like:
+    // 规范化数据，以便 reducers 可以加载可预测的 payload，比如：
     // `action.payload = { users: {}, articles: {}, comments: {} }`
     const normalized = normalize(data, articleEntity)
     return normalized.entities
@@ -880,7 +879,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchArticle.fulfilled]: (state, action) => {
-      // Handle the fetch result by inserting the articles here
+      // 通过在此处插入 articles 处理请求结果
       articlesAdapter.upsertMany(state, action.payload.articles)
     }
   }
@@ -902,7 +901,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      // And handle the same fetch result by inserting the users here
+      // 通过在此处插入 users 处理相同的请求结果
       usersAdapter.upsertMany(state, action.payload.users)
     })
   }
@@ -924,7 +923,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchArticle.fulfilled]: (state, action) => {
-      // Same for the comments
+      // comments 也一样
       commentsAdapter.upsertMany(state, action.payload.comments)
     }
   }
@@ -934,14 +933,14 @@ const reducer = slice.reducer
 export default reducer
 ```
 
-You can [view the full code of this example `normalizr` usage on CodeSandbox](https://codesandbox.io/s/rtk-entities-basic-example-with-normalizr-bm3ie)
+你可以[在 CodeSandbox 查看 `normalizr` 使用示例的完整代码](https://codesandbox.io/s/rtk-entities-basic-example-with-normalizr-bm3ie)。
 
-### Using selectors with `createEntityAdapter`
+### 将选择器与 `createEntityAdapter` 一起使用
 
-The entity adapter providers a selector factory that generates the most common selectors for you. Taking the examples above, we can add selectors to our `usersSlice` like this:
+Entity adapter 提供了 selector factory 可为你生成最常用的 selector。以上面的例子为例，我们可以将添加 selector 到 `usersSlice`，如下所示：
 
 ```js
-// Rename the exports for readability in component usage
+// 为了组件中使用的可读性重命名 export
 export const {
   selectById: selectUserById,
   selectIds: selectUserIds,
@@ -951,7 +950,7 @@ export const {
 } = usersAdapter.getSelectors(state => state.users)
 ```
 
-You could then use these selectors in a component like this:
+然后，你可以在组件里使用这些 selector，如下所示：
 
 ```js
 import React from 'react'
@@ -980,12 +979,12 @@ export function UsersList() {
 }
 ```
 
-### Specifying Alternate ID Fields
+### 指定备用 ID 字段
 
-By default, `createEntityAdapter` assumes that your data has unique IDs in an `entity.id` field. If your data set stores its ID in a different field, you can pass in a `selectId` argument that returns the appropriate field.
+默认情况下，`createEntityAdapter` 假设你的数据在 `entity.id` 字段中具有唯一的ID。如果你的数据集将其ID存储在其他字段中，则可以传入 `selectId` 参数，以返回适当的字段。
 
 ```js
-// In this instance, our user data always has a primary key of `idx`
+// 在这个例子中，user 数据始终具有主键 `idx`
 const userData = {
   users: [
     { idx: 1, first_name: 'Test' },
@@ -993,19 +992,19 @@ const userData = {
   ]
 }
 
-// Since our primary key is `idx` and not `id`,
-// pass in an ID selector to return that field instead
+// 因为主键是 `idx` 而不是 `id`，
+// 所以传给ID选择器返回对应字段以替代
 export const usersAdapter = createEntityAdapter({
   selectId: user => user.idx
 })
 ```
 
-### Sorting Entities
+### Entities 排序
 
-`createEntityAdapter` provides a `sortComparer` argument that you can leverage to sort the collection of `ids` in state. This can be very useful for when you want to guarantee a sort order and your data doesn't come presorted.
+`createEntityAdapter` 提供了一个 `sortComparer` 参数，你可以利用该参数对 state 中的 `ids` 集合进行排序。当你要保证顺序并且数据没有预排序时，这可能会非常有用。
 
 ```js
-// In this instance, our user data always has a primary key of `idx`
+// 在这种情况下，user 数据始终具有主键 `idx`
 const userData = {
   users: [
     { id: 1, first_name: 'Test' },
@@ -1013,42 +1012,42 @@ const userData = {
   ]
 }
 
-// Sort by `first_name`. `state.ids` would be ordered as
-// `ids: [ 2, 1 ]`, since 'B' comes before 'T'.
-// When using the provided `selectAll` selector, the result would be sorted:
+// 根据 `first_name`，`state.ids` 会被重排为
+// `ids: [ 2, 1 ]`，因为 'B' 在 'T' 前面。
+// 当使用给定的 `selectAll` 选择器，结果会被排序为：
 // [{ id: 2, first_name: 'Banana' }, { id: 1, first_name: 'Test' }]
 export const usersAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.first_name.localeCompare(b.first_name)
 })
 ```
 
-## Working with Non-Serializable Data
+## 处理不可序列化的数据
 
-One of the core usage principles for Redux is that [you should not put non-serializable values in state or actions](https://redux.js.org/style-guide/style-guide#do-not-put-non-serializable-values-in-state-or-actions).
+Redux 的核心使用原则之一是[你不应该在 state 或者 action 中放置不可序列化的值](https://redux.js.org/style-guide/style-guide#do-not-put-non-serializable-values-in-state-or-actions)。
 
-However, like most rules, there are exceptions. There may be occasions when you have to deal with actions that need to accept non-serializable data. This should be done very rarely and only if necessary, and these non-serializable payloads shouldn't ever make it into your application state through a reducer.
+不过，像大多数规则一样，也有例外。在某些情况下，你必须处理需要接受非序列化数据的 action。只有在很少的时候必要时才这样做，并且这些不可序列化的 payload 永远不要通过 reducer 传入你应用的 state。
 
-The [serializability dev check middleware](../api/getDefaultMiddleware.mdx) will automatically warn anytime it detects non-serializable values in your actions or state. We encourage you to leave this middleware active to help avoid accidentally making mistakes. However, if you _do_ need to turnoff those warnings, you can customize the middleware by configuring it to ignore specific action types, or fields in actions and state:
+[可序列化的开发者检查 middleware](../api/getDefaultMiddleware.mdx) 将在任何时候检测到你的 action 或 state 中有不可序列化的值时自动发出警告。我们鼓励你将该 middleware 设置为可用，以帮助你避免意外地犯错误。但是，如果 _确实_ 需要关闭这些警告，你可以通过配置 middleware 去忽略特定的 action type，或者 action 和 state 中的字段来定制 middleware：
 
 ```js
 configureStore({
   //...
   middleware: getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
+      // 忽略这些 action types
       ignoredActions: ['your/action/type'],
-      // Ignore these field paths in all actions
+      // 忽略所有 action 中的这些字段路径
       ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
-      // Ignore these paths in the state
+      // 忽略 state 中的这些路径 paths in the state
       ignoredPaths: ['items.dates']
     }
   })
 })
 ```
 
-### Use with Redux-Persist
+### 使用 Redux-Persist
 
-If using Redux-Persist, you should specifically ignore all the action types it dispatches:
+如果使用 Redux-Persist，你需要特定地忽略它 dispatch 的所有 action type：
 
 ```jsx
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
@@ -1097,13 +1096,13 @@ ReactDOM.render(
 )
 ```
 
-See [Redux Toolkit #121: How to use this with Redux-Persist?](https://github.com/reduxjs/redux-toolkit/issues/121) and [Redux-Persist #988: non-serializable value error](https://github.com/rt2zz/redux-persist/issues/988#issuecomment-552242978) for further discussion.
+更多讨论可查看 [Redux 工具包 #121: 如何使用 Redux-Persist?](https://github.com/reduxjs/redux-toolkit/issues/121) 和 [Redux-Persist #988: 不可序列化值错误](https://github.com/rt2zz/redux-persist/issues/988#issuecomment-552242978)。
 
-### Use with React-Redux-Firebase
+### 使用 React-Redux-Firebase
 
-RRF includes timestamp values in most actions and state as of 3.x, but there are PRs that may improve that behavior as of 4.x.
+3.x 版本中，RRF在大多数 action 和 state 中包含时间戳值，但是从 4.x 版本开始，有些 PR 可以改善这一行为。
 
-A possible configuration to work with that behavior could look like:
+与该行为配合使用的可能的配置如下所示：
 
 ```ts
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
@@ -1122,7 +1121,7 @@ const middleware = [
   ...getDefaultMiddleware({
     serializableCheck: {
       ignoredActions: [
-        // just ignore every redux-firebase and react-redux-firebase action type
+        // 只需忽略每个 redux-firebase 和 react-redux-firebase action type
         ...Object.keys(rfConstants.actionTypes).map(
           type => `${rfConstants.actionsPrefix}/${type}`
         ),
