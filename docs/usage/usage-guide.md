@@ -62,6 +62,7 @@ export default function configureStore(preloadedState) {
 - 设置 middleware 和 enhancers 让人感到困惑，特别是如果你要添加几项配置进去。
 - Redux Devtools 拓展文档原本建议使用[手写代码检查全局命名空间以查看扩展是否可用](https://github.com/zalmoxisus/redux-devtools-extension#11-basic-store)。很多使用者复制粘贴了那些片段，导致代码更难读。
 
+
 ### 使用 `configureStore` 简化 Store 设置
 
 `configureStore` 帮助解决这些问题：
