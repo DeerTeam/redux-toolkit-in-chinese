@@ -1,0 +1,152 @@
+---
+id: code-generation
+title: Code Generation
+sidebar_label: Code Generation
+hide_title: true
+description: 'RTK Query > Usage > Code Generation: automated creation of API code'
+---
+
+&nbsp;
+
+# Code Generation
+
+RTK Query's API and architecture is oriented around declaring API endpoints up front. This lends itself well to automatically generating API slice definitions from external API schema definitions, such as OpenAPI and GraphQL.
+
+We have early previews of code generation capabilities available as separate tools.
+
+## GraphQL
+
+We provide a [Plugin for GraphQL Codegen](https://www.graphql-code-generator.com/docs/plugins/typescript-rtk-query). You can find the documentation to that on the graphql-codegen homepage.
+
+For a full example on how to use it, you can see [this example project](https://github.com/reduxjs/redux-toolkit/tree/master/examples/query/react/graphql-codegen).
+
+## OpenAPI
+
+We provide a package for RTK Query code generation from OpenAPI schemas. It is published as `@rtk-query/codegen-openapi` and you can find the source code at [`packages/rtk-query-codegen-openapi`](https://github.com/reduxjs/redux-toolkit/tree/master/packages/rtk-query-codegen-openapi).
+
+### Usage
+
+Create an empty api using `createApi` like
+
+```ts no-transpile title="src/store/emptyApi.ts"
+// Or from '@reduxjs/toolkit/query' if not using the auto-generated hooks
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+// initialize an empty api service that we'll inject endpoints into later as needed
+export const emptySplitApi = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: '/' }),
+  endpoints: () => ({}),
+})
+```
+
+Generate a config file (json, js or ts) with contents like
+
+```ts no-transpile title="openapi-config.ts"
+import type { ConfigFile } from '@rtk-query/codegen-openapi'
+
+const config: ConfigFile = {
+  schemaFile: 'https://petstore3.swagger.io/api/v3/openapi.json',
+  apiFile: './src/store/emptyApi.ts',
+  apiImport: 'emptySplitApi',
+  outputFile: './src/store/petApi.ts',
+  exportName: 'petApi',
+  hooks: true,
+}
+
+export default config
+```
+
+and then call the code generator:
+
+```bash
+npx @rtk-query/codegen-openapi openapi-config.ts
+```
+
+### Programmatic usage
+
+```ts no-transpile title="src/store/petApi.ts"
+import { generateEndpoints } from '@rtk-query/codegen-openapi'
+
+const api = await generateEndpoints({
+  apiFile: './fixtures/emptyApi.ts',
+  schemaFile: resolve(__dirname, 'fixtures/petstore.json'),
+  filterEndpoints: ['getPetById', 'addPet'],
+  hooks: true,
+})
+```
+
+### Config file options
+
+#### Simple usage
+
+```ts no-transpile
+interface SimpleUsage {
+  apiFile: string
+  schemaFile: string
+  apiImport?: string
+  exportName?: string
+  argSuffix?: string
+  responseSuffix?: string
+  hooks?: boolean
+  outputFile: string
+  filterEndpoints?:
+    | string
+    | RegExp
+    | EndpointMatcherFunction
+    | Array<string | RegExp | EndpointMatcherFunction>
+  endpointOverrides?: EndpointOverrides[]
+}
+
+export type EndpointMatcherFunction = (
+  operationName: string,
+  operationDefinition: OperationDefinition
+) => boolean
+```
+
+#### Filtering endpoints
+
+If you only want to include a few endpoints, you can use the `filterEndpoints` config option to filter your endpoints.
+
+```ts no-transpile title="openapi-config.ts"
+const filteredConfig: ConfigFile = {
+  // ...
+  // should only have endpoints loginUser, placeOrder, getOrderById, deleteOrder
+  filterEndpoints: ['loginUser', /Order/],
+}
+```
+
+#### Endpoint overrides
+
+If an endpoint is generated as a mutation instead of a query or the other way round, you can override that:
+
+```ts no-transpile title="openapi-config.ts"
+const withOverride: ConfigFile = {
+  // ...
+  endpointOverrides: [
+    {
+      pattern: 'loginUser',
+      type: 'mutation',
+    },
+  ],
+}
+```
+
+#### Multiple output files
+
+```ts no-transpile title="openapi-config.ts"
+const config: ConfigFile = {
+  schemaFile: 'https://petstore3.swagger.io/api/v3/openapi.json',
+  apiFile: './src/store/emptyApi.ts',
+  outputFiles: {
+    './src/store/user.ts': {
+      filterEndpoints: [/user/i],
+    },
+    './src/store/order.ts': {
+      filterEndpoints: [/order/i],
+    },
+    './src/store/pet.ts': {
+      filterEndpoints: [/pet/i],
+    },
+  },
+}
+```

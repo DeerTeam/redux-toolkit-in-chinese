@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/@reduxjs/toolkit.svg?style=flat-square)](https://www.npmjs.com/package/@reduxjs/toolkit)
 [![npm downloads](https://img.shields.io/npm/dm/@reduxjs/toolkit.svg?style=flat-square&label=RTK+downloads)](https://www.npmjs.com/package/@reduxjs/toolkit)
 
-**一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包**
+**一个官方提供用于Redux高效开发的、有想法的、功能齐全的工具包**
 
 (前身为 "Redux快速入门包[Redux Starter Kit]")
 

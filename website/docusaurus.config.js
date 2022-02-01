@@ -56,7 +56,7 @@ module.exports = {
   baseUrl: '/',
   favicon: 'img/favicon/favicon.ico',
   tagline:
-    '一个官方提供用于Redux高效开发，有想法的、功能齐全的工具包',
+    '一个官方提供用于Redux高效开发的、有想法的、功能齐全的工具包',
   title: 'Redux工具包 中文文档',
   url: 'https://redux-toolkit.js.org',
   customFields: {
@@ -108,9 +108,17 @@ module.exports = {
               to: 'introduction/quick-start'
             },
             {
-              label: 'API 参考',
+              label: '教程', 
+              to: 'tutorials/basic-tutorial'
+            },
+            {
+              label: '使用指南',
+              to: 'usage/usage-guide'
+            },
+            {
+              label: 'API参考',
               to: 'api/configureStore'
-            }
+            },
           ]
         },
         {
@@ -154,7 +162,7 @@ module.exports = {
           ]
         }
       ],
-      copyright: `Copyright © 2015–${new Date().getFullYear()} Dan Abramov and the Redux documentation authors. 中文由[DeerTeam](https://github.com/DeerTeam)前端团队翻译制作。`
+      copyright: `Copyright © 2015–${new Date().getFullYear()} Dan Abramov and the Redux documentation authors. 中文由[DeerTeam]团队翻译制作。`
     },
     image: 'img/redux-logo-landscape.png',
     navbar: {
@@ -175,12 +183,12 @@ module.exports = {
         // { to: 'rtk-query/overview', label: 'RTK查询', position: 'right' },
         {
           href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese',
-          label: 'GitHub(中文仓库)',
+          label: 'GitHub(中文)',
           position: 'right'
         },
         {
           href: 'https://github.com/reduxjs/redux-toolkit',
-          label: 'GitHub(English version)',
+          label: 'GitHub(English)',
           position: 'right'
         }
       ]

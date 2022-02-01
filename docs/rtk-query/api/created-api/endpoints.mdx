@@ -1,0 +1,274 @@
+---
+id: endpoints
+title: 'API Slices: Endpoints'
+sidebar_label: Endpoints
+hide_title: true
+---
+
+&nbsp;
+
+# API Slices: Endpoints
+
+The API slice object will have an `endpoints` field inside. This section maps the endpoint names you provided to `createApi` to the core Redux logic (thunks and selectors) used to trigger data fetches and read cached data for that endpoint. If you're using the React-specific version of `createApi`, each endpoint definition will also contain the auto-generated React hooks for that endpoint.
+
+Each endpoint structure contains the following fields:
+
+```ts no-transpile
+type EndpointLogic = {
+  initiate: InitiateRequestThunk
+  select: CreateCacheSelectorFactory
+  matchPending: Matcher<PendingAction>
+  matchFulfilled: Matcher<FulfilledAction>
+  matchRejected: Matcher<RejectedAction>
+}
+```
+
+## `initiate`
+
+#### Signature
+
+```ts no-transpile
+type InitiateRequestThunk = StartQueryActionCreator | StartMutationActionCreator;
+
+type StartQueryActionCreator = (
+  arg:any,
+  options?: StartQueryActionCreatorOptions
+) => ThunkAction<QueryActionCreatorResult, any, any, AnyAction>;
+
+type StartMutationActionCreator<D extends MutationDefinition<any, any, any, any>> = (
+  arg: any
+  options?: StartMutationActionCreatorOptions
+) => ThunkAction<MutationActionCreatorResult<D>, any, any, AnyAction>;
+
+type SubscriptionOptions = {
+  /**
+   * How frequently to automatically re-fetch data (in milliseconds). Defaults to `0` (off).
+   */
+  pollingInterval?: number;
+  /**
+   * Defaults to `false`. This setting allows you to control whether RTK Query will try to refetch all subscribed queries after regaining a network connection.
+   *
+   * If you specify this option alongside `skip: true`, this **will not be evaluated** until `skip` is false.
+   *
+   * Note: requires `setupListeners` to have been called.
+   */
+  refetchOnReconnect?: boolean;
+  /**
+   * Defaults to `false`. This setting allows you to control whether RTK Query will try to refetch all subscribed queries after the application window regains focus.
+   *
+   * If you specify this option alongside `skip: true`, this **will not be evaluated** until `skip` is false.
+   *
+   * Note: requires `setupListeners` to have been called.
+   */
+  refetchOnFocus?: boolean;
+};
+
+interface StartQueryActionCreatorOptions {
+  subscribe?: boolean;
+  forceRefetch?: boolean | number;
+  subscriptionOptions?: SubscriptionOptions;
+}
+
+interface StartMutationActionCreatorOptions {
+  /**
+   * If this mutation should be tracked in the store.
+   * If you just want to manually trigger this mutation using `dispatch` and don't care about the
+   * result, state & potential errors being held in store, you can set this to false.
+   * (defaults to `true`)
+   */
+  track?: boolean;
+}
+```
+
+#### Description
+
+A Redux thunk action creator that you can dispatch to trigger data fetch queries or mutations.
+
+React Hooks users will most likely never need to use these directly, as the hooks automatically dispatch these actions as needed.
+
+:::note Usage of actions outside of React Hooks
+When dispatching an action creator, you're responsible for storing a reference to the promise it returns in the event that you want to update that specific subscription. Also, you have to manually unsubscribe once your component unmounts. To get an idea of what that entails, see the [Svelte Example](../../usage/examples.mdx#svelte) or the [React Class Components Example](../../usage/examples.mdx#react-class-components)
+:::
+
+#### Example
+
+```tsx title="initiate query example"
+import { useState } from 'react'
+import { useAppDispatch } from './store/hooks'
+import { api } from './services/api'
+
+function App() {
+  const dispatch = useAppDispatch()
+  const [postId, setPostId] = useState<number>(1)
+
+  useEffect(() => {
+    // highlight-start
+    // Add a subscription
+    const result = dispatch(api.endpoints.getPost.initiate(postId))
+
+    // Return the `unsubscribe` callback to be called in the `useEffect` cleanup step
+    return result.unsubscribe
+    // highlight-end
+  }, [dispatch, postId])
+
+  return (
+    <div>
+      <div>Initiate query example</div>
+    </div>
+  )
+}
+```
+
+```tsx title="initiate mutation example"
+import { useState } from 'react'
+import { useAppDispatch } from './store/hooks'
+import { api, Post } from './services/api'
+
+function App() {
+  const dispatch = useAppDispatch()
+  const [newPost, setNewPost] = useState<Omit<Post, 'id'>>({ name: 'Ash' })
+
+  function handleClick() {
+    // highlight-start
+    // Trigger a mutation
+    // The `track` property can be set `false` in situations where we aren't
+    // interested in the result of the mutation
+    dispatch(api.endpoints.addPost.initiate(newPost), { track: false })
+    // highlight-end
+  }
+
+  return (
+    <div>
+      <div>Initiate mutation example</div>
+      <button onClick={handleClick}>Add post</button>
+    </div>
+  )
+}
+```
+
+## `select`
+
+#### Signature
+
+```ts no-transpile
+type CreateCacheSelectorFactory =
+  | QueryResultSelectorFactory
+  | MutationResultSelectorFactory
+
+type QueryResultSelectorFactory = (
+  queryArg: QueryArg | SkipToken
+) => (state: RootState) => QueryResultSelectorResult<Definition>
+
+type MutationResultSelectorFactory<
+  Definition extends MutationDefinition<any, any, any, any>,
+  RootState
+> = (
+  requestId: string | SkipToken
+) => (state: RootState) => MutationSubState<Definition> & RequestStatusFlags
+
+type SkipToken = typeof Symbol
+```
+
+#### Description
+
+A function that accepts a cache key argument, and generates a new memoized selector for reading cached data for this endpoint using the given cache key. The generated selector is memoized using [Reselect's `createSelector`](https://redux-toolkit.js.org/api/createSelector).
+
+When selecting mutation results rather than queries, the function accepts a request ID instead.
+
+RTKQ defines a `Symbol` named `skipToken` internally. If `skipToken` is passed as the query argument to these selectors, the selector will return a default uninitialized state. This can be used to avoid returning a value if a given query is supposed to be disabled.
+
+React Hooks users will most likely never need to use these directly, as the hooks automatically use these selectors as needed.
+
+:::caution
+
+Each call to `.select(someCacheKey)` returns a _new_ selector function instance. In order for memoization to work correctly, you should create a given selector function once per cache key and reuse that selector function instance, rather than creating a new selector instance each time.
+
+:::
+
+#### Example
+
+```tsx title="select query example"
+import { useState, useMemo } from 'react'
+import { useAppDispatch, useAppSelector } from './store/hooks'
+import { api } from './services/api'
+
+function App() {
+  const dispatch = useAppDispatch()
+  const [postId, setPostId] = useState(1)
+  // highlight-start
+  // useMemo is used to only call `.select()` when required.
+  // Each call will create a new selector function instance
+  const selectPost = useMemo(() => api.endpoints.getPost.select(postId), [
+    postId,
+  ])
+  const { data, isLoading } = useAppSelector(selectPost)
+  // highlight-end
+
+  useEffect(() => {
+    // Add a subscription
+    const result = dispatch(api.endpoints.getPost.initiate(postId))
+
+    // Return the `unsubscribe` callback to be called in the cleanup step
+    return result.unsubscribe
+  }, [dispatch, postId])
+
+  if (isLoading) return <div>Loading post...</div>
+
+  return (
+    <div>
+      <div>Initiate query example</div>
+      <div>Post name: {data.name}</div>
+    </div>
+  )
+}
+```
+
+```tsx title="select mutation example"
+import { useState, useMemo } from 'react'
+import { skipToken } from '@reduxjs/toolkit/query'
+import { useAppDispatch, useAppSelector } from './store/hooks'
+import { api } from './services/api'
+
+function App() {
+  const dispatch = useAppDispatch()
+  const [newPost, setNewPost] = useState({ name: 'Ash' })
+  const [requestId, setRequestId] = useState<typeof skipToken | string>(
+    skipToken
+  )
+  // highlight-start
+  // useMemo is used to only call `.select(..)` when required.
+  // Each call will create a new selector function instance
+  const selectMutationResult = useMemo(
+    () => api.endpoints.addPost.select(requestId),
+    [requestId]
+  )
+  const { isLoading } = useAppSelector(selectMutationResult)
+  // highlight-end
+
+  function handleClick() {
+    // Trigger a mutation
+    const result = dispatch(api.endpoints.addPost.initiate(newPost))
+    // store the requestId to select the mutation result elsewhere
+    setRequestId(result.requestId)
+  }
+
+  if (isLoading) return <div>Adding post...</div>
+
+  return (
+    <div>
+      <div>Select mutation example</div>
+      <button onClick={handleClick}>Add post</button>
+    </div>
+  )
+}
+```
+
+## Matchers
+
+A set of [Redux Toolkit action matching utilities](https://redux-toolkit.js.org/api/matching-utilities) that match the `pending`, `fulfilled`, and `rejected` actions that will be dispatched by this thunk. These allow you to match on Redux actions for that endpoint, such as in `createSlice.extraReducers` or a custom middleware. Those are implemented as follows:
+
+```ts no-transpile
+ matchPending: isAllOf(isPending(thunk), matchesEndpoint(endpoint)),
+ matchFulfilled: isAllOf(isFulfilled(thunk), matchesEndpoint(endpoint)),
+ matchRejected: isAllOf(isRejected(thunk), matchesEndpoint(endpoint)),
+```
