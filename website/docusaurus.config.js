@@ -169,7 +169,10 @@ module.exports = {
           label: '快速开始',
           position: 'right'
         },
+        { to: 'tutorials/overview', label: '教程', position: 'right' },
+        { to: 'usage/usage-guide', label: '使用指南', position: 'right' },
         { to: 'api/configureStore', label: 'API', position: 'right' },
+        { to: 'rtk-query/overview', label: 'RTK查询', position: 'right' },
         {
           href: 'https://github.com/DeerTeam/redux-toolkit-in-chinese',
           label: 'GitHub(中文仓库)',
@@ -188,7 +191,7 @@ module.exports = {
       algoliaOptions: {}
     },
     googleAnalytics: {
-      trackingID: 'UA-130598673-3'
+      trackingID: 'G-7Z903YTZBQ'
     }
   }
 }
