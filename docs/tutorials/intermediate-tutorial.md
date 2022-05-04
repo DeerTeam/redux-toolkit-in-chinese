@@ -9,7 +9,7 @@ hide_title: true
 
 在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux 工具包中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
 
-在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们转而使用 RTK 来把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换。
+在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换，以便使用 RTK。
 
 我们将会介绍几个概念:
 
@@ -30,9 +30,9 @@ hide_title: true
 - [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的 JS 对象和数组来 "手工" 进行 immutable 更新
 - [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js)
   中，有几个纯手写的 action creator 函数，同时 action type 字符串在 actions 文件和 reducer 文件中重复出现
-- 项目代码结构用的是 ["folder-by-type" 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
+- 项目代码结构用的是 ["类型文件夹"("folder-by-type") 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
 - React 组件用的是一种严格版本的 ["容器/展示"模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来编写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
-- 若干代码并没有遵某些 Redux 所推荐的"最佳实践"模式。在展示的过程中，我们会仔细观察一些具体的例子
+- 若干代码并没有遵某些 Redux 所推荐的"最佳实践"模式。在演示的过程中，我们会仔细观察一些具体的例子
 
 一方面，这是一个小小的示例应用。它的意图是说明实际中一起使用 React 和 Redux 的基础知识，并不是一定要在一个全面的生产的应用中作为"正确的方式"来使用。另一方面，大多数人会使用他们在文档和示例中看到的模式，这里面肯定有改进的空间。
 
@@ -40,7 +40,7 @@ hide_title: true
 
 ### 在项目中添加 Redux 工具包
 
-由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目中，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
+由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
 
 > - [首次提交](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1)
 > - [添加 jsconfig.json 来支持绝对引入](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
@@ -62,13 +62,13 @@ yarn add @reduxjs/toolkit
 
 这一步完成之后，我们就可以着手写代码了。
 
-### 改造成利用 `configureStore` 生成的 Store
+### 转换成使用 `configureStore` 的 Store 
 
-正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会自动把 Redux DevTools Extension 设置好。
+正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会为我们把 Redux DevTools Extension 自动设置好。
 
-这里的只是一些简单的转换。我们更新 `src/index.js`，引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住 `configureStore` 接收一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
+这里看到的只是一些简单的变化。我们更新 `src/index.js`，以引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住， `configureStore` 接收一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
 
-> - [使用了 configureStore 编写 store 的设置代码](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
+> - [转换成使用 configureStore 的 store 设置代码](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
 
 ```diff {3-4,9-12}
 import React from "react";
@@ -85,15 +85,15 @@ import rootReducer from "./reducers";
 +});
 ```
 
-**注意，我们仍然在使用原应用里的相同的根 reducer 函数，并且一个 Redux store 仍旧需要被创建出来。唯一的变化仅仅是，store 是利用协助开发的工具自动设置好的。**
+**注意，我们仍然在使用已经在应用里存在的，与原应用一样的根 reducer 函数，并且一个 Redux store 仍旧需要被创建出来。所有的变化，仅是 store 是使用了协助开发的工具而被自动设置好的**
 
-如果你安装好了 [Redux DevTools 浏览器插件](https://github.com/zalmoxisus/redux-devtools-extension)， 启动应用之后，你应该能看到的开发模式下的当前状态，并且能够打开开发者工具插件。它应该长这个样子：
+如果 [Redux DevTools 浏览器插件](https://github.com/zalmoxisus/redux-devtools-extension) 已经安装好了， 在开发模式下启动应用且打开插件，你应该能看到应用当前状态。它应该长这个样子：
 
 ![展示 Redux DevTools 初始状态的插件截图](/assets/tutorials/intermediate/int-tut-01-redux-devtools.png)
 
 ## 创建 Todos 切片
 
-第一个重写应用的重大步骤，就是将 todos 逻辑转化成一个新的 "切片"。
+第一个重写应用的重大步骤，就是将 todos 逻辑转换成一个新的 "切片"。
 
 ### 理解"切片"
 
@@ -115,7 +115,7 @@ export default combineReducers({
 })
 ```
 
-因此，合并之后的状态长 `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` 这样。 `state.todos` 是一个 “切片”， 而 `todos` reducer 函数是一个 “切片 reducer”。
+因此，合并之后的状态长 `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` 这样。 `state.todos` 是一个 “切片”，而 `todos` reducer 函数是一个 “切片 reducer”。
 
 ### 审视原 Todos Reducer
 
@@ -201,9 +201,9 @@ export default todosSlice.reducer
 
 这里没有 `default` 处理函数。`createSlice` 生成的 reducer 会通过返回当前的状态，自动处理其他的 action types，所以我们不用自己列出来。
 
-#### "Mutable" 更新逻辑
+#### "可变" 更新逻辑
 
-注意到 `addTodo` 正在调用 `state.push()` 。 通常情况下，这是很糟糕的，因为 [`array.push()` 函数改变了现存的数组](https://doesitmutate.xyz/#push)，并且还有 **[Redux reducers _一定不能_ 修改状态!](https://redux.js.org/basics/reducers#handling-actions)**
+注意到 `addTodo` 正在调用 `state.push()` 。 通常情况下，这是很糟糕的，因为 [`array.push()` 函数改变了已有的数组](https://doesitmutate.xyz/#push)，并且还有 **[Redux reducers _一定不能_ 修改状态!](https://redux.js.org/basics/reducers#handling-actions)**
 
 然而，`createSlice` 和 `createReducer` 把你的函数用 [Immer 里的 `produce`](https://github.com/immerjs/immer) 封装了起来。**这意味着你可以写任何修改 reducer 里面的状态的代码，而 Immer 会安全地返回一个被正确地更新过的结果**
 
@@ -266,7 +266,7 @@ export default todosSlice.reducer
 
 另外一个问题是，测试案例的 action 对象长得像 `{type, id, text}` ，而 RTK 永远把这些额外的值放到 `action.payload` 。因此，我们需要更改测试 actions 以作匹配。
 
-(我们的确 _可以_ 仅仅把测试用例中的行内 action 对象用 `addTodo({id : 0, text: "Buy milk"})` 替换掉，但是就目前来说上述是一套简单稍微简单一些的更改操作。)
+(我们的确 _可以_ 仅仅把测试用例中的行内 action 对象用 `addTodo({id : 0, text: "Buy milk"})` 替换掉，但是就目前来说上述是一套稍微简单一些的更改操作。)
 
 > - [搬运 todos 测试案例到 todos 切片中](https://github.com/reduxjs/rtk-convert-todos-example/commit/39dbbf37bd4c559db956c8291bbd0bf1135546bb)
 
@@ -293,7 +293,7 @@ export default todosSlice.reducer
     ).toEqual([
 ```
 
-更改过后，所有 `todosSlice.spec.js` 里面的测试用都会通过，证明我们的 RTK 切片 reducer 跟之前纯手写的 reducer 一模一样。
+更改过后，所有 `todosSlice.spec.js` 里面的测试用例都会通过，证明我们的 RTK 切片 reducer 跟之前纯手写的 reducer 一模一样。
 
 ### 实现 Todo IDs
 
@@ -579,7 +579,7 @@ Redux 应用经常使用一个叫 [Reselect](https://github.com/reduxjs/reselect
 
 RTK 把 `createSelector` 函数从 Reselect 重新导出，所以我们可以在 `VisibleTodoList` 导入并且使用它。
 
-> - [把可见的 todos 转化为一个 memoized selector](https://github.com/reduxjs/rtk-convert-todos-example/commit/4fc943b7111381974f20f74750a114b5e52ce1b2)
+> - [把可见的 todos 转换为一个 memoized selector](https://github.com/reduxjs/rtk-convert-todos-example/commit/4fc943b7111381974f20f74750a114b5e52ce1b2)
 
 ```diff
 import { connect } from 'react-redux'
@@ -642,7 +642,7 @@ const mapDispatchToProps = { toggleTodo }
 
 我们可以很安全地删除 `actions/index.js`, `reducers/todos.js`, `reducers/visibilityFilter.js` 以及相关的测试文件。
 
-我们同时也可以尝试把 "folder-by-type" 结构彻底地换成 "feature folder" 结果，做法是把组件文件移入 feature 文件夹中。
+我们同时也可以尝试把 "类型文件夹" 结构彻底地换成 "功能文件夹" 结构，做法是把组件文件移入 feature 文件夹中。
 
 > - [删除无用的 action 和 reducer 文件](https://github.com/reduxjs/rtk-convert-todos-example/commit/fbc0b965949e082748b8613b734612226ffe9e94)
 > - [整合组件到 feature 文件夹中](https://github.com/reduxjs/rtk-convert-todos-example/commit/138cc162b1cc9c64ab67fae0a1171d07940414e6)
