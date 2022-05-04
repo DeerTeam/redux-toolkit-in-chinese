@@ -46,7 +46,7 @@ document.getElementById('increment').addEventListener('click', function() {
 
 ### 一个更典型的计数器示例
 
-尽管这个例子挺简单，但是它在真实场景中不一定这么实现。大多数的 Redux 应用都是使用 ES6 的语法来写的，因此函数的参数默认值是 undefined 。最常见的做法是编写 ["action creator" 函数](https://redux.js.org/basics/actions#action-creators)  而不是直接在代码中编写 action 对象、编写整个 action 类型作为常量而不是每次都是纯字符串。
+尽管这个例子挺简单，但是它在真实场景中不一定这么实现。大多数的 Redux 应用都是使用 ES6 的语法来写的，因此函数的参数默认值是 undefined 。最常见的做法是编写 ["action creator" 函数](https://redux.js.org/basics/actions#action-creators)  而不是直接在代码中编写 action 对象；编写整个 action 类型作为常量而不是每次都是纯字符串。
 
 让我们使用这样的实现方式，重写一下上面的那个例子，看看会是什么样：
 
@@ -108,7 +108,7 @@ const store = configureStore({
 
 接下来，我们来看一看 [`createAction`](../api/createAction.mdx).
 
-`createAction` 接受一个 action 类型字符串作为参数，并返回一个使用该类型字符串的 action creator 函数。（我们正在创建一个 "action creator 函数"，而不是 "action 对象" - 让这个函数名看起来好像有点不正确），但它比 `createActionCreator` 更短更容易记住。因此，这两个例子是等价的:
+`createAction` 接受一个 action type 字符串作为参数，并返回一个使用该 type 字符串的 action creator 函数。（我们正在创建一个 "action creator 函数"，而不是 "action 对象" - 让这个函数名看起来好像有点不正确），但它比 `createActionCreator` 更短更容易记住。因此，这两个例子是等价的:
 
 
 ```js
@@ -187,7 +187,7 @@ const counter = createReducer(0, {
 })
 ```
 
-或者，由于计算属性语法将在其中任何变量上调用 `toString()` ，我们可以只是直接使用 action creator 函数而不用 `.type` 字段：
+或者，由于计算属性语法将在其中任何变量上调用 `toString()` ，我们可以直接使用 action creator 函数而不用 `.type` 字段：
 
 ```js
 const counter = createReducer(0, {
@@ -220,11 +220,11 @@ document.getElementById('increment').addEventListener('click', () => {
 })
 ```
 
-这样看并不糟糕，但是我们可以再做一个主要的改变。为什么我们甚至需要单独生成 action creator，或者写出那些 action type 字符串呢？这里真正重要的部分是 reducer 函数。
+这样看并不糟糕，但是我们可以对其再做一次重大的修改。我们为什么还需要单独生成 action creator，或者写出那些 action type 字符串呢？这里真正重要的部分只是 reducer 函数。
 
-这就是 [`createSlice` 函数](../api/createSlice.mdx) 的作用。它允许我们提供一个带有 reducer 函数的对象，并且它将根据我们列出的 reducer 的名称自动生成 action type 字符串和 action creator 函数。
+这正是 [`createSlice` 函数](../api/createSlice.mdx) 的作用。它允许我们提供一个带有 reducer 函数的对象，并且它将根据我们列出的 reducer 的名称自动生成 action type 字符串和 action creator 函数。
 
-`createSlice` 返回一个 "分片" 对象，该对象包含生成的 reducer 函数作为一个名为 `reducer` 的字段，以及在一个名为 `actions` 的对象中生成的 action creator。
+`createSlice` 返回一个 "分片" 对象，该对象包含被生成的 reducer 函数，其作为一个名为 `reducer` 的字段，以及被生成的、放置在一个名为 `actions` 的对象中的所有 action creator 函数。
 
 下面是使用了 `createSlice` 的计数器例子：
 

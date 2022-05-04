@@ -5,21 +5,21 @@ sidebar_label: 中级教程
 hide_title: true
 ---
 
-# 中级教程: 把 Redux工具包 实践起来
+# 中级教程: 把 Redux 工具包 实践起来
 
-在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux工具包 中包含的主要的API函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个HTML页面的 script 标签就能使用 Redux 和 RTK。
+在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux 工具包 中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
 
-在这个教程中，你将看到在一个简单的 React 应用中如何使用这些API。尤其是我们将转换这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 而用 RTK 替代。
+在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们转而使用 RTK 来把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换。
 
-我们将会展示几个概念:
+我们将会介绍几个概念:
 
-- 如何将 "纯 Redux" 代码转换使用 RTK
+- 如何将 "纯 Redux" 代码转化使用为 RTK 代码
 - 如何在一个典型的 React+Redux 应用中使用 RTK
 - 如何使用 RTK 里一些更强大的特性来简化你的 Redux 代码
 
-另外，虽然这不是RTK特有的，但我们还将研究几种改进你的 React-Redux 代码的方法。
+另外，尽管接下来的并不仅针对于 RTK，我们也会研究几种能改进你的 React-Redux 代码的方法。
 
-从本教程实现成应用的完整源代码在 [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example) 可以获得。我们将回顾整个实现过程。相关有意义的个人提交将像如下高亮的引用块显示：
+本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有特殊意义的、独立的代码提交的链接，将像如下高亮的引用块显示：
 
 > - 这里是提交信息
 
@@ -27,22 +27,23 @@ hide_title: true
 
 如果我们查看 [当前 `todos` 示例源代码](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src)，我们可以观察到以下几点：
 
-- [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的JS对象和数组来 "手工" 进行 immutable 更新
-- The [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js) has hand-written action creator functions, and the action type strings are being duplicated between the actions file and the reducer files
-- The code is laid out using a ["folder-by-type" 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go), with separate files for `actions` and `reducers`
-- The React components are written using a strict version of the ["container/presentational" pattern](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0), where [the "presentational" components are in one folder](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components), and the [Redux "container" connection definitions are in a different folder](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
-- Some of the code isn't following some of the recommended Redux "best practices" patterns. We'll look at some specific examples as we go through this tutorial.
+- [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的 JS 对象和数组来 "手工" 进行 immutable 更新
+- [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js)
+  中，有几个纯手工写的 action creator 函数，同时 action type 字符串在 actions 文件和 reducer 文件中重复出现
+- 项目代码结构用的是 ["folder-by-type" 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
+- React 组件用的是一种严格版本的 ["容器/展示"模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来撰写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
+- 若干代码并没有遵某些 Redux 所推荐的"最佳实践"模式。在展示的过程中，我们会仔细观察一些具体的例子
 
 一方面，这是一个小小的示例应用。它的意图是说明实际中一起使用 React 和 Redux 的基础知识，并不是一定要在一个全面的生产的应用中作为"正确的方式"来使用。另一方面，大多数人会使用他们在文档和示例中看到的模式，这里面肯定有改进的空间。
 
 ## 初始转换步骤
 
-### 在项目中添加 Redux工具包
+### 在项目中添加 Redux 工具包
 
-Since the original todos example is in the Redux repo, we start by copying the Redux "todos" source code to a fresh Create-React-App project, and adding Prettier to the project to help make sure the code is formatted consistently. There's also a [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) file to enable us to use "absolute import paths" that start from the `/src` folder.
+由于原始的 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中去，之后再把 Prettier 添加到项目中，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
 
-> - [Initial commit](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1).
-> - [Add jsconfig.json to support absolute imports](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
+> - [首次提交](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1).
+> - [添加 jsconfig.json 来支持绝对引入](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
 
 在基础教程中，我们只是作为一个独立的 script 标签链接到 Redux Toolkit。单身，在一个典型的应用中，你需要将 RTK 作为一个包引用添加到你的项目。你可以使用 NPM 或者 Yarn
 任意一种包管理器：
@@ -55,19 +56,19 @@ npm install @reduxjs/toolkit
 yarn add @reduxjs/toolkit
 ```
 
-Once that's complete, you should add and commit the modified `package.json` file and the "lock file" from your package manager (`package-lock.json` for NPM, or `yarn.lock` for Yarn).
+一旦完成之后，你应该暂存和提交被修改过的 `package.json` 文件，以及那被你的包管理器”锁定了的文件“ (NPM 是 `package-lock.json`， 或者 Yarn 是 `yarn.lock`).
 
-> - [Add Redux Toolkit](https://github.com/reduxjs/rtk-convert-todos-example/commit/c3f47aeaecf855561e4db9d452b928f1b8b6c016)
+> - [添加 Redux Toolkit](https://github.com/reduxjs/rtk-convert-todos-example/commit/c3f47aeaecf855561e4db9d452b928f1b8b6c016)
 
-With that done, we can start to work on the code.
+这一步完成之后，我们就可以着手写代码了。
 
-### Converting the Store to Use `configureStore`
+### 使用 `configureStore` 转化 Store 
 
-Just like with the "counter" example, we can replace the plain Redux `createStore` function with RTK's `configureStore`. This will automatically set up the Redux DevTools Extension for us.
+正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会自动把 Redux DevTools Extension 设置好。
 
-The changes here are simple. We update `src/index.js` to import `configureStore` instead of `createStore`, and replace the function call. Remember that `configureStore` takes an options object as a parameter with named fields, so instead of passing `rootReducer` directly as the first parameter, we pass it as an object field named `reducer`:
+这里的只是一些简单的转换。我们更新 `src/index.js`，引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住 `configureStore` 接收一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
 
-> - [Convert store setup to use configureStore](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
+> - [以使用 configureStore 转换 store 配置](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
 
 ```diff {3-4,9-12}
 import React from "react";
@@ -84,11 +85,11 @@ import rootReducer from "./reducers";
 +});
 ```
 
-**Note that we're still using the same root reducer function that's already in the application, and a Redux store is still being created. All that's changed is the store is automatically set up with tools to aid you in development.**
+**注意，我们仍然在使用原应用里的相同的根 reducer 函数，并且一个 Redux store 仍旧需要被创建出来。唯一的变化仅仅是，store 是利用协助开发的工具自动设置好的。**
 
-If you have [the Redux DevTools browser extension](https://github.com/zalmoxisus/redux-devtools-extension) installed, you should now be able to see the current state if you start the application in development mode and open the DevTools Extension. It should look like this:
+如果你安装好了 [Redux DevTools 浏览器插件](https://github.com/zalmoxisus/redux-devtools-extension)， 启动应用之后，你应该能看到的开发模式下的当前状态，并且能够打开开发者工具插件。它应该长这个样子：
 
-![Redux DevTools Extension screenshot showing initial state](/assets/tutorials/intermediate/int-tut-01-redux-devtools.png)
+![展示 Redux DevTools 初始状态的插件截图](/assets/tutorials/intermediate/int-tut-01-redux-devtools.png)
 
 ## 创建 Todos 分片
 
@@ -96,13 +97,13 @@ If you have [the Redux DevTools browser extension](https://github.com/zalmoxisus
 
 ### 理解"分片"
 
-Right now, the todos code is split into two parts. The reducer logic is in `reducers/todos.js`, while the action creators are in `actions/index.js`. In a larger app, we might even see the action type constants in their own file, like `constants/todos.js`, so they can be reused in both places.
+目前为止，todos 代码被分为两个部分。reducer 逻辑在 `reducers/todos.js`，而 action creators 在 `actions/index.js`。在一个更大型的应用中，我们有可能还会看到 action type 常量，比如 `constants/todos.js`，因此可以在以上两处地方被复用。
 
-We _could_ replace those using RTK's [`createReducer`](../api/createReducer.mdx) and [`createAction`](../api/createAction.mdx) functions. However, the RTK [`createSlice` function](../api/createSlice.mdx) allows us to consolidate that logic in one place. It uses `createReducer` and `createAction` internally, so **in most apps, you won't need to use them yourself - `createSlice` is all you need**.
+我们 _可以_ 使用 RTK [`createReducer`](../api/createReducer.mdx) 和 [`createAction`](../api/createAction.mdx) 函数把它们替换掉。然而，RTK [`createSlice` 函数](../api/createSlice.mdx) 可以让我们把这些逻辑整合到一个地方。它的内部使用了 `createReducer` 和 `createAction`，因此 **在大部分应用中, 你无需亲自调用这两个函数 - `createSlice` 足够了。**
 
-You may be wondering, "what is a 'slice', anyway?". A normal Redux application has a JS object at the top of its state tree, and that object is the result of calling the Redux [`combineReducers` function](https://redux.js.org/api/combinereducers) to join multiple reducer functions into one larger "root reducer". **We refer to one key/value section of that object as a "slice", and we use the term ["slice reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) to describe the reducer function responsible for updating that slice of the state**.
+你可能会有疑惑，“究竟什么是‘分片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”根 reducer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '分片' , 同时我们使用 ["分片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该分片状态的 reducer 函数。**
 
-In this app, the root reducer looks like:
+在这个应用中，这个根 reducer 长这样：
 
 ```js
 import todos from './todos'
@@ -113,12 +114,11 @@ export default combineReducers({
   visibilityFilter
 })
 ```
+因此，合并之后的状态长 `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` 这样。 `state.todos` 是一个 “分片”， 而 `todos` reducer 函数是一个 “分片 reducer”。
 
-So, the combined state looks like `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` is a "slice", and the `todos` reducer function is a "slice reducer".
+### 审视原始 Todos Reducer
 
-### Examining the Original Todos Reducer
-
-The original todos reducer logic looks like this:
+原来的 todos reducer 逻辑是这样的:
 
 ```js
 const todos = (state = [], action) => {
@@ -144,23 +144,22 @@ const todos = (state = [], action) => {
 export default todos
 ```
 
-We can see that it handles three cases:
+我们可以看到它要处理三种情况：
 
-- It adds a new todo by copying the existing `state` array and adding a new todo entry at the end
-- It handles toggling a todo entry by copying the existing array using `state.map()`, copies and replaces the todo object that needs to be updated, and leaves all other todo entries alone.
-- It responds to all other actions by returning the existing state (effectively saying "I don't care about that action").
+- 拷贝当前的 `state` 数组以及添加一个新的 todo 条目到数组末尾，从而添加一条新的 todo
+- 利用 `state.map()` 方法，拷贝当前的数组，从而进行 todo 条目的状态切换；数组中，需要更新的 todo 对象会被替换掉，而其余的 todo 条目则不作修改
+- 对所有其他的 actions 一律返回当前的状态（等价于 "我根本不关心这个 action")
 
-It also initializes the state with a default value of `[]`, and does a default export of the reducer function.
+并且，它以一个默认值 `[]` 初始化了状态值，并且自身被默认暴露出来。
+### 撰写分片 Reducer
 
-### Writing the Slice Reducer
+我们可以利用 `createSlice` 去完成同样的工作，但是会以一种更简单的方式。
 
-We can do the same work with `createSlice`, but we can do it in a simpler way.
+首先，我们会添加一个名为 `/features/todos/todosSlice.js` 的新文件。注意到，尽管如何组织你的应用里面的文件夹与文件并不是一个大问题，但是我们发现 [a "feature folder" approach](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go) 在很多应用中效果会更好。文件命名也是由完全取决于你，但是 `someFeatureSlice.js` 的约定是比较合理的。
 
-We'll start by adding a new file called `/features/todos/todosSlice.js`. Note that while it doesn't matter how you actually structure your folders and files, we've found that [a "feature folder" approach](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go) usually works better for most applications. The file name is also entirely up to you, but a convention of `someFeatureSlice.js` is reasonable to use.
+在这个文件当中，我们会添加如下的逻辑：
 
-In this file, we'll add the following logic:
-
-> - [Add an initial todos slice](https://github.com/reduxjs/rtk-convert-todos-example/commit/48ce059dbb0fce1b961631821534fbcb766d3471)
+> - [添加初始 todos 分片](https://github.com/reduxjs/rtk-convert-todos-example/commit/48ce059dbb0fce1b961631821534fbcb766d3471)
 
 ```js
 import { createSlice } from '@reduxjs/toolkit'
@@ -187,9 +186,9 @@ export const { addTodo, toggleTodo } = todosSlice.actions
 export default todosSlice.reducer
 ```
 
-#### `createSlice` Options
+#### `createSlice` 选项
 
-Let's break down what this does:
+让我们来解构一下它做了哪些事情：
 
 - `createSlice` takes an options object as its argument, with these options:
   - `name`: a string that is used as the prefix for generated action types
@@ -689,4 +688,4 @@ If we do that, the final source code structure looks like this:
 
 希望这有助于说明如何在实践中实际使用这些方法。
 
-接下来，[高级教程](./advanced-tutorial.md) 将介绍如何在一个应用程序中使用RTK来完成异步数据抓取并使用TypeScript。
+接下来，[高级教程](./advanced-tutorial.md) 将介绍如何在一个应用程序中使用 RTK 来完成异步数据抓取并使用 TypeScript。
