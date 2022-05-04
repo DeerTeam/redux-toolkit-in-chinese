@@ -88,7 +88,7 @@ document.getElementById('increment').addEventListener('click', () => {
 
 Redux 工具包包含了一些能够简化你的 Redux 代码的函数。我们看到的第一个函数是 [`configureStore`](../api/configureStore.mdx) 。
 
-通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的根 reducer 函数。Redux 工具包有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
+通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的 root reducer 函数。Redux 工具包有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
 
 我们可以很容易的用 `configureStore` 替换现有的 `createStore` 调用。`configureStore` 接受一个具有指定字段的对象，而不是多个函数参数，因此我们需要将 reducer 函数作为一个名为 `reducer` 的字段传递：
 

@@ -62,7 +62,7 @@ yarn add @reduxjs/toolkit
 
 这一步完成之后，我们就可以着手写代码了。
 
-### 转换成使用 `configureStore` 的 Store 
+### 转换成使用 `configureStore` 的 Store
 
 正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会为我们把 Redux DevTools Extension 自动设置好。
 
@@ -85,7 +85,7 @@ import rootReducer from "./reducers";
 +});
 ```
 
-**注意，我们仍然在使用已经在应用里存在的，与原应用一样的根 reducer 函数，并且一个 Redux store 仍旧需要被创建出来。所有的变化，仅是 store 是使用了协助开发的工具而被自动设置好的**
+**注意，我们仍然在使用已经在应用里存在的，与原应用一样的 root reducer 函数，并且一个 Redux store 仍旧需要被创建出来。所有的变化，仅是 store 是使用了协助开发的工具而被自动设置好的**
 
 如果 [Redux DevTools 浏览器插件](https://github.com/zalmoxisus/redux-devtools-extension) 已经安装好了， 在开发模式下启动应用且打开插件，你应该能看到应用当前状态。它应该长这个样子：
 
@@ -103,7 +103,7 @@ import rootReducer from "./reducers";
 
 你可能会有疑惑，“究竟什么是‘切片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”根 reducer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '切片' , 同时我们使用 ["切片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该切片状态的 reducer 函数。**
 
-在这个应用中，这个根 reducer 长这样：
+在这个应用中，这个 root reducer 长这样：
 
 ```js
 import todos from './todos'
@@ -366,7 +366,7 @@ describe('addTodo', () => {
 
 ## 使用新的 Todos 切片
 
-### 更新根 Reducer
+### 更新 root Reducer
 
 我们现在有一个崭新的 todos reducer 函数，但是它目前还没有与任何东西进行绑定。
 
@@ -438,7 +438,7 @@ export default connect(null, mapDispatch)(AddTodo)
 
 我们首先从我们的 todos 切片引入正确的 `addTodo` action creator 函数。
 
-输入框现在被视作一个标准的 “可控 input"，text 的值被存储到组件的状态中。我们可以利用在表单的 submit 处理函数中利用这个状态值。
+输入框现在被视作一个标准的 “可控输入"，text 的值被存储到组件的状态中。我们可以利用在表单的 submit 处理函数中利用这个状态值。
 
 最后，我们使用 [`mapDispatch` 的"对象简写"形式](https://react-redux.js.org/using-react-redux/connect-mapdispatch#defining-mapdispatchtoprops-as-an-object) 去简化给 `connect` 传入 action creators 的过程。`addTodo` 的 “有界” 版本被作为一个 prop 传进来，它会在我们调用它的时候，派发对应的 action 。
 
@@ -499,7 +499,7 @@ export default filtersSlice.reducer
 
 ### 使用 Filters 切片
 
-就像 todos reducer 一样，我们需要导入和添加 visibility reducer 到我们的根 reducer 中：
+就像 todos reducer 一样，我们需要导入和添加 visibility reducer 到我们的 root reducer 中：
 
 > - [使用 filters 切片 reducer](https://github.com/reduxjs/rtk-convert-todos-example/commit/623c47b1987914a1d90142824892686ec76c20a1)
 
@@ -630,7 +630,7 @@ const mapDispatchToProps = { toggleTodo }
 
 首先，我们从 RTK 导入 `createSelector`，然后定义一些单行 selector 函数，以从 `todos` 和 `visibilityFilter` 的 `state` 参数中获取这两个字段。
 
-我们接着调用 `createSelector` ，并且把这两个小的 selector 函数传入到"input selectors"数组中。 `createSelector` 会调用它们，获取到返回值，然后把返回值放置到我们定义的 "output selector"中，之后就会开始进行过滤和返回最终的结果。
+我们接着调用 `createSelector` ，并且把这两个小的 selector 函数传入到"输入 selectors"数组中。 `createSelector` 会调用它们，获取到返回值，然后把返回值放置到我们定义的 "输出 selector" 数组中，之后就会开始进行过滤和返回最终的结果。
 
 上述代码的定义和使用，我们做了一些小改变。尽管你可以 selector 函数任意地命名，`selectX` 是一种更传统的命名规则。另外，因为 input selectors 负责读取必须要的值，我们可只调用 `selectVisibleTodos(state)`，其中 state 作为唯一的参数。
 

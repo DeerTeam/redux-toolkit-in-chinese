@@ -12,12 +12,12 @@ hide_title: true
 在本教程中，你将会看到如何在一个比 todo 列表更大的“实际”应用中使用 Redux 工具包。本教程会展示几个概念：
 
 - 如何将一个”纯 React“应用转化以使用 Redux
-- 异步逻辑，例如获取数据，是如何融和到 RTK 中的
-- 如何结合 TypeScript 和 RTK
+- 异步逻辑，例如获取数据，是如何融入到 RTK 中的
+- 如何结合 TypeScript 来使用 RTK
 
 在此过程中，我们探究几个使用了 Typescript 技术编写的例子的，以提高你的代码质量，同时我们还会看到如何使用新的 [React-Redux hooks APIs](https://react-redux.js.org/api/hooks) , 作为[传统的 `connect` API](https://react-redux.js.org/api/connect)的另一个替代品。
 
-> **注意**: 本教程并不是关于 TypeScript 通用或者 Redux 特定的完整教程，且这里演示的示例并没有达到 100%的类型安全。获取更多咨询，请查阅社区的资源，例如 [React TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet) 和 [React/Redux TypeScript Guide](https://github.com/piotrwitek/react-redux-typescript-guide)。
+> **注意**: 本教程并不是关于 TypeScript 通用或者在 Redux 中特定使用方式的完整教程，且这里演示的示例并没有达到 100% 的类型安全。想要获取更多信息，请查阅社区的资源，例如 [React TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet) 和 [React/Redux TypeScript Guide](https://github.com/piotrwitek/react-redux-typescript-guide)。
 >
 > 此外，本教程并不意味着你 _必须_ 把 React 应用的逻辑完全地转换成 Redux 的逻辑。[这取决于你如何选择哪些状态应当留在 React 组件中，哪些应该放到 Redux 里](https://redux.js.org/faq/organizing-state#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-setstate)。教程的示例仅仅向你展示 _能以什么方式_ 把逻辑换成 Redux 逻辑，如果你选择这么做的话。
 

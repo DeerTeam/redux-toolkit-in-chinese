@@ -5,22 +5,23 @@ sidebar_label: 配合TypeScript使用
 hide_title: true
 ---
 
-# 配合TypeScript使用
+# 与 TypeScript 共同使用
 
-Redux Toolkit is written in TypeScript, and its API is designed to enable great integration with TypeScript applications.
+Redux 工具包是使用 TypeScript 编写的，它的 API 被设计得能很好地与 TypeScript 应用进行整合。
 
-This page is intended to give an overview of all common usecases and the most probable pitfalls you might encounter when using RTK with TypeScript.
+这一章节的目的是提供一个关于所有常见用例的概览，以及大部分你在使用 RTK 和 TypeScript 时，有可能会遇到的陷阱。
 
-**If you encounter any problems with the types that are not described on this page, please open an issue for discussion.**
+**如果你碰到了任何在本章节中没有提到过的关于类型方面的问题，请给我们提出 issue 以便进行讨论**
 
-## Using `configureStore` with TypeScript
+## 搭配 TypeScript 使用 `configureStore`
 
-Using [configureStore](../api/configureStore.mdx) should not need any additional typings. You might, however, want to extract the `RootState` type and the `Dispatch` type.
+使用 [configureStore](../api/configureStore.mdx) 应该不再需要额外的类型定义。但是，你可能需要把 `RootState` 和 `Dispatch` 的类型提取出来。
 
-### Getting the `State` type
+### 获取 `State` 的类型
 
-The easiest way of getting the `State` type is to define the root reducer in advance and extract its `ReturnType`.  
-It is recommend to give the type a different name like `RootState` to prevent confusion, as the type name `State` is usually overused.
+获取 `State` 最简单的方法，是提前把 root reducer 的类型获取到还有提取它的 `ReturnType` 。
+
+建议的做法是，给这个类型取一个不同的名字比如 `RootState` ，以避免产生混淆，因为 `State` 这个类型名字经常被滥用。
 
 ```typescript {3}
 import { combineReducers } from '@reduxjs/toolkit'
@@ -28,7 +29,7 @@ const rootReducer = combineReducers({})
 export type RootState = ReturnType<typeof rootReducer>
 ```
 
-Alternatively, if you choose to not create a `rootReducer` yourself and instead pass the slice reducers directly to `configureStore()`, you need to slightly modify the typing to correctly infer the root reducer:
+另外一种方式是，如果你不打算自己创建 `rootReducer` ，而是把切片 reducers 直接传入 `configureStore()`，你需要稍微修改一下类型，从而能准确地推断出 root reducer 的类型。
 
 ```ts
 import { configureStore } from '@reduxjs/toolkit'
@@ -40,11 +41,13 @@ const store = configureStore({
   }
 })
 export type RootState = ReturnType<typeof store.getState>
+
+export default store
 ```
 
-### Getting the `Dispatch` type
+### 获取 `Dispatch` 类型
 
-If you want to get the `Dispatch` type from your store, you can extract it after creating the store. It is recommended to give the type a different name like `AppDispatch` to prevent confusion, as the type name `Dispatch` is usually overused. You may also find it to be more convenient to export a hook like `useAppDispatch` shown below, then using it wherever you'd call `useDispatch`.
+如果你想从你的 store 获取到 `Dispatch` 类型，你可以在创建了 store 之后把它提取出来。建议的做法是，给这个类型取一个不同的名字比如 `AppDispatch` 来避免混淆，因为 `Dispatch` 这个类型名字经常被滥用。同时你也会发现，把一个如下所示像 `useAppDispatch` 这样的 hook 导出，是比较方便的一件事情，接着你就可以在任何你调用 `useDispatch` 的地方使用它了。
 
 ```typescript {6}
 import { configureStore } from '@reduxjs/toolkit'
@@ -56,16 +59,16 @@ const store = configureStore({
 })
 
 export type AppDispatch = typeof store.dispatch
-export const useAppDispatch = () => useDispatch<AppDispatch>() // Export a hook that can be reused to resolve types
+export const useAppDispatch = () => useDispatch<AppDispatch>() // 导出一个能被复用以解析类型的hook
 ```
 
-### Correct typings for the `Dispatch` type
+### 正确的 `Dispatch` 类型定义
 
-The type of the `dispatch` function type will be directly inferred from the `middleware` option. So if you add _correctly typed_ middlewares, `dispatch` should already be correctly typed.
+`dispatch` 函数的类型会被 `middleware` 选项直接推断出来。因此如果添加了 _被准确地定义了类型_ 的中间件，`dispatch` 也应该被定义好了类型。
 
-As TypeScript often widens array types when combining arrays using the spread operator, we suggest using the `.concat(...)` and `.prepend(...)` methods of the `MiddlewareArray` returned by `getDefaultMiddleware()`.
+由于 TypeScript 经常在使用扩展运算符合并数组的时候，把数组的类型进行扩展，我们建议使用 `getDefaultMiddleware()` 的返回值 `MiddlewareArray` 中的 `.concat(...)` 和 `.prepend(...)` 方法。
 
-Also, we suggest using the callback notation for the `middleware` option to get a correctly pre-typed version of `getDefaultMiddleware` that does not require you to specify any generics by hand.
+此外，我们也建议为 `middleware` 选项里使用回调的形式，以获取一个提前正确定义好的、无需你再去手动指定任何泛型的 `getDefaultMiddleware`。
 
 ```ts {10-20}
 import { configureStore } from '@reduxjs/toolkit'
@@ -81,28 +84,28 @@ const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .prepend(
-        // correctly typed middlewares can just be used
+        // 被正确定义过的中间可以直接使用
         additionalMiddleware,
-        // you can also type middlewares manually
+        // 你也可以手动定义中间件类型
         untypedMiddleware as Middleware<
           (action: Action<'specialAction'>) => number,
           RootState
         >
       )
-      // prepend and concat calls can be chained
+      // prepend 和 concat 可以被链式调用
       .concat(logger)
 })
 
 type AppDispatch = typeof store.dispatch
 ```
 
-#### Using `MiddlewareArray` without `getDefaultMiddleware`
+#### 不带 `getDefaultMiddleware` 使用 `MiddlewareArray`
 
-If you want to skip the usage of `getDefaultMiddleware` altogether, you can still use `MiddlewareArray` for type-safe concatenation of your `middleware` array. This class extends the default JavaScript `Array` type, only with modified typings for `.concat(...)` and the additional `.prepend(...)` method.
+如果你想完全跳过使用 `getDefaultMiddleware`， 你依然可以为了你的 `middleware` 数组具有类型安全的拼接，而使用 `MiddlewareArray` 。这个类继承了 JavasScript 内置的 `Array` 构造函数类型，唯一的变化是仅仅只是修改了 `concat(...)` 和那个额外的`.prepend(...)` 方法的类型。
 
-This is generally not required though, as you will probably not run into any array-type-widening issues as long as you are using `as const` and do not use the spread operator.
+通常来说，这些操作都不是必须的，因为你不一定会遇到数组类型扩展的问题，只要你使用了 `as const` 断言还有不使用扩展运算符。
 
-So the following two calls would be equivalent:
+所以如下的两个函数调用是完全一样的：
 
 ```ts
 import { configureStore, MiddlewareArray } from '@reduxjs/toolkit'
@@ -118,22 +121,21 @@ configureStore({
 })
 ```
 
-### Using the extracted `Dispatch` type with React-Redux
+### 在 React-Redux 使用被提取的 `Dispatch` 类型
 
-By default, the React-Redux `useDispatch` hook does not contain any types that take middlewares into account. If you need a more specific type for the `dispatch` function when dispatching, you may specify the type of the returned `dispatch` function, or create a custom-typed version of `useSelector`. See [the React-Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook) for details.
+默认情况下，React-Redux `useDispatch` hook 并不含有任何考虑中间件的类型。如果你需要`dispatch` 函数在派发 action 时更具体的类型，你可以指定 `dispatch` 函数的返回值类型，或者创建自定义类型的 `useSelector`。具体详情请参考 [the React-Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook)
 
 ## `createAction`
 
-For most use cases, there is no need to have a literal definition of `action.type`, so the following can be used:
+对于大部分的用例而言，`action.type` 并不需要一个字面量定义，因此如下所示是被允许的：
 
 ```typescript
 createAction<number>('test')
 ```
 
-This will result in the created action being of type `PayloadActionCreator<number, string>`.
+这样被创建出来的 action 会具有 `PayloadActionCreator<number, string>` 这个类型。
 
-In some setups, you will need a literal type for `action.type`, though.
-Unfortunately, TypeScript type definitions do not allow for a mix of manually-defined and inferred type parameters, so you'll have to specify the `type` both in the Generic definition as well as in the actual JavaScript code:
+在某些设置中，你却需要一个 `action.type` 字面量类型。遗憾的是，TypeScript 类型定义并不允许手动定义和推断出来的类型参数混合在一起使用，因此你必须同时在泛型和实际的JavaScript代码中指定 `type`：
 
 ```typescript
 createAction<number, 'test'>('test')
