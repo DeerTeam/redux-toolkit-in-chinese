@@ -7,13 +7,13 @@ hide_title: true
 
 # 中级教程: 把 Redux 工具包 实践起来
 
-在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux 工具包 中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
+在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux 工具包中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
 
 在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们转而使用 RTK 来把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换。
 
 我们将会介绍几个概念:
 
-- 如何将 "纯 Redux" 代码转化使用为 RTK 代码
+- 如何将 "纯 Redux" 代码转换为使用 RTK 代码
 - 如何在一个典型的 React+Redux 应用中使用 RTK
 - 如何使用 RTK 里一些更强大的特性来简化你的 Redux 代码
 
@@ -29,9 +29,9 @@ hide_title: true
 
 - [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的 JS 对象和数组来 "手工" 进行 immutable 更新
 - [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js)
-  中，有几个纯手工写的 action creator 函数，同时 action type 字符串在 actions 文件和 reducer 文件中重复出现
+  中，有几个纯手写的 action creator 函数，同时 action type 字符串在 actions 文件和 reducer 文件中重复出现
 - 项目代码结构用的是 ["folder-by-type" 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
-- React 组件用的是一种严格版本的 ["容器/展示"模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来撰写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
+- React 组件用的是一种严格版本的 ["容器/展示"模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来编写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
 - 若干代码并没有遵某些 Redux 所推荐的"最佳实践"模式。在展示的过程中，我们会仔细观察一些具体的例子
 
 一方面，这是一个小小的示例应用。它的意图是说明实际中一起使用 React 和 Redux 的基础知识，并不是一定要在一个全面的生产的应用中作为"正确的方式"来使用。另一方面，大多数人会使用他们在文档和示例中看到的模式，这里面肯定有改进的空间。
@@ -40,9 +40,9 @@ hide_title: true
 
 ### 在项目中添加 Redux 工具包
 
-由于原始的 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中去，之后再把 Prettier 添加到项目中，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
+由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目中，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
 
-> - [首次提交](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1).
+> - [首次提交](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1)
 > - [添加 jsconfig.json 来支持绝对引入](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
 
 在基础教程中，我们只是作为一个独立的 script 标签链接到 Redux Toolkit。单身，在一个典型的应用中，你需要将 RTK 作为一个包引用添加到你的项目。你可以使用 NPM 或者 Yarn
@@ -62,13 +62,13 @@ yarn add @reduxjs/toolkit
 
 这一步完成之后，我们就可以着手写代码了。
 
-### 使用 `configureStore` 转化 Store 
+### 改造成利用 `configureStore` 生成的 Store
 
 正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会自动把 Redux DevTools Extension 设置好。
 
 这里的只是一些简单的转换。我们更新 `src/index.js`，引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住 `configureStore` 接收一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
 
-> - [以使用 configureStore 转换 store 配置](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
+> - [使用了 configureStore 编写 store 的设置代码](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
 
 ```diff {3-4,9-12}
 import React from "react";
@@ -91,17 +91,17 @@ import rootReducer from "./reducers";
 
 ![展示 Redux DevTools 初始状态的插件截图](/assets/tutorials/intermediate/int-tut-01-redux-devtools.png)
 
-## 创建 Todos 分片
+## 创建 Todos 切片
 
-第一个重写应用的重大步骤，就是将 todos 逻辑转化成一个新的 "分片"。
+第一个重写应用的重大步骤，就是将 todos 逻辑转化成一个新的 "切片"。
 
-### 理解"分片"
+### 理解"切片"
 
 目前为止，todos 代码被分为两个部分。reducer 逻辑在 `reducers/todos.js`，而 action creators 在 `actions/index.js`。在一个更大型的应用中，我们有可能还会看到 action type 常量，比如 `constants/todos.js`，因此可以在以上两处地方被复用。
 
 我们 _可以_ 使用 RTK [`createReducer`](../api/createReducer.mdx) 和 [`createAction`](../api/createAction.mdx) 函数把它们替换掉。然而，RTK [`createSlice` 函数](../api/createSlice.mdx) 可以让我们把这些逻辑整合到一个地方。它的内部使用了 `createReducer` 和 `createAction`，因此 **在大部分应用中, 你无需亲自调用这两个函数 - `createSlice` 足够了。**
 
-你可能会有疑惑，“究竟什么是‘分片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”根 reducer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '分片' , 同时我们使用 ["分片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该分片状态的 reducer 函数。**
+你可能会有疑惑，“究竟什么是‘切片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”根 reducer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '切片' , 同时我们使用 ["切片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该切片状态的 reducer 函数。**
 
 在这个应用中，这个根 reducer 长这样：
 
@@ -114,9 +114,10 @@ export default combineReducers({
   visibilityFilter
 })
 ```
-因此，合并之后的状态长 `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` 这样。 `state.todos` 是一个 “分片”， 而 `todos` reducer 函数是一个 “分片 reducer”。
 
-### 审视原始 Todos Reducer
+因此，合并之后的状态长 `{todos: [], visibilityFilter: "SHOW_ALL"}`. `state.todos` 这样。 `state.todos` 是一个 “切片”， 而 `todos` reducer 函数是一个 “切片 reducer”。
+
+### 审视原 Todos Reducer
 
 原来的 todos reducer 逻辑是这样的:
 
@@ -148,10 +149,11 @@ export default todos
 
 - 拷贝当前的 `state` 数组以及添加一个新的 todo 条目到数组末尾，从而添加一条新的 todo
 - 利用 `state.map()` 方法，拷贝当前的数组，从而进行 todo 条目的状态切换；数组中，需要更新的 todo 对象会被替换掉，而其余的 todo 条目则不作修改
-- 对所有其他的 actions 一律返回当前的状态（等价于 "我根本不关心这个 action")
+- 对所有其他的 actions 一律返回当前的状态（等效于 "我根本不关心这个 action")
 
 并且，它以一个默认值 `[]` 初始化了状态值，并且自身被默认暴露出来。
-### 撰写分片 Reducer
+
+### 编写切片 Reducer
 
 我们可以利用 `createSlice` 去完成同样的工作，但是会以一种更简单的方式。
 
@@ -159,7 +161,7 @@ export default todos
 
 在这个文件当中，我们会添加如下的逻辑：
 
-> - [添加初始 todos 分片](https://github.com/reduxjs/rtk-convert-todos-example/commit/48ce059dbb0fce1b961631821534fbcb766d3471)
+> - [添加初始 todos 切片](https://github.com/reduxjs/rtk-convert-todos-example/commit/48ce059dbb0fce1b961631821534fbcb766d3471)
 
 ```js
 import { createSlice } from '@reduxjs/toolkit'
@@ -190,28 +192,28 @@ export default todosSlice.reducer
 
 让我们来解构一下它做了哪些事情：
 
-- `createSlice` takes an options object as its argument, with these options:
-  - `name`: a string that is used as the prefix for generated action types
-  - `initialState`: the initial state value for the reducer
-  - `reducers`: an object, where the keys will become action type strings, and the functions are reducers that will be run when that action type is dispatched. (These are sometimes referred to as ["case reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic), because they're similar to a `case` in a `switch` statement)
+- `createSlice` 接收一个选项对象作为参数，其中的选项有：
+  - `name`: 字符串，被用于生成的 action type 的的前缀
+  - `initialState`: reducer 的初始状态值
+  - `reducers`: 对象，其中的键会成为 action type 字符串，而函数是当 action type 被分发时调用的 reducers。(有时候它们也会被称为 ["case reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic)，因为它们类似于 `switch` 语句中的 `case`)
 
-So, the `addTodo` case reducer function will be run when an action with the type `"todos/addTodo"` is dispatched.
+因此，当一个带有 `"todos/addTodo"` 的 action 被分发时， `addTodo` case reducer 函数会被调用。
 
-There's no `default` handler here. The reducer generated by `createSlice` will automatically handle all other action types by returning the current state, so we don't have to list that ourselves.
+这里没有 `default` 处理函数。`createSlice` 生成的 reducer 会通过返回当前的状态，自动处理其他的 action types，所以我们不用自己列出来。
 
-#### "Mutable" Update Logic
+#### "Mutable" 更新逻辑
 
-Notice that the `addTodo` reducer is calling `state.push()`. Normally, this is bad, because [the `array.push()` function mutates the existing array](https://doesitmutate.xyz/#push), and **[Redux reducers must _never_ mutate state!](https://redux.js.org/basics/reducers#handling-actions)**.
+注意到 `addTodo` 正在调用 `state.push()` 。 通常情况下，这是很糟糕的，因为 [`array.push()` 函数改变了现存的数组](https://doesitmutate.xyz/#push)，并且还有 **[Redux reducers _一定不能_ 修改状态!](https://redux.js.org/basics/reducers#handling-actions)**
 
-However, `createSlice` and `createReducer` wrap your function with [`produce` from the Immer library](https://github.com/immerjs/immer). **This means you can write code that "mutates" the state inside the reducer, and Immer will safely return a correct immutably updated result.**
+然而，`createSlice` 和 `createReducer` 把你的函数用 [Immer 里的 `produce`](https://github.com/immerjs/immer) 封装了起来。**这意味着你可以写任何修改 reducer 里面的状态的代码，而 Immer 会安全地返回一个被正确地更新过的结果**
 
-Similarly, `toggleTodo` doesn't map over the array or copy the matching todo object. Instead, it just finds the matching todo object, and then mutates it by assigning `todo.completed = !todo.completed`. Again, Immer knows this object was updated, and makes copies of both the todo object and the containing array.
+同样地，`toggleTodo` 并不会遍历数组或者拷贝匹配的 todo 对象。相反，它仅仅查找对应的 todo 对象，并且通过 `todo.completed = !todo.completed` 的赋值操作进行更改。再次地，Immer 知道这个对象被更改过了，因此会拷贝这个 todo 对象还有对应的数组。
 
-Normal immutable update logic tends to obscure what you're actually trying to do because of all of the extra copying that has to happen. Here, the intent should be much more clear: we're adding an item to the end of an array, and we're modifying a field in a todo entry.
+正是因为这些所有必须要发生的额外拷贝操作，普通的可变更新逻辑趋向于模糊化你正在尝试做的事情。在此，你的目的需要更加明确：我们正在往一个数组的末尾添加一个元素，或是我们正在修改一个 todo 条目的字段。
 
-#### Exporting the Slice Functions
+#### 导出切片函数
 
-`createSlice` returns an object that looks like this:
+`createSlice` 返回的对象长这样:
 
 ```js
 {
@@ -228,47 +230,47 @@ Normal immutable update logic tends to obscure what you're actually trying to do
 }
 ```
 
-**Notice that it auto-generated the appropriate action creator functions _and_ action types for each of our reducers - we don't have to write those by hand!**
+**注意它自动生成了合适的 action creator 函数 **和** 每一个我们的 reducers 的 action types - 我们不必自己手动去写**
 
-We'll need to use the action creators and the reducer in other files, so at a minimum we would need to export the slice object. However, we can use a Redux community code convention called [the "ducks" pattern](https://github.com/erikras/ducks-modular-redux). Simply put, **it suggests that you should put all your action creators and reducers in one file, do named exports of the action creators, and a default export of the reducer function**.
+我们需要在其他文件中使用 action creators 和 reducers，因此至少上我们会需要导出这个切片对象。但是，我们可以利用 Redux 社区的一种叫做 ["鸭子" 模式](https://github.com/erikras/ducks-modular-redux)的约定。简单来说，**它意味着你需要把你所有的 action creators 和 reducers 放到一个文件当中，完成具名地导出 action creators，还有一个 reducer 函数的默认导出**
 
-Thanks to `createSlice`, we already have our action creators and the reducer right here in one file. All we have to do is export them separately, and our todos slice file now matches the common "ducks" pattern.
+多亏了 `createSlice`，我们已经可以让我们的 action creators 和 reducer 同时放在一个文件中。我们需要做的就是把它们分别导出，并且我们的 todos 切片文件与常规的 “鸭子” 模式对应上了。
 
-#### Working with Action Payloads
+#### 使用 Action Payloads
 
-Speaking of the action creators, let's go back and re-examine the reducer logic for a minute.
+说到 action creators, 让我们稍微重温与回顾一下 reducer 的逻辑。
 
-By default, the action creators from the RTK `createAction` function only accept one argument. That argument, whatever it is, is put into the action object as a field called `payload`.
+默认情况下，RTK 的 `createAction` 函数创造出来 action creators 只接受一个实参。不管那个实参是什么，都会被放到 action 对象中，作为一个名为 `payload` 的字段。
 
-There's nothing special about the field `action.payload` by itself. Redux doesn't know or care about that name. But, like "ducks", the name `payload` comes from another Redux community convention called ["Flux Standard Actions"](https://github.com/redux-utilities/flux-standard-action).
+关于 `action.payload` 本身其实没什么特别的。Redux 并不知道也不关心它的命名。但是，比如“鸭子模式”， `payload` 这个名字来自于另外一个 Redux 社区的约定，名为 ["Flux Standard Actions"](https://github.com/redux-utilities/flux-standard-action)。
 
-Actions usually need to include some extra data along with the `type` field. The original Redux code for `addTodo` has an action object that looks like `{type, id, text}`. **The FSA convention suggests that rather than having data fields with random names directly in the action object, you should always put your data inside a field named `payload`**.
+联同 `type` 字段，actions 通常需要包含其他额外的数据。 原 `addTodo` 的 Redux 代码中有一个 action 对象，形如 `{type, id, text}`。 **FSA 约定建议，与其允许 action 对象中直接存在有任意的名称的数据字段， 你应该把数据放到一个名为 `payload` 的字段**
 
-It's up to the reducer to establish what it thinks `payload` should be for each action type, and whatever code dispatches the action needs to pass in values that match that expectation. If only one value is needed, you could potentially use that as the whole `payload` value directly. More commonly, you'd need to pass in multiple values, in which case `payload` should be an object containing those values.
+`payload` 的形状结构，取决于 reducer 对不同 action type 的想法，并且不管派发什么代码，该 action 需要把符合该预期的值传进来。 如果只需要一个值，你或许可以直接使用该值充当 `payload` 的全部。更常见的是，你需要传入多个值，并且在这种情况下， `payload` 应该是一个含有所有那些值的一个对象。
 
-In our todos slice, `addTodo` needs two fields, `id` and `text`, so we put those into an object as `payload`. For `toggleTodo`, the only value we need is the `id` of the todo being changed. We could have made that the `payload`, but I prefer always having `payload` be an object, so I made it `action.payload.id` instead.
+在我们的 todos 切片中，`addTodo` 需要两个字段，`id` 和 `text`，所以我们把这两个值传到一个 `payload` 对象中。而对于 `toggleTodo`，我们唯一需要的值，是需要被修改的一条 todo 的 `id`。 我们原本可以那直接当作 `payload` 而传入，但是我们比较习惯于把 `payload` 始终作为一个对象，所以我干脆将其构造成 `action.payload.id`。
 
-(As a sneak peek: there _is_ a way to customize how action object payloads are created. We'll look at that later in this tutorial, or you can look through [the `createAction` API docs](../api/createAction.mdx) for an explanation.)
+(剧透一下: _确实有_ 一种自定义如何构造 action 对象 payloads 的方法。我们会在本教程后段进行探讨，或者你也可以查阅 [the `createAction` API docs](../api/createAction.mdx) 寻找相关解释。 )
 
-### Updating the Todos Tests
+### 更新 Todos 的测试
 
-The original todos reducer has a tests file with it. We can port those over to work with our todos slice, and verify that they both work the same way.
+原 todos reducer 包含了一个测试文件。我们可以把它搬运到我们的 todos 切片当中来，并且检验一下它们具有相同的输出结果。
 
-The first step is to copy `reducers/todos.spec.js` over to `features/todos/todosSlice.spec.js`, and change the import path to read the reducer from the slice file.
+第一步是先拷贝 `reducers/todos.spec.js` 到 `features/todos/todosSlice.spec.js`, 接着修改引入路径从而能读取到切片文件的 reducer
 
-> - [Copy tests to todos slice](https://github.com/reduxjs/rtk-convert-todos-example/commit/b603312ddf55899e8a75522d407c40474948ae0b)
+> - [拷贝测试到 todos 切片](https://github.com/reduxjs/rtk-convert-todos-example/commit/b603312ddf55899e8a75522d407c40474948ae0b)
 
-Once that is done, we need to update the tests to match how RTK works.
+完成之后，我们需要更新测试文件以匹配 RTK。
 
-The first issue is that the test file hardcodes action types like `'ADD_TODO'`. RTK's action types look like `'todos/addTodo'`. We can reference that by also importing the action creators from the todos slice, and replacing the original type constants in the test with `addTodo.type`.
+第一个问题是，测试文件把例如像 `'ADD_TODO'` 这样的 action types 硬编码了。 RTK 的 action types 形如 `'todos/addTodo'` 。我们也可以通过从 todos 切片导入 action creators，从而引用到它，然后把原来的 type 常量用 `addTodo.type` 替换掉。
 
-The other problem is that the action objects in the tests look like `{type, id, text}`, whereas RTK always puts those extra values inside `action.payload`. So, we need to modify the test actions to match that.
+另外一个问题是，测试案例的 action 对象长得像 `{type, id, text}` ，而 RTK 永远把这些额外的值放到 `action.payload` 。因此，我们需要更改测试 actions 以作匹配。
 
-(We really _could_ just replace all the inline action objects in the test with calls like `addTodo({id : 0, text: "Buy milk"})`, but this is a simpler set of changes to show for now.)
+(我们的确 _可以_ 仅仅把测试用例中的行内 action 对象用 `addTodo({id : 0, text: "Buy milk"})` 替换掉，但是就目前来说上述是一套简单稍微简单一些的更改操作。)
 
-> - [Port the todos tests to work with the todos slice](https://github.com/reduxjs/rtk-convert-todos-example/commit/39dbbf37bd4c559db956c8291bbd0bf1135546bb)
+> - [搬运 todos 测试案例到 todos 切片中](https://github.com/reduxjs/rtk-convert-todos-example/commit/39dbbf37bd4c559db956c8291bbd0bf1135546bb)
 
-An example of the changes would be:
+其中一个更改示例会如下:
 
 ```diff
 // Change the imports to get the action creators
@@ -291,11 +293,11 @@ An example of the changes would be:
     ).toEqual([
 ```
 
-After those changes, all the tests in `todosSlice.spec.js` should pass, proving that our new RTK slice reducer works exactly the same as the original hand-written reducer!
+更改过后，所有 `todosSlice.spec.js` 里面的测试用都会通过，证明我们的 RTK 切片 reducer 跟之前纯手写的 reducer 一模一样。
 
-### Implementing Todo IDs
+### 实现 Todo IDs
 
-In the original code, each newly added todo gets an ID value from an incrementing number:
+在原应用的代码中，每一个新添加的 todo 都有一个自增 number 类型的 ID 值：
 
 ```js
 let nextTodoId = 0
@@ -306,13 +308,13 @@ export const addTodo = text => ({
 })
 ```
 
-Right now, our todos slice doesn't do that, because the `addTodo` action creator is automatically generated for us.
+现在，我们的 todos 切片并不那么做，因为 `addTodo` action creator 是为我们自动生成的。
 
-We _could_ add that behavior for requiring that whatever code dispatches the add todo should have to pass in a new ID, like `addTodo({id: 1, text: "Buy milk"})`, but that would be annoying. Why should the caller have to track that value? Also, what if there are multiple parts of the app that would need to dispatch that action? It would be better to encapsulate that logic in the action creator.
+我们 _可以_ 为此添加这种行为，要求无论什么代码派发添加 todo 这个 action 时都应该传入一个新的 ID，比如像 `addTodo({id: 1, text: "Buy milk"})`，但是这将非常麻烦。为什么调用者需要追踪这个值？另外，如果应用当中还有其他地方需要派发这个 action 呢？更好的办法是把这段逻辑封装到 action creator 中去。
 
-RTK allows you to customize how the `payload` field is created in your action objects. If you are using `createAction` by itself, you can pass a "prepare callback" as the second argument. Here's what this would look like:
+RTK 允许你自定义 `payload` 在 action 对象中的生成方式。如果你单独 `createAction` 使用，你可以传入一个 “prepare 回调函数“ 作为第二个实参。大概长这个样子：
 
-> - [Implement addTodo ID generation](https://github.com/reduxjs/rtk-convert-todos-example/commit/0c9e3b721c209d368d23a70cf8faca8f308ff8df)
+> - [实现 addTodo ID 生成方式](https://github.com/reduxjs/rtk-convert-todos-example/commit/0c9e3b721c209d368d23a70cf8faca8f308ff8df)
 
 ```js
 let nextTodoId = 0
@@ -324,9 +326,9 @@ export const addTodo = createAction('ADD_TODO', text => {
 })
 ```
 
-**Note that the "prepare callback" _must_ return an object with a field called `payload` inside!** Otherwise, the action's payload will be undefined. It _may_ also include a field called `meta`, which can be used to include extra additional metadata related to the action.
+**注意 “prepare 回调函数” _必须_ 返回一个带有一个 `payload` 字段的对象**。否则，action 的 payload 会变成 undefined。它也可以包含一个叫 `meta` 的字段，其可以被用作涵盖其他额外的跟该 action 相关的元数据。
 
-If you're using `createSlice`, it automatically calls `createAction` for you. If you need to customize the payload there, you can do so by passing an object containing `reducer` and `prepare` functions to the `reducers` object, instead of just the reducer function by itself:
+如果你使用 `createSlice`，它会自动调用 `createAction`。如果你需要自定义 payload，你可以传入一个带有 `reducer` 和 `prepare` 函数的对象到 `reducers` 对象中，而不是只是 reducer 函数本身：
 
 ```js
 let nextTodoId = 0
@@ -348,7 +350,7 @@ const todosSlice = createSlice({
 }
 ```
 
-We can add an additional test that confirms this works:
+我们可以添加另外一个确认这种实现可行的测试：
 
 ```js
 describe('addTodo', () => {
@@ -362,15 +364,15 @@ describe('addTodo', () => {
 })
 ```
 
-## Using the New Todos Slice
+## 使用新的 Todos 切片
 
-### Updating the Root Reducer
+### 更新根 Reducer
 
-We have a shiny new todos reducer function, but it isn't hooked up to anything yet.
+我们现在有一个崭新的 todos reducer 函数，但是它目前还没有与任何东西进行绑定。
 
-The first step is to go update our root reducer to use the reducer from the todos slice instead of the original reducer. We just need to change the import statement in `reducers/index.js`:
+第一步是先更新我们的根 reducer，让其使用来自 todos 切片的 reducer 而不是原来的 reducer。我们只需要在 `reducers/index.js` 更改 import 语句：
 
-> - [Use the todos slice reducer](https://github.com/reduxjs/rtk-convert-todos-example/commit/7b6e005377c856d7415e328387188260330ebae4)
+> - [使用 todos 切片 reducer](https://github.com/reduxjs/rtk-convert-todos-example/commit/7b6e005377c856d7415e328387188260330ebae4)
 
 ```diff
 import { combineReducers } from 'redux'
@@ -385,19 +387,20 @@ export default combineReducers({
 })
 ```
 
-While we could have kept the imported function named as `todos` so that we can use the object literal shorthand with `combineReducers`, it's a little more clear if we name the imported function `todosReducer` and define the field as `todos: todosReducer`.
+尽管我们可以保留被引入函数 `todos` 的这个名字，这样我们就可以在 `combineReducers` 中使用对象字面量的简写形式，但是如果我们为 `todosReducer` 命名，且定义这个字段为 `todos: todosReducer`，这样会稍微清晰一些。
 
-### Updating the Add Todo Component
+### 更新 Add Todo 组件
 
-If we reload the app, we should still see that `state.todos` is an empty array. But, if we click on "Add Todo", nothing will happen. We're still dispatching actions whose type is `'ADD_TODO'`, while our todos slice is looking for an action type of `'todos/addTodo'`. We need to import the correct action creator and use it in the `AddTodo.js` file.
+如果我们重新加载应用，我们应该能看到 `state.todos` 还是一个空数组。但是，如果我们点击 "Add Todo"， 不会有任何响应。我们仍旧在派发 type 为 `'ADD_TODO'` 的 actions，然而我们的 todos 切片是在寻找一个 type 为 `'todos/addTodo'` 的 action。我们需要引入正确的 action creator，并且在 `AddTodo.js` 文件中使用它。
 
-While we're at it, there are a couple of other problems with how the `AddTodo` component is written. First, it's currently using a React "callback ref" to read the current text value from the input when you click "Add Todo". This works, but the standard "React way" to handle form fields is with the "controlled inputs" pattern, where the current field value is stored in the component's state.
+趁此机会，我们可以说说几个关于 `AddTodo` 编写方面存在的问题。首先，它目前使用的是 React 中的"callback ref" ，以读取当你点击 "Add Todo"时输入框的当前 text 的值。这是奏效的，但是处理表单字段的标准 “React 做法“ 是利用 ”可控 inputs“ 模式，其中当前表单字段的值是存到组件的状态中的。
 
-Second, the connected component is getting `dispatch` as a prop. Again, this works, but the normal way to use connect is to [pass action creator functions to `connect`](https://react-redux.js.org/using-react-redux/connect-mapdispatch), and then dispatch the actions by calling the functions that were passed in as props.
+第二，被连接的组件正接受 `dispatch` 作为一个属性 prop。正如所料，这依然奏效，但是常规的连接做法是
+[给 `connect` 传入 action creator 函数](https://react-redux.js.org/using-react-redux/connect-mapdispatch)，然后通过调用被作为 props 的函数，从而派发 actions。
 
-Since we've got this component open, we can fix those issues too. Here's what the final version looks like:
+因为我们已经拿到了这个组件所在的文件，我们可以把这些也一并修复。最终的版本长这样：
 
-> - [Update AddTodo to dispatch the new action type](https://github.com/reduxjs/rtk-convert-todos-example/commit/d7082409ebaa113b74f6989bf70ee09600f37d0b)
+> - [更新 AddTodo 以派发新的 action type](https://github.com/reduxjs/rtk-convert-todos-example/commit/d7082409ebaa113b74f6989bf70ee09600f37d0b)
 
 ```js
 import React, { useState } from 'react'
@@ -433,17 +436,17 @@ const AddTodo = ({ addTodo }) => {
 export default connect(null, mapDispatch)(AddTodo)
 ```
 
-We start by importing the correct `addTodo` action creator from our todos slice.
+我们首先从我们的 todos 切片引入正确的 `addTodo` action creator 函数。
 
-The input is now being handled as a standard "controlled input", with the text value being stored in the component's state. We can use that state text value in the form's submit handler.
+输入框现在被视作一个标准的 “可控 input"，text 的值被存储到组件的状态中。我们可以利用在表单的 submit 处理函数中利用这个状态值。
 
-Finally, we use the ["object shorthand" form of `mapDispatch`](https://react-redux.js.org/using-react-redux/connect-mapdispatch#defining-mapdispatchtoprops-as-an-object) to simplify passing the action creators to `connect`. The "bound" version of `addTodo` is passed in to the component as a prop, and it will dispatch the action as soon as we call it.
+最后，我们使用 [`mapDispatch` 的"对象简写"形式](https://react-redux.js.org/using-react-redux/connect-mapdispatch#defining-mapdispatchtoprops-as-an-object) 去简化给 `connect` 传入 action creators 的过程。`addTodo` 的 “有界” 版本被作为一个 prop 传进来，它会在我们调用它的时候，派发对应的 action 。
 
-### Updating the Todo List
+### 更新 Todo 列表
 
-The `TodoList` and `VisibleTodoList` components have similar issues: they're using the older `toggleTodo` action creator, and the `connect` setup isn't using the "object shorthand" form of `mapDispatch`. We can fix both of those.
+`TodoList` 和 `VisibleTodoList` 组件有着相同的问题：它们都是用了更早期版本的 `toggleTodo` action creator，并且 `connect` 并不是通过 `mapDispatch` 的"对象简写"形式设置的。我们可以解决这两个问题。
 
-> - [Update TodoList to dispatch the new toggle action type](https://github.com/reduxjs/rtk-convert-todos-example/commit/b47b2124d6a28386b7461bccb9216682a81edb3e)
+> - [更新 TodoList 以派发新的 toggle action type](https://github.com/reduxjs/rtk-convert-todos-example/commit/b47b2124d6a28386b7461bccb9216682a81edb3e)
 
 ```diff
 // VisibleTodoList.js
@@ -456,17 +459,17 @@ The `TodoList` and `VisibleTodoList` components have similar issues: they're usi
 +const mapDispatchToProps = { toggleTodo }
 ```
 
-And with that, we should now be able to add and toggle todos again, but using our new todos slice!
+设置好之后，我们应该能够再次添加和切换 todos 状态了，但是我们这里用我们新的 todos 切片！
 
-## Creating and Using the Filters Slice
+## 创建和使用 Filters 切片
 
-Now that we've created the todos slice and hooked it up to the UI, we can do the same for the filter selection logic as well.
+既然我们创建了 todos 切片并且把它绑定到我们的 UI，我们可以对过滤选择的逻辑重施故技。
 
-### Writing the Filters Slice
+### 编写 Filters 切片
 
-The filter logic is really simple. We have one action, which sets the current filter value by returning what's in the action. Here's the whole slice:
+过滤的逻辑其实非常简单。我们有一个 action，其通过返回 action 里面的东西来设置当前的过滤值。整个切片如下：
 
-> - [Add the filters slice](https://github.com/reduxjs/rtk-convert-todos-example/commit/b77f4155e3b45bce24d0d0ef6e2f7b0c3bd11ee1)
+> - [添加 filters 切片](https://github.com/reduxjs/rtk-convert-todos-example/commit/b77f4155e3b45bce24d0d0ef6e2f7b0c3bd11ee1)
 
 ```js
 import { createSlice } from '@reduxjs/toolkit'
@@ -492,13 +495,13 @@ export const { setVisibilityFilter } = filtersSlice.actions
 export default filtersSlice.reducer
 ```
 
-We've copied over the `VisibilityFilters` enum object that was originally in `actions/index.js`. The slice code just creates the one reducer, we export the action creator and reducer, and we're done.
+我们把 `VisibilityFilters` 原先在 `actions/index.js` 的枚举对象复制了过来。这个切片代码只是创建一个 reducer, 我们把其中的 action creator 和 reducer 导出之后就完成了。
 
-### Using the Filters Slice
+### 使用 Filters 切片
 
-As with the todos reducer, we need to import and add the visibility reducer to our root reducer:
+就像 todos reducer 一样，我们需要导入和添加 visibility reducer 到我们的根 reducer 中：
 
-> - [Use the filters slice reducer](https://github.com/reduxjs/rtk-convert-todos-example/commit/623c47b1987914a1d90142824892686ec76c20a1)
+> - [使用 filters 切片 reducer](https://github.com/reduxjs/rtk-convert-todos-example/commit/623c47b1987914a1d90142824892686ec76c20a1)
 
 ```diff
 import todosReducer from 'features/todos/todosSlice'
@@ -512,11 +515,11 @@ export default combineReducers({
 })
 ```
 
-From there, we need to dispatch the `setVisibilityFilter` action when the user clicks on the buttons. First, for consistency, we should update `VisibleTodoList.js` and `Footer.js` to use the `VisibilityFilter` enum that's exported from the filter slice file, instead of the one from the actions file.
+从这里开始，当用户点击按钮时，我们需要派发 `setVisibilityFilter` action。首先，为了保持一致，我们需要更新 `VisibleTodoList.js` 和 `Footer.js` 以使用 `VisibilityFilter` 从 filter 切片文件而来的枚举对象，而非从 actions 文件而来的那个。
 
-From there, the link components will take just a bit more work. `FilterLink` is currently creating new functions that capture the current value of `ownProps.filter`, so that `Link` is just getting a function called `onClick`. While that's a valid way to do it, for consistency we'd like to continue using the object shorthand form of `mapDispatch`, and modify `Link` to pass the filter value in when it dispatches the action.
+从这里开始，link 组件需要承担更多的工作。`FilterLink` 正在创建捕获 `ownProps.filter` 当前值的新函数，因此 `Link` 只是获得了一个名为 `onClick` 的函数。尽管这种做法没有问题，为了一致性我们想继续使用 `mapDispatch` 对象简写形式，随后在 `Link` 派发 action 的时候修改传给它的过滤值。
 
-> - [Use the new filters action in the UI](https://github.com/reduxjs/rtk-convert-todos-example/commit/776b39088384513ff68af41039fe5fc5188fe8fb)
+> - [在 UI 中使用新的 filters action](https://github.com/reduxjs/rtk-convert-todos-example/commit/776b39088384513ff68af41039fe5fc5188fe8fb)
 
 ```diff
 // FilterLink.js
@@ -558,25 +561,25 @@ Link.propTypes = {
 export default Link
 ```
 
-Again, note that most of this doesn't have to do with RTK specifically, but it's good to try to consistently use some of the recommended best practices in this example code.
+再一次地，注意到这些大部分这些改动其实并非针 RTK 而做的，但是在示例代码中尽可能地为了保持一致性而采用一些最佳实践，总归是一件好事。
 
-With that done, we should be able to add a couple todos, toggle the state of some of them, and then switch the filters to change the display list.
+工作完成之后，我们应该可以添加一些 todos，修改其中某些的状态，然后切换过滤器来呈现不同形式的展示列表。
 
-## Optimizing Todo Filtering
+## 优化 Todo 过滤工作
 
-The `VisibleTodoList` component currently uses a function called `getVisibleTodos` to do the work of filtering the todos array for display. This is a "selector function", as described in the Redux docs page on [Computing Derived Data](https://redux.js.org/recipes/computing-derived-data). It encapsulates the process of reading values from the Redux store and extracting part or all of those values for use.
+`VisibleTodoList` 组件目前使用着一个名为 `getVisibleTodos` 的函数以完成过滤 todos 数组。这其实是一个 “selector 函数”，如在 Redux 官方文档 [Computing Derived Data](https://redux.js.org/recipes/computing-derived-data) 所介绍。它封装了从 Redux store 读取的过程，并且把部分或者全部的值都提取了出来。
 
-However, the code as currently written has a problem. If the filter is set to `SHOW_COMPLETED` or `SHOW_ACTIVE`, it will _always_ return a new array _every_ time it is called. Since it's being used in a `mapState` function, that means it will return a new array reference when _any_ action is dispatched.
+然而，目前的代码隐含着一个问题。如果过滤值被设置成 `SHOW_COMPLETED` 或者 `SHOW_ACTIVE` ，_每一次_ 它被调用的时候，它会 _永远_ 只返回一个新的数组。因为它被用在了一个 `mapState` 函数中，这意味每当 _任何_ 的 action 被派发的时， 它都会返回一个新的数组引用。
 
-In this tiny todo example app, that isn't a problem. The only actions we have involve altering the todos list or filtering it, anyway. But, in a real app, many other actions will be dispatched. Imagine if this todo app had a counter in it, and `"INCREMENT"` was dispatched while the list is filtered. We would create a new list, and the `TodoList` would have to re-render even though nothing changed.
+在这个小的 todo 示例应用中，这并不是是个问题。反正，我们的 actions 只是牵涉到修改 todo 列表或者过滤它。但是，在真正的应用，许多其他的 actions 会被派发。想想一下如果这个 todo 应用有一个计数器，然后当列表被过滤之后， `"INCREMENT"` 被派发了。我们会创建出一个新的列表，并且 `TodoList` 被迫重新渲染，即使其中没有发生任何事物发生了改变。
 
-While this isn't a real performance issue now, it's worth showing how we can improve the behavior.
+即使这不是一个真正的性能上的问题，关于我们如何改进这个问题，这总是值得展示的一件事。
 
-Redux apps commonly use a library called [Reselect](https://github.com/reduxjs/reselect), which has a `createSelector` function that lets you define "memoized" selector functions. These memoized selectors only recalculate values if the inputs have actually changed.
+Redux 应用经常使用一个叫 [Reselect](https://github.com/reduxjs/reselect) 的库，其中有一个 `createSelector` 函数，可以让你定义 "被记住的 (memoized)" selector 函数。这些 memoized selectors 只会在输入的值变化时，重新计算它们。
 
-RTK re-exports the `createSelector` function from Reselect, so we can import that and use it in `VisibleTodoList`.
+RTK 把 `createSelector` 函数从 Reselect 重新导出，所以我们可以在 `VisibleTodoList` 导入并且使用它。
 
-> - [Convert visible todos to a memoized selector](https://github.com/reduxjs/rtk-convert-todos-example/commit/4fc943b7111381974f20f74750a114b5e52ce1b2)
+> - [把可见的 todos 转化为一个 memoized selector](https://github.com/reduxjs/rtk-convert-todos-example/commit/4fc943b7111381974f20f74750a114b5e52ce1b2)
 
 ```diff
 import { connect } from 'react-redux'
@@ -625,24 +628,24 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = { toggleTodo }
 ```
 
-First, we import `createSelector` from RTK, and define a couple one-line selector functions that grab the `todos` and `visibilityFilter` fields from their `state` argument.
+首先，我们从 RTK 导入 `createSelector`，然后定义一些单行 selector 函数，以从 `todos` 和 `visibilityFilter` 的 `state` 参数中获取这两个字段。
 
-We then call `createSelector`, and pass those two small selector functions in the "input selectors" array. `createSelector` will call those, take the return values, and pass those to the "output selector" we've defined, which can then do the filtering and return the final result.
+我们接着调用 `createSelector` ，并且把这两个小的 selector 函数传入到"input selectors"数组中。 `createSelector` 会调用它们，获取到返回值，然后把返回值放置到我们定义的 "output selector"中，之后就会开始进行过滤和返回最终的结果。
 
-There's a couple small changes in how this is defined and used. While you can give selector functions any name you want, `selectX` is a more common naming convention than `getX`. Also, because the input selectors take care of reading the necessary values, we can just call `selectVisibleTodos(state)`, with `state` as the only argument.
+上述代码的定义和使用，我们做了一些小改变。尽管你可以 selector 函数任意地命名，`selectX` 是一种更传统的命名规则。另外，因为 input selectors 负责读取必须要的值，我们可只调用 `selectVisibleTodos(state)`，其中 state 作为唯一的参数。
 
-If we re-run the app, the filtering logic _should_ work exactly the same as before from what you can see in the UI.
+当我们重新运行应用的时候，过滤逻辑的效果 _应该_ 和之前你在 UI 里面看到的相同。
 
-## Cleanup
+## 清理工作
 
-That's the end of the actual conversion work. We now have a bunch of action and reducer files that are no longer being used, so we should delete those to clean up the project.
+我们来到的本教程的卫生。我们现在能看得到许多已经不再需要的 action 和 reducer 文件，所以我们应该把它们都删除了以清理我们的项目。
 
-We can safely remove `actions/index.js`, `reducers/todos.js`, `reducers/visibilityFilter.js`, and the associated test files.
+我们可以很安全地删除 `actions/index.js`, `reducers/todos.js`, `reducers/visibilityFilter.js` 以及相关的测试文件。
 
-We can also try completely switching from the "folder-by-type" structure to a "feature folder" structure, by moving all of the component files into the matching feature folders.
+我们同时也可以尝试把 "folder-by-type" 结构彻底地换成 "feature folder" 结果，做法是把组件文件移入 feature 文件夹中。
 
-> - [Remove unused action and reducer files](https://github.com/reduxjs/rtk-convert-todos-example/commit/fbc0b965949e082748b8613b734612226ffe9e94)
-> - [Consolidate components into feature folders](https://github.com/reduxjs/rtk-convert-todos-example/commit/138cc162b1cc9c64ab67fae0a1171d07940414e6)
+> - [删除无用的 action 和 reducer 文件](https://github.com/reduxjs/rtk-convert-todos-example/commit/fbc0b965949e082748b8613b734612226ffe9e94)
+> - [整合组件到 feature 文件夹中](https://github.com/reduxjs/rtk-convert-todos-example/commit/138cc162b1cc9c64ab67fae0a1171d07940414e6)
 
 If we do that, the final source code structure looks like this:
 

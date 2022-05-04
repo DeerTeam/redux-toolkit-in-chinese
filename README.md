@@ -52,7 +52,7 @@ Redux工具包 包含了如下API:
 - `configureStore()`: 包装 `createStore` 以提供简化的配置选项和良好的默认预设。它可以自动组合你的切片 reducers，添加您提供的任何 Redux 中间件，默认情况下包含 `redux-thunk` ，并允许使用 Redux DevTools 扩展。
 - `createReducer()`: 为 case reducer 函数提供 action 类型的查找表，而不是编写switch语句。此外，它会自动使用[`immer` 库](https://github.com/mweststrate/immer)来让您使用普通的可变代码编写更简单的 immutable 更新，例如 `state.todos [3] .completed = true `。
 - `createAction()`: 为给定的 action type string 生成一个 action creator 函数。函数本身定义了 `toString()`，因此它可以用来代替 type 常量。
-- `createSlice()`: 接受一个 reducer 函数的对象、分片名称和初始状态值，并且自动生成具有相应 action creators 和 action 类型的分片reducer。
+- `createSlice()`: 接受一个 reducer 函数的对象、切片名称和初始状态值，并且自动生成具有相应 action creators 和 action 类型的切片reducer。
 - `createAsyncThunk`: 接受一个 action type string 和一个返回 promise 的函数，并生成一个发起基于该 promise 的`pending/fulfilled/rejected` action 类型的 thunk。
 - `createEntityAdapter`: 生成一组可重用的 reducers 和 selectors，以管理存储中的规范化数据
 - `createSelector` 组件 来自 [Reselect](https://github.com/reduxjs/reselect) 库，为了易用再导出。
