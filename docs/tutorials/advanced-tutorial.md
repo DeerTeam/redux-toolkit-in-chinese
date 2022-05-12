@@ -5,11 +5,11 @@ sidebar_label: 高级教程
 hide_title: true
 ---
 
-# 高级教程: Redux 工具包实践
+# 高级教程: Redux工具包 实践
 
-在[中级教程](./intermediate-tutorial.md)中，你看到了如何在一个典型的基本 React 应用中使用 Redux 工具包，同时还有如何把已有的纯 Redux 代码进行转换，以便使用 RTK。 另外，你还看到了如何在 reducer 函数中编写“可变的”immutable 更新代码，以及如何编写一个为了生成 action payload 的 “prepare 回调函数“。
+在[中级教程](./intermediate-tutorial.md)中，你看到了如何在一个典型的基本 React 应用中使用 Redux工具包，同时还有如何把已有的纯 Redux 代码进行转换，以便使用 RTK。 另外，你还看到了如何在 reducer 函数中编写“可变的”immutable 更新代码，以及如何编写一个为了生成 action payload 的 “prepare 回调函数“。
 
-在本教程中，你将会看到如何在一个比 todo 列表更大的“实际”应用中使用 Redux 工具包。本教程会展示几个概念：
+在本教程中，你将会看到如何在一个比 todo 列表更大的“实际”应用中使用 Redux工具包。本教程会展示几个概念：
 
 - 如何将一个”纯 React“应用转化以使用 Redux
 - 异步逻辑，例如获取数据，是如何融入到 RTK 中的

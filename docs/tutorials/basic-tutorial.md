@@ -5,11 +5,11 @@ sidebar_label: 基础教程
 hide_title: true
 ---
 
-# 基础教程: 介绍 Redux 工具包
+# 基础教程: 介绍 Redux工具包
 
-欢迎使用 Redux 工具包 ！这个教程将为你展示 Redux 工具包（也可以简称 RTK） 所包含的基础功能。
+欢迎使用 Redux工具包 ！这个教程将为你展示 Redux工具包（也可以简称 RTK） 所包含的基础功能。
 
-本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux 工具包 与传统的 Redux 代码在用法上的不同点。
+本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux工具包 与传统的 Redux 代码在用法上的不同点。
 
 ## 介绍：编写一个计数应用
 
@@ -86,9 +86,9 @@ document.getElementById('increment').addEventListener('click', () => {
 
 ### 介绍：`configureStore`
 
-Redux 工具包包含了一些能够简化你的 Redux 代码的函数。我们看到的第一个函数是 [`configureStore`](../api/configureStore.mdx) 。
+Redux工具包 包含了一些能够简化你的 Redux 代码的函数。我们看到的第一个函数是 [`configureStore`](../api/configureStore.mdx) 。
 
-通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的 root reducer 函数。Redux 工具包有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
+通常情况下，你可以调用 `createStore()` 来创建一个 Redux store ，并传入你的 root reducer 函数。Redux工具包 有一个 `configureStore()` 函数，其中覆盖了 `createStore()` 来做同样的事情，同时也设置了一些有用的开发工具给你作为 store 创建过程的一部分。
 
 我们可以很容易的用 `configureStore` 替换现有的 `createStore` 调用。`configureStore` 接受一个具有指定字段的对象，而不是多个函数参数，因此我们需要将 reducer 函数作为一个名为 `reducer` 的字段传递：
 
@@ -172,7 +172,7 @@ document.getElementById('increment').addEventListener('click', () => {
 
 现在让我们来看看 reducer 函数。尽管你可以在一个 Redux reducer 中使用像 `if` 条件语句和循环这样的任何条件逻辑，最常见的实现是检查 `action.type` 字段然后为每个 action type 做特定的逻辑。一个 reducer 也将提供一个初始化的状态值，如果 action 不是它所关心的则返回现有的状态。
 
-Redux 工具包 包含了一个 [`createReducer` 函数](../api/createReducer.mdx) ，它让使用"查找表"对象的方式编写 reducer，其中对象的每一个 key 都是一个 Redux action type 字符串，value 是 reducer 函数。我们可以直接使用它来替代现有的 `counter` 函数定义。由于我们需要使用 action type 字符串作为 key，所以我们可以使用 [ES6 object "computed property" syntax](http://javascript.info/object#computed-properties) 从 type 字符串变量来创建 key。
+Redux工具包 包含了一个 [`createReducer` 函数](../api/createReducer.mdx) ，它让使用"查找表"对象的方式编写 reducer，其中对象的每一个 key 都是一个 Redux action type 字符串，value 是 reducer 函数。我们可以直接使用它来替代现有的 `counter` 函数定义。由于我们需要使用 action type 字符串作为 key，所以我们可以使用 [ES6 object "computed property" syntax](http://javascript.info/object#computed-properties) 从 type 字符串变量来创建 key。
 
 ```js
 const increment = createAction('INCREMENT')
@@ -260,7 +260,7 @@ const { increment, decrement } = actions
 - `createReducer`: 为 reducer 函数接受一个初始状态值和 action type 的查找表，并创建一个 reducer 来处理所有这些 action type
 - `createSlice`: 接受一个初始状态和一个包含 reducer 名称和函数的查找表，并自动生成 action creator 函数、action type 字符串和一个 reducer 函数
 
-注意，这些都没有改变 Redux 的工作方式。我们仍然在创建一个 Redux store，发起了"发生了什么"的 action 对象，并使用一个 reducer 函数返回更新后的状态。另外，请注意，无论使用什么方法来构建 UI，都可以使用 Redux 工具箱 里的函数，因为它们只处理代码的 "纯 Redux store" 部分。我们的例子使用了 "纯 JS"UI（无框架） 的 store，但是我们可以将这个 store 与 React、Angular、Vue 或任何其他 UI 层一起使用。
+注意，这些都没有改变 Redux 的工作方式。我们仍然在创建一个 Redux store，发起了"发生了什么"的 action 对象，并使用一个 reducer 函数返回更新后的状态。另外，请注意，无论使用什么方法来构建 UI，都可以使用 Redux工具包 里的函数，因为它们只处理代码的 "纯 Redux store" 部分。我们的例子使用了 "纯 JS" UI（无框架） 的 store，但是我们可以将这个 store 与 React、Angular、Vue 或任何其他 UI 层一起使用。
 
 最后，如果你仔细看这个例子，你会看到有一个地方，我们写了一些异步逻辑 - "增量异步" 按钮:
 
@@ -272,7 +272,7 @@ document.getElementById('incrementAsync').addEventListener('click', function() {
 })
 ```
 
-您可以看到，我们将异步处理与 reducer 逻辑分离，并且在需要更新 store 时发起一个 action。Redux 工具包 并不会改变这一点。
+您可以看到，我们将异步处理与 reducer 逻辑分离，并且在需要更新 store 时发起一个 action。Redux工具包 并不会改变这一点。
 
 下面是我们在 sandbox 中的完整示例:
 

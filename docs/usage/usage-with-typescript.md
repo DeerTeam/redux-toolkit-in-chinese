@@ -5,15 +5,15 @@ sidebar_label: 配合TypeScript使用
 hide_title: true
 ---
 
-# 与 TypeScript 共同使用
+# 配合 TypeScript 使用
 
-Redux 工具包是使用 TypeScript 编写的，它的 API 被设计得能很好地与 TypeScript 应用进行整合。
+Redux工具包 是使用 TypeScript 编写的，它的 API 被设计得能很好地与 TypeScript 应用进行整合。
 
-这一章节的目的是提供一个关于所有常见用例的概览，以及大部分你在使用 RTK 和 TypeScript 时，有可能会遇到的陷阱。
+这一章节的目的是提供一个你在使用 RTK 和 TypeScript 的过程中，关于所有常见用例以及最有可能会遇到的隐患的概览。
 
 **如果你碰到了任何在本章节中没有提到过的关于类型方面的问题，请给我们提出 issue 以便进行讨论**
 
-## 搭配 TypeScript 使用 `configureStore`
+## 配合 TypeScript 使用 `configureStore`
 
 使用 [configureStore](../api/configureStore.mdx) 应该不再需要额外的类型定义。但是，你可能需要把 `RootState` 和 `Dispatch` 的类型提取出来。
 
@@ -29,7 +29,7 @@ const rootReducer = combineReducers({})
 export type RootState = ReturnType<typeof rootReducer>
 ```
 
-另外一种方式是，如果你不打算自己创建 `rootReducer` ，而是把切片 reducers 直接传入 `configureStore()`，你需要稍微修改一下类型，从而能准确地推断出 root reducer 的类型。
+另外一种方式是，如果你不打算自己创建 `rootReducer` ，而是把切片 reducers 直接传入 `configureStore()`，你需要稍微修改一下类型，从而能正确地推断出 root reducer 的类型。
 
 ```ts
 import { configureStore } from '@reduxjs/toolkit'
@@ -64,11 +64,11 @@ export const useAppDispatch = () => useDispatch<AppDispatch>() // 导出一个�
 
 ### 正确的 `Dispatch` 类型定义
 
-`dispatch` 函数的类型会被 `middleware` 选项直接推断出来。因此如果添加了 _被准确地定义了类型_ 的中间件，`dispatch` 也应该被定义好了类型。
+`dispatch` 函数的类型会被 `middleware` 选项直接推断出来。因此如果添加了 _被正确地定义了类型_ 的中间件，`dispatch` 也应该被定义好了类型。
 
 由于 TypeScript 经常在使用扩展运算符合并数组的时候，把数组的类型进行扩展，我们建议使用 `getDefaultMiddleware()` 的返回值 `MiddlewareArray` 中的 `.concat(...)` 和 `.prepend(...)` 方法。
 
-此外，我们也建议为 `middleware` 选项里使用回调的形式，以获取一个提前正确定义好的、无需你再去手动指定任何泛型的 `getDefaultMiddleware`。
+此外，我们也建议为 `middleware` 选项里使用回调的形式，以获取一个提前正确定义好的、无需再指定任何泛型参数的 `getDefaultMiddleware`。
 
 ```ts {10-20}
 import { configureStore } from '@reduxjs/toolkit'
@@ -103,7 +103,7 @@ type AppDispatch = typeof store.dispatch
 
 如果你想完全跳过使用 `getDefaultMiddleware`， 你依然可以为了你的 `middleware` 数组具有类型安全的拼接，而使用 `MiddlewareArray` 。这个类继承了 JavasScript 内置的 `Array` 构造函数类型，唯一的变化是仅仅只是修改了 `concat(...)` 和那个额外的`.prepend(...)` 方法的类型。
 
-通常来说，这些操作都不是必须的，因为你不一定会遇到数组类型扩展的问题，只要你使用了 `as const` 断言还有不使用扩展运算符。
+通常来说，这些操作都不是必须的，因为你不一定会遇到数组类型扩展的问题，只要你使用了 `as const` 断言并且不使用扩展运算符。
 
 所以如下的两个函数调用是完全一样的：
 
@@ -123,7 +123,7 @@ configureStore({
 
 ### 在 React-Redux 使用被提取的 `Dispatch` 类型
 
-默认情况下，React-Redux `useDispatch` hook 并不含有任何考虑中间件的类型。如果你需要`dispatch` 函数在派发 action 时更具体的类型，你可以指定 `dispatch` 函数的返回值类型，或者创建自定义类型的 `useSelector`。具体详情请参考 [the React-Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook)
+默认情况下，React-Redux 的 `useDispatch` hook 并不包含任何考虑到中间件的类型。如果你需要为 `dispatch` 函数在派发 action 时指定更具体的类型，你可以指定 `dispatch` 函数的返回值类型，或者创建一个自定义类型版本的 `useSelector`。具体详情请参考 [the React-Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook)
 
 ## `createAction`
 
@@ -135,13 +135,13 @@ createAction<number>('test')
 
 这样被创建出来的 action 会具有 `PayloadActionCreator<number, string>` 这个类型。
 
-在某些设置中，你却需要一个 `action.type` 字面量类型。遗憾的是，TypeScript 类型定义并不允许手动定义和推断出来的类型参数混合在一起使用，因此你必须同时在泛型和实际的JavaScript代码中指定 `type`：
+然而在某些设置中，你却会需要一个 `action.type` 字面量类型。遗憾的是，TypeScript 类型定义并不允许手动定义和经过类型推断的参数混合使用，因此你必须同时在泛型和实际的 JavaScript 代码中指定 `type`：
 
 ```typescript
 createAction<number, 'test'>('test')
 ```
 
-If you are looking for an alternate way of writing this without the duplication, you can use a prepare callback so that both type parameters can be inferred from arguments, removing the need to specify the action type.
+如果你正在寻找另外一种能避免重复的编写方式，你可以使用 prepare 回调函数，这样两种类型参数都可以从实参中被推断出来，而无需指定具体的 action type 了。
 
 ```typescript
 function withPayloadType<T>() {
@@ -150,27 +150,27 @@ function withPayloadType<T>() {
 createAction('test', withPayloadType<string>())
 ```
 
-### Alternative to using a literally-typed `action.type`
+### 字面量 `action.type` 的替代方案
 
-If you are using `action.type` as a discriminator on a discriminated union, for example to correctly type your payload in `case` statements, you might be interested in this alternative:
+如果你在可辨识联合类型中，把 `action.type` 作为可辨识符来使用，比如在 `case` 语句中去正确地定义你的 payload，你可能会对这种方案感兴趣：
 
-Created action creators have a `match` method that acts as a [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates):
+被创建的 action creators 有一个被用作 [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 的 `match` 方法：
 
 ```typescript
 const increment = createAction<number>('increment')
 function test(action: Action) {
   if (increment.match(action)) {
-    // action.payload inferred correctly here
+    // action.payload 被正确地推断
     action.payload
   }
 }
 ```
 
-This `match` method is also very useful in combination with `redux-observable` and RxJS's `filter` method.
+`match` 方法在与 `redux-observable` 和 RxJS 的 `filter` 方法结合使用时，也非常有用。
 
 ## `createReducer`
 
-The default way of calling `createReducer` would be with a "lookup table" / "map object", like this:
+默认 `createReducer` 调用方法是与 “查找表“/”映射对象“ 配合使用的，如下所示：
 
 ```typescript
 createReducer(0, {
@@ -178,7 +178,7 @@ createReducer(0, {
 })
 ```
 
-Unfortunately, as the keys are only strings, using that API TypeScript can neither infer nor validate the action types for you:
+遗憾的是，由于对象的键名是唯一的字符串，使用这个 API 的话 TypeScript 及不能为你作出类型推断，也不能验证 action types 的合法性：
 
 ```typescript
 {
@@ -186,20 +186,20 @@ Unfortunately, as the keys are only strings, using that API TypeScript can neith
   const decrement = createAction<number, 'decrement'>('decrement')
   createReducer(0, {
     [increment.type]: (state, action) => {
-      // action is any here
+      // action 是 any 类型
     },
     [decrement.type]: (state, action: PayloadAction<string>) => {
-      // even though action should actually be PayloadAction<number>, TypeScript can't detect that and won't give a warning here.
+      // 即使 action 应该被定义为 PayloadAction<number> 类型， TypeScript 无法检测到，也无法给出警告。
     }
   })
 }
 ```
 
-As an alternative, RTK includes a type-safe reducer builder API.
+RTK 包含了一个类型安全的 reducer builder API 作为一个替代方案。
 
-### Building Type-Safe Reducer Argument Objects
+### 构建类型安全的 Reducer 实参对象
 
-Instead of using a simple object as an argument to `createReducer`, you can also use a callback that receives a `ActionReducerMapBuilder` instance:
+你可以使用一个接收 `ActionReducerMapBuilder` 参数的回调函数，去替代作为 `createReducer` 实参的简单对象：
 
 ```typescript {3-10}
 const increment = createAction<number, 'increment'>('increment')
@@ -207,20 +207,19 @@ const decrement = createAction<number, 'decrement'>('decrement')
 createReducer(0, builder =>
   builder
     .addCase(increment, (state, action) => {
-      // action is inferred correctly here
+      // action 被错误地推断
     })
     .addCase(decrement, (state, action: PayloadAction<string>) => {
-      // this would error out
+      // 这样产生错误
     })
 )
 ```
 
-We recommend using this API if stricter type safety is necessary when defining reducer argument objects.
+在定义 reducer 的实参对象时，如果更严格的类型安全是必要的话，我们推荐使用这个 API。
 
-#### Typing `builder.addMatcher`
+#### 定义 `builder.addMatcher` 的类型 
 
-As the first `matcher` argument to `builder.addMatcher`, a [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) function should be used.
-As a result, the `action` argument for the second `reducer` argument can be inferred by TypeScript:
+应该使用一个 [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 函数，作为 `builder.addMatcher` 的第一个 `matcher` 参数。这样，`reducer` 第二个参数 `action` 的类型就可以被 TypeScript 推断出来：
 
 ```ts
 function isNumberValueAction(action: AnyAction): action is PayloadAction<{ value: number }> {
@@ -236,8 +235,7 @@ createReducer({ value: 0 }, builder =>
 
 ## `createSlice`
 
-As `createSlice` creates your actions as well as your reducer for you, you don't have to worry about type safety here.
-Action types can just be provided inline:
+由于 `createSlice` 为你同时创建了 actions 和 reducer，你无需担心类型安全。Action types 仅需要通过内联的方式提供：
 
 ```typescript
 {
@@ -249,14 +247,14 @@ Action types can just be provided inline:
         state + action.payload
     }
   })
-  // now available:
+  // 现在可以使用了:
   slice.actions.increment(2)
-  // also available:
+  // 也可以在此使用:
   slice.caseReducers.increment(0, { type: 'increment', payload: 5 })
 }
 ```
 
-If you have too many reducers and defining them inline would be messy, you can also define them outside the `createSlice` call and type them as `CaseReducer`:
+如果你有太多的 reducers 而且内联式的定义会显得太凌乱，你也可以在 `createSlice` 的调用之外定义它们，并且把它们作为 `CaseReducer` 来进行定义：
 
 ```typescript
 type State = number
@@ -272,25 +270,25 @@ createSlice({
 })
 ```
 
-### Defining the Initial State Type
+### 定义初始 State 类型 
 
-You might have noticed that it is not a good idea to pass your `SliceState` type as a generic to `createSlice`. This is due to the fact that in almost all cases, follow-up generic parameters to `createSlice` need to be inferred, and TypeScript cannot mix explicit declaration and inference of generic types within the same "generic block".
+你可能注意到了，把 `SliceState` 作为一个泛型传入 `createSlice` 并不是一个好主意。这是因为在大部分情况下，`createSlice` 的后续泛型参数需要被推断出来，而 TypeScript 无法在同一个 “泛型块” 中，混合泛型类型的显式声明和推断。
 
-The standard approach is to declare an interface or type for your state, create an initial state value that uses that type, and pass the initial state value to `createSlice`. You can also use the construct `initialState: myInitialState as SliceState`.
+标准的做法是，为你的 state 定义一个接口或者类型，创建一个使用该类型的初始值，并把这个初始值传到 `createSlice`。你也可以使用 `initialState: myInitialState as SliceState` 这种语法。
 
 ```ts {1,4,8,15}
 type SliceState = { state: 'loading' } | { state: 'finished'; data: string }
 
-// First approach: define the initial state using that type
+// 第一种方法: 使用此类型定义 state 初始值
 const initialState: SliceState = { state: 'loading' }
 
 createSlice({
   name: 'test1',
-  initialState, // type SliceState is inferred for the state of the slice
+  initialState, // 该切片的 state 类型被推断成 SliceState 类型
   reducers: {}
 })
 
-// Or, cast the initial state as necessary
+// 或者, 对 state 的初始值类型进行必要断言
 createSlice({
   name: 'test2',
   initialState: { state: 'loading' } as SliceState,
@@ -298,13 +296,13 @@ createSlice({
 })
 ```
 
-which will result in a `Slice<SliceState, ...>`.
+这样会得到一个 `Slice<SliceState, ...>` 类型。
 
-### Defining Action Contents with `prepare` Callbacks
+### 配合 `prepare` 回调函数定义 Action 内容
 
-If you want to add a `meta` or `error` property to your action, or customize the `payload` of your action, you have to use the `prepare` notation.
+如果你想为你的 action 添加一个 `meta` 或者 `error` 属性，或者自定义 action 的 `payload`，你必须使用 `prepare` 表示法。
 
-Using this notation with TypeScript looks like this:
+在TypeScript 里，这种表示长这样:
 
 ```ts {5-16}
 const blogSlice = createSlice({
@@ -327,11 +325,11 @@ const blogSlice = createSlice({
 })
 ```
 
-### Generated Action Types for Slices
+### 被创建出来的切片 Action Types
 
-As TS cannot combine two string literals (`slice.name` and the key of `actionMap`) into a new literal, all actionCreators created by `createSlice` are of type 'string'. This is usually not a problem, as these types are only rarely used as literals.
+由于 TS 无法把两种字符串字面量 (`slice.name` 和 `actionMap` 的键) 合并成一个新的字面量。所有由 `createSlice` 创建的 action creators 都是 'string'。这通常来说都不是一个问题，因为这些类型很少被当作字面量来使用。
 
-In most cases that `type` would be required as a literal, the `slice.action.myAction.match` [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) should be a viable alternative:
+在大部分 `type` 会被要求作为字面量使用的场景中，`slice.action.myAction.match` [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 应该是一个可行的替代方案：
 
 ```ts {10}
 const slice = createSlice({
@@ -344,14 +342,14 @@ const slice = createSlice({
 
 function myCustomMiddleware(action: Action) {
   if (slice.actions.increment.match(action)) {
-    // `action` is narrowed down to the type `PayloadAction<number>` here.
+    // `action` 被收缩成 `PayloadAction<number>` 类型.
   }
 }
 ```
 
-If you actually _need_ that type, unfortunately there is no other way than manual casting.
+如果你真的 _需要_ 这个类型，很遗憾除了手动转换之外别无他法。
 
-### Type safety with `extraReducers`
+### `extraReducers` 的类型安全
 
 Reducer lookup tables that map an action `type` string to a reducer function are not easy to fully type correctly. This affects both `createReducer` and the `extraReducers` argument for `createSlice`. So, like with `createReducer`, [you may also use the "builder callback" approach](#building-type-safe-reducer-argument-objects) for defining the reducer object argument.
 

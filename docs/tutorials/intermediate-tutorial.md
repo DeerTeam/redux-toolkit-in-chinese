@@ -5,9 +5,9 @@ sidebar_label: 中级教程
 hide_title: true
 ---
 
-# 中级教程: 把 Redux 工具包 实践起来
+# 中级教程: 把 Redux工具包 实践起来
 
-在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux 工具包中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
+在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux工具包 中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
 
 在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换，以便使用 RTK。
 
@@ -38,7 +38,7 @@ hide_title: true
 
 ## 初始转换步骤
 
-### 在项目中添加 Redux 工具包
+### 在项目中添加 Redux工具包
 
 由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
 
