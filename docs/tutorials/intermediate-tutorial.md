@@ -101,7 +101,7 @@ import rootReducer from "./reducers";
 
 我们 _可以_ 使用 RTK [`createReducer`](../api/createReducer.mdx) 和 [`createAction`](../api/createAction.mdx) 函数把它们替换掉。然而，RTK [`createSlice` 函数](../api/createSlice.mdx) 可以让我们把这些逻辑整合到一个地方。它的内部使用了 `createReducer` 和 `createAction`，因此 **在大部分应用中, 你无需亲自调用这两个函数 - `createSlice` 足够了。**
 
-你可能会有疑惑，“究竟什么是‘切片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”根 reducer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '切片' , 同时我们使用 ["切片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该切片状态的 reducer 函数。**
+你可能会有疑惑，“究竟什么是‘切片’呢？“。一个普通的 Redux 应用里，有一个在状态树顶级的 JS 对象，并且该对象是调用了 Redux [`combineReducers` 函数](https://redux.js.org/api/combinereducers) （其目的是聚合多个 reducer 函数到一个更大的 ”root educer“）的结果。**我们把这个对象的任意一个键/值区域称为一个 '切片' , 同时我们使用 ["切片 reducer"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 这个术语，去形容负责更新该切片状态的 reducer 函数。**
 
 在这个应用中，这个 root reducer 长这样：
 
@@ -312,7 +312,7 @@ export const addTodo = text => ({
 
 我们 _可以_ 为此添加这种行为，要求无论什么代码派发添加 todo 这个 action 时都应该传入一个新的 ID，比如像 `addTodo({id: 1, text: "Buy milk"})`，但是这将非常麻烦。为什么调用者需要追踪这个值？另外，如果应用当中还有其他地方需要派发这个 action 呢？更好的办法是把这段逻辑封装到 action creator 中去。
 
-RTK 允许你自定义 `payload` 在 action 对象中的生成方式。如果你单独 `createAction` 使用，你可以传入一个 “prepare 回调函数“ 作为第二个实参。大概长这个样子：
+RTK 允许你自定义 `payload` 在 action 对象中的生成方式。如果你单独 `createAction` 使用，你可以传入一个 “prepare回调函数“ 作为第二个实参。大概长这个样子：
 
 > - [实现 addTodo ID 生成方式](https://github.com/reduxjs/rtk-convert-todos-example/commit/0c9e3b721c209d368d23a70cf8faca8f308ff8df)
 
@@ -393,7 +393,7 @@ export default combineReducers({
 
 如果我们重新加载应用，我们应该能看到 `state.todos` 还是一个空数组。但是，如果我们点击 "Add Todo"， 不会有任何响应。我们仍旧在派发 type 为 `'ADD_TODO'` 的 actions，然而我们的 todos 切片是在寻找一个 type 为 `'todos/addTodo'` 的 action。我们需要引入正确的 action creator，并且在 `AddTodo.js` 文件中使用它。
 
-趁此机会，我们可以说说几个关于 `AddTodo` 编写方面存在的问题。首先，它目前使用的是 React 中的"callback ref" ，以读取当你点击 "Add Todo"时输入框的当前 text 的值。这是奏效的，但是处理表单字段的标准 “React 做法“ 是利用 ”可控 inputs“ 模式，其中当前表单字段的值是存到组件的状态中的。
+趁此机会，我们可以说说几个关于 `AddTodo` 编写方面存在的问题。首先，它目前使用的是 React 中的 "callback ref" ，以读取当你点击 "Add Todo"时输入框的当前 text 的值。这是奏效的，但是处理表单字段的标准 “React 做法“ 是利用 ”可控输入“ 模式，其中当前表单字段的值是存到组件的状态中的。
 
 第二，被连接的组件正接受 `dispatch` 作为一个属性 prop。正如所料，这依然奏效，但是常规的连接做法是
 [给 `connect` 传入 action creator 函数](https://react-redux.js.org/using-react-redux/connect-mapdispatch)，然后通过调用被作为 props 的函数，从而派发 actions。

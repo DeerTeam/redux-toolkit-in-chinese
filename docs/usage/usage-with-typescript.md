@@ -141,7 +141,7 @@ createAction<number>('test')
 createAction<number, 'test'>('test')
 ```
 
-如果你正在寻找另外一种能避免重复的编写方式，你可以使用 prepare 回调函数，这样两种类型参数都可以从实参中被推断出来，而无需指定具体的 action type 了。
+如果你正在寻找另外一种能避免重复的编写方式，你可以使用 prepare回调函数，这样两种类型参数都可以被推断出来，而无需指定具体的 action type 了。
 
 ```typescript
 function withPayloadType<T>() {
@@ -178,7 +178,7 @@ createReducer(0, {
 })
 ```
 
-遗憾的是，由于对象的键名是唯一的字符串，使用这个 API 的话 TypeScript 及不能为你作出类型推断，也不能验证 action types 的合法性：
+遗憾的是，由于对象的键名是唯一的字符串，使用这个 API 的话 TypeScript 并不能为你作出类型推断，也不能验证 action types 的合法性：
 
 ```typescript
 {
@@ -199,7 +199,7 @@ RTK 包含了一个类型安全的 reducer builder API 作为一个替代方案�
 
 ### 构建类型安全的 Reducer 实参对象
 
-你可以使用一个接收 `ActionReducerMapBuilder` 参数的回调函数，去替代作为 `createReducer` 实参的简单对象：
+你可以使用一个接收 `ActionReducerMapBuilder` 参数的回调函数，去替代那个 `createReducer` 简单对象实参：
 
 ```typescript {3-10}
 const increment = createAction<number, 'increment'>('increment')
@@ -207,7 +207,7 @@ const decrement = createAction<number, 'decrement'>('decrement')
 createReducer(0, builder =>
   builder
     .addCase(increment, (state, action) => {
-      // action 被错误地推断
+      // action 被正确地推断
     })
     .addCase(decrement, (state, action: PayloadAction<string>) => {
       // 这样产生错误
@@ -219,7 +219,7 @@ createReducer(0, builder =>
 
 #### 定义 `builder.addMatcher` 的类型 
 
-应该使用一个 [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 函数，作为 `builder.addMatcher` 的第一个 `matcher` 参数。这样，`reducer` 第二个参数 `action` 的类型就可以被 TypeScript 推断出来：
+应该使用一个 [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 函数，作为 `builder.addMatcher` 的第一个 `matcher` 参数。这样，`reducer` 的第二个参数 `action` 的类型就可以被 TypeScript 推断出来：
 
 ```ts
 function isNumberValueAction(action: AnyAction): action is PayloadAction<{ value: number }> {
@@ -254,7 +254,7 @@ createReducer({ value: 0 }, builder =>
 }
 ```
 
-如果你有太多的 reducers 而且内联式的定义会显得太凌乱，你也可以在 `createSlice` 的调用之外定义它们，并且把它们作为 `CaseReducer` 来进行定义：
+如果你有太多的 reducers 而且内联式的定义会显得太凌乱的话，你也可以在 `createSlice` 的调用之外定义它们，并且把它们作为 `CaseReducer` 来进行定义：
 
 ```typescript
 type State = number
@@ -272,7 +272,7 @@ createSlice({
 
 ### 定义初始 State 类型 
 
-你可能注意到了，把 `SliceState` 作为一个泛型传入 `createSlice` 并不是一个好主意。这是因为在大部分情况下，`createSlice` 的后续泛型参数需要被推断出来，而 TypeScript 无法在同一个 “泛型块” 中，混合泛型类型的显式声明和推断。
+你可能注意到了，把 `SliceState` 作为一个泛型传入 `createSlice` 并不是一个好主意。这是因为在大部分情况下，`createSlice` 的后续泛型参数需要被推断出来，而 TypeScript 无法在同一个 “泛型块” 中，混合使用泛型类型的显式声明和推断。
 
 标准的做法是，为你的 state 定义一个接口或者类型，创建一个使用该类型的初始值，并把这个初始值传到 `createSlice`。你也可以使用 `initialState: myInitialState as SliceState` 这种语法。
 
@@ -327,7 +327,7 @@ const blogSlice = createSlice({
 
 ### 被创建出来的切片 Action Types
 
-由于 TS 无法把两种字符串字面量 (`slice.name` 和 `actionMap` 的键) 合并成一个新的字面量。所有由 `createSlice` 创建的 action creators 都是 'string'。这通常来说都不是一个问题，因为这些类型很少被当作字面量来使用。
+由于 TS 无法把两种字符串字面量 (`slice.name` 和 `actionMap` 的键) 合并成一个新的字面量，所以由 `createSlice` 创建的 action creators 都是 'string' 类型。这通常来说都不是一个问题，因为这些类型很少被当作字面量来使用。
 
 在大部分 `type` 会被要求作为字面量使用的场景中，`slice.action.myAction.match` [类型谓词](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) 应该是一个可行的替代方案：
 
@@ -351,14 +351,14 @@ function myCustomMiddleware(action: Action) {
 
 ### `extraReducers` 的类型安全
 
-Reducer lookup tables that map an action `type` string to a reducer function are not easy to fully type correctly. This affects both `createReducer` and the `extraReducers` argument for `createSlice`. So, like with `createReducer`, [you may also use the "builder callback" approach](#building-type-safe-reducer-argument-objects) for defining the reducer object argument.
+想要完整正确地定义出那些映射 action `type` 到 reducer 函数的 Reducer 查找表格的类型，并不是一件容易的事。这会影响到 `createSlice` 当中的 `createReducer` 和 `extraReducers` 的类型。因此，像跟 `createReducer` 一样，[你可以使用 "builder回调函数" 方法](#building-type-safe-reducer-argument-objects)，去定义 reducer 的对象参数。
 
-This is particularly useful when a slice reducer needs to handle action types generated by other slices, or generated by specific calls to `createAction` (such as the actions generated by [`createAsyncThunk`](../api/createAsyncThunk.mdx)).
+当一个切片 reducer 需要处理由其他切片，或者 `createAction` (例如由 [`createAsyncThunk`](../api/createAsyncThunk.mdx)生成的 actions) 的具体调用而生成的 action types 时，这个方法特别有用。
 
 ```ts {27-30}
 const fetchUserById = createAsyncThunk(
   'users/fetchById',
-  // if you type your function argument here
+  // 如果你在这里定义参数的类型
   async (userId: number) => {
     const response = await fetch(`https://reqres.in/api/users/${userId}`)
     return (await response.json()) as Returned
@@ -379,24 +379,24 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    // fill in primary logic here
+    // 在这里填入主要的逻辑
   },
   extraReducers: builder => {
     builder.addCase(fetchUserById.pending, (state, action) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
+      // 根据切片的 state 以及 `pending` 的 action creator
+      // `state` 和 `action` 现在都被正确地定义了类型
     })
   }
 })
 ```
 
-Like the `builder` in `createReducer`, this `builder` also accepts `addMatcher` (see [typing `builder.matcher`](#typing-builderaddmatcher)) and `addDefaultCase`.
+像在 `createReducer` 的 `builder` 一样，这个 `builder` 也接受 `addMatcher` (查阅 [定义 `builder.matcher`](#typing-builderaddmatcher)) 和 `addDefaultCase`
 
-### Wrapping `createSlice`
+### 封装 `createSlice`
 
-If you need to reuse reducer logic, it is common to write ["higher-order reducers"](https://redux.js.org/recipes/structuring-reducers/reusing-reducer-logic#customizing-behavior-with-higher-order-reducers) that wrap a reducer function with additional common behavior. This can be done with `createSlice` as well, but due to the complexity of the types for `createSlice`, you have to use the `SliceCaseReducers` and `ValidateSliceCaseReducers` types in a very specific way.
+如果你需要复用 reducer 的逻辑，比较常用的做法是，编写带有额外常见行为、用于封装 reducer 函数的 ["高阶 reducers"](https://redux.js.org/recipes/structuring-reducers/reusing-reducer-logic#customizing-behavior-with-higher-order-reducers)。`createSlice` 也能用这种方法，但是鉴于 `createSlice` 类型定义的复杂度，你必须以非常具体的的方式去使用 `SliceCaseReducers` 和 `ValidateSliceCaseReducers` 这两个类型。
 
-Here is an example of such a "generic" wrapped `createSlice` call:
+这里有一个这样的 “被泛型化” 封装起来的 `createSlice` 调用示例：
 
 ```ts
 interface GenericState<T> {
@@ -424,11 +424,10 @@ const createGenericSlice = <
         state.status = 'loading'
       },
       /**
-       * If you want to write to values of the state that depend on the generic
-       * (in this case: `state.data`, which is T), you might need to specify the
-       * State type manually here, as it defaults to `Draft<GenericState<T>>`,
-       * which can sometimes be problematic with yet-unresolved generics.
-       * This is a general problem when working with immer's Draft type and generics.
+       * 如果你想对依赖于泛型的 state 写入一些值的话（在这个案例中：`state.data`，其为 T），
+       * 你可能需要手动的具体指明 State 的类型，因为它的默认类型是 `Draft<GenericState<T>>`，
+       * 对于某些还没确定好类型的泛型来说，有时候这种做法会有点问题。
+       * 这在使用 Immer 中的 Draft 类型和泛型的时候，是一个很普遍的问题。
        */
       success(state: GenericState<T>, action: PayloadAction<T>) {
         state.data = action.payload
@@ -453,10 +452,11 @@ const wrappedSlice = createGenericSlice({
 
 ## `createAsyncThunk`
 
-In the most common use cases, you should not need to explicitly declare any types for the `createAsyncThunk` call itself.
+在大部分常见的使用案例中，你不应该为 `createAsyncThunk` 的调用本身显式地指定任何类型。
 
-Just provide a type for the first argument to the `payloadCreator` argument as you would for any function argument, and the resulting thunk will accept the same type as its input parameter.
-The return type of the `payloadCreator` will also be reflected in all generated action types.
+像对待其他的函数一样，仅需要为 `createAsyncThunk` 的 `payloadCreator` 参数，提供其第一个参数的类型，这样生成的 thunk 会接收到相同的入参类型。
+
+`payloadCreator` 的返回值类型也会被反映到所有生成的 action types 当中。
 
 ```ts {8,11,18}
 interface MyData {
@@ -465,29 +465,29 @@ interface MyData {
 
 const fetchUserById = createAsyncThunk(
   'users/fetchById',
-  // Declare the type your function argument here:
+  // 在这里声明函数参数的类型:
   async (userId: number) => {
     const response = await fetch(`https://reqres.in/api/users/${userId}`)
-    // Inferred return type: Promise<MyData>
+    // 被推断的返回值类型: Promise<MyData>
     return (await response.json()) as MyData
   }
 )
 
-// the parameter of `fetchUserById` is automatically inferred to `number` here
-// and dispatching the resulting thunkAction will return a Promise of a correctly
-// typed "fulfilled" or "rejected" action.
+// `fetchUserById` 的参数被自动推断成`number` 类型
+// 并且派发由此产生的 thunkAction，会返回一个 action 的 Promise
+// 其类型被正确定义为 "fulfilled" 或者 "rejected"  
 const lastReturnedAction = await store.dispatch(fetchUserById(3))
 ```
 
-The second argument to the `payloadCreator`, known as `thunkApi`, is an object containing references to the `dispatch`, `getState`, and `extra` arguments from the thunk middleware as well as a utility function called `rejectWithValue`. If you want to use these from within the `payloadCreator`, you will need to define some generic arguments, as the types for these arguments cannot be inferred. Also, as TS cannot mix explicit and inferred generic parameters, from this point on you'll have to define the `Returned` and `ThunkArg` generic parameter as well.
+`payloadCreator` 的第二个参数，`thunkApi` ，是一个包含有对 `dispatch` 、`getState`、thunk 中间件的 `extra` 参数以及一个工具函数 `rejectWithValue`的引用的对象。如果你想在 `payloadCreator` 中使用这些引用，你需要定义一些泛型参数，因为这些参数的类型无法被推断。此外，由于TS 不能混合使用显式和推断的泛型参数，从这里开始你也需要为 `Returned` 和 `ThunkArg` 这两个泛型参数进行定义。
 
-To define the types for these arguments, pass an object as the third generic argument, with type declarations for some or all of these fields: `{dispatch?, state?, extra?, rejectValue?}`.
+要为这些参数进行类型定义，你需要把一个对象作为第三个泛型参数，其对某些或者全部的字段的类型声明如：`{dispatch?, state?, extra?, rejectValue?}`
 
 ```ts
 const fetchUserById = createAsyncThunk<
-  // Return type of the payload creator
+  // payload creator 的返回值类型
   MyData,
-  // First argument to the payload creator
+  // payload creator 的第一个参数
   number,
   {
     dispatch: AppDispatch
@@ -505,8 +505,8 @@ const fetchUserById = createAsyncThunk<
   return (await response.json()) as MyData
 })
 ```
-
-If you are performing a request that you know will typically either be a success or have an expected error format, you can pass in a type to `rejectValue` and `return rejectWithValue(knownPayload)` in the action creator. This allows you to reference the error payload in the reducer as well as in a component after dispatching the `createAsyncThunk` action.
+ 
+如果你知道你的请求会成功或者有一个预期的错误格式，你可以在 action creator 中传入 `rejectValue` 和 `return rejectWithValue(knownPayload)` 的类型。这样在派发完 `createAsyncThunk` action 之后，你就能够在 reducer 和组件中引用该错误的 payload。
 
 ```ts
 interface MyKnownError {
@@ -521,11 +521,11 @@ interface UserAttributes {
 }
 
 const updateUser = createAsyncThunk<
-  // Return type of the payload creator
+  // payload creator 返回值类型
   MyData,
-  // First argument to the payload creator
+  // payload creator 的第一个参数
   UserAttributes,
-  // Types for ThunkAPI
+  // ThunkAPI 的类型
   {
     extra: {
       jwt: string
@@ -542,18 +542,18 @@ const updateUser = createAsyncThunk<
     body: JSON.stringify(userData)
   })
   if (response.status === 400) {
-    // Return the known error for future handling
+    // 为后续处理返回已知错误
     return thunkApi.rejectWithValue((await response.json()) as MyKnownError)
   }
   return (await response.json()) as MyData
 })
 ```
 
-While this notation for `state`, `dispatch`, `extra` and `rejectValue` might seem uncommon at first, it allows you to provide only the types for these you actually need - so for example, if you are not accessing `getState` within your `payloadCreator`, there is no need to provide a type for `state`. The same can be said about `rejectValue` - if you don't need to access any potential error payload, you can ignore it.
+尽管这种 `state`, `dispatch`, `extra` 和 `rejectValue` 的表示法可能一开始显得很陌生，但是它可以让你只需提供那些你需要的类型 - 比如说，如果你并不在 `payloadCreator` 中读取 `getState`, 你并不需要为 `state` 提供一个类型。`rejectValue` 也是同样的情况 - 如果你需要读取任何可能发生的错误 payload，你可以忽略它。
 
-In addition, you can leverage checks against `action.payload` and `match` as provided by `createAction` as a type-guard for when you want to access known properties on defined types. Example:
+除此之外，当你需要在被定义好的类型上读取已知的属性，你可以借助对 `action.payload` 和由 `createAction` 提供的作为一个类型守卫的 `match` 的类型检查。示例：
 
-- In a reducer
+- 在一个 reducer 中
 
 ```ts
 const usersSlice = createSlice({
@@ -569,7 +569,7 @@ const usersSlice = createSlice({
     })
     builder.addCase(updateUser.rejected, (state, action) => {
       if (action.payload) {
-        // Since we passed in `MyKnownError` to `rejectType` in `updateUser`, the type information will be available here.
+        // 由于我们在 `updateUser` 中，给 `rejectType` 传入 `MyKnownError`，类型信息能在此获取
         state.error = action.payload.errorMessage
       } else {
         state.error = action.error
@@ -579,7 +579,7 @@ const usersSlice = createSlice({
 })
 ```
 
-- In a component
+- 在一个组件中
 
 ```ts
 const handleUpdateUser = async userData => {
@@ -589,8 +589,8 @@ const handleUpdateUser = async userData => {
     showToast('success', `Updated ${user.name}`)
   } else {
     if (resultAction.payload) {
-      // Since we passed in `MyKnownError` to `rejectType` in `updateUser`, the type information will be available here.
-      // Note: this would also be a good place to do any handling that relies on the `rejectedWithValue` payload, such as setting field errors
+      // 由于我们在 `updateUser` 中，给 `rejectType` 传入 `MyKnownError`，类型信息能在此获取
+      // 注意：这里也是处理任何依赖于 `rejectedWithValue` payload 的好地方，比如设置字段错误
       showToast('error', `Update failed: ${resultAction.payload.errorMessage}`)
     } else {
       showToast('error', `Update failed: ${resultAction.error.message}`)
@@ -601,9 +601,9 @@ const handleUpdateUser = async userData => {
 
 ## `createEntityAdapter`
 
-Typing `createEntityAdapter` only requires you to specify the entity type as the single generic argument.
+给 `createEntityAdapter` 进行类型定义只需你指定一个作为单一泛型参数的的 entity 类型。
 
-The example from the `createEntityAdapter` documentation would look like this in TypeScript:
+`createEntityAdapter` 文档中的示例，在 TypeScript 中长这样：
 
 ```ts {7}
 interface Book {
@@ -629,9 +629,9 @@ const booksSlice = createSlice({
 })
 ```
 
-### Using `createEntityAdapter` with `normalizr`
+### 配合 `normalizr` 使用 `createEntityAdapter`
 
-When using a library like [`normalizr`](https://github.com/paularmstrong/normalizr/), your normalized data will resemble this shape:
+当你使用像 [`normalizr`](https://github.com/paularmstrong/normalizr/) 这样的库时，被范式化的数据类似于这种形状：
 
 ```js
 {
@@ -643,9 +643,9 @@ When using a library like [`normalizr`](https://github.com/paularmstrong/normali
 }
 ```
 
-The methods `addMany`, `upsertMany`, and `setAll` all allow you to pass in the `entities` portion of this directly with no extra conversion steps. However, the `normalizr` TS typings currently do not correctly reflect that multiple data types may be included in the results, so you will need to specify that type structure yourself.
+`addMany`, `upsertMany`, 和 `setAll` 这些方法都可以允许在把 `entities` 部分传入而且不需要额外的转化步骤。然而，`normalizr` 的 TS 类型定义并不能正确地反应出多数据类型可能会被包含到结果中国呢，因此你需要为这种数据结构自行定义。
 
-Here is an example of how that would look:
+这里有一个长这样的示例:
 
 ```ts
 type Author = { id: number; name: string }
@@ -656,9 +656,10 @@ export const fetchArticle = createAsyncThunk(
   'articles/fetchArticle',
   async (id: number) => {
     const data = await fakeAPI.articles.show(id)
-    // Normalize the data so reducers can responded to a predictable payload.
-    // Note: at the time of writing, normalizr does not automatically infer the result,
-    // so we explicitly declare the shape of the returned normalized data as a generic arg.
+    // 把数据范式化，以此 reducers 可以对可预测的 payload 进行响应。
+    // 注意：截止至本文写作时间，normalizr 不会对结果自动进行类型推断，
+    // 因此，我们需要显式地声明出被范式化后的数据形状，以此作为一个泛型参数
+
     const normalized = normalize<
       any,
       {
@@ -677,7 +678,7 @@ export const slice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      // action.payload 的类型签名于我们为 `normalize` 传入的泛型相吻合，如果我们愿意的话，我们就可以在 `payload.articles` 读取具体的属性
       articlesAdapter.upsertMany(state, action.payload.articles)
     })
   }
