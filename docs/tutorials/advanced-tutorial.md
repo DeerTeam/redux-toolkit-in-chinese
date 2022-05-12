@@ -40,9 +40,9 @@ Let's start by viewing the original plain React app in action:
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
 
-### React Codebase Source Overview
+### React 代码库源码概览 
 
-The codebase is already laid out in a "feature folder" structure, The main pieces are:
+代码仓库已经使用了“功能文件夹”结构编写，主要组成部分有：
 
 - `/api`: fetching functions and TS types for the Github Issues API
 - `/app`: main `<App>` component

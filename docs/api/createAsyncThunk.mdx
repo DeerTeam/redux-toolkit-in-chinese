@@ -7,21 +7,21 @@ hide_title: true
 
 # `createAsyncThunk`
 
-## Overview
+## 概览
 
-A function that accepts a Redux action type string and a callback function that should return a promise. It generates promise lifecycle action types based on the action type prefix that you pass in, and returns a thunk action creator that will run the promise callback and dispatch the lifecycle actions based on the returned promise.
+一个函数，其接收一个 Redux action type 字符串和一个应当返回 promise 对象的回调函数。根据传入的 action type 的前缀，它会生成关于 promise 生命周期的 action types，并且返回一个会运行 promise 回调函数、且根据返回的 promise 派发生命周期 actions 的 thunk action creator。
 
-This abstracts the standard recommended approach for handling async request lifecycles.
+这么做把处理异步请求生命周期的标准推荐做法抽象出来了。
 
-It does not generate any reducer functions, since it does not know what data you're fetching, how you want to track loading state, or how the data you return needs to be processed. You should write your own reducer logic that handles these actions, with whatever loading state and processing logic is appropriate for your own app.
+该函数不会生成任何 reducer 函数，因为它并不知道它接受的数据是什么、如何追踪加载状态、或者返回的数据需要被如何处理。你应当编写你自己的 reducer 逻辑来处理这些 actions，不管是用何种适合你应用的加载状态和处理逻辑。
 
-Sample usage:
+示例用法：
 
 ```js {5-11,22-25,30}
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { userAPI } from './userAPI'
 
-// First, create the thunk
+// 首先, 创建 thunk
 const fetchUserById = createAsyncThunk(
   'users/fetchByIdStatus',
   async (userId, thunkAPI) => {
@@ -30,29 +30,29 @@ const fetchUserById = createAsyncThunk(
   }
 )
 
-// Then, handle actions in your reducers:
+// 接着, 在你的 reducers 中处理这些 actions:
 const usersSlice = createSlice({
   name: 'users',
   initialState: { entities: [], loading: 'idle' },
   reducers: {
-    // standard reducer logic, with auto-generated action types per reducer
+    // 标准 reducer 逻辑, 带有每个 reducer 自动生成的 action types
   },
   extraReducers: {
-    // Add reducers for additional action types here, and handle loading state as needed
+    // 在这里添加处理额外 action types 的 reducers, 并且如果有需要的话，也在此处理加载状态
     [fetchUserById.fulfilled]: (state, action) => {
-      // Add user to the state array
+      // 把用户添加到 state 数组中
       state.entities.push(action.payload)
     }
   }
 })
 
-// Later, dispatch the thunk as needed in the app
+// 稍后, 在应用中需要用到的地方派发这个 thunk 
 dispatch(fetchUserById(123))
 ```
 
-## Parameters
+## 参数
 
-`createAsyncThunk` accepts three parameters: a string action `type` value, a `payloadCreator` callback, and an `options` object.
+`createAsyncThunk` 接收三个参数：一个字符串 action `type` 值、一个 `payloadCreator` 回调，和一个 `options` 对象。
 
 ### `type`
 

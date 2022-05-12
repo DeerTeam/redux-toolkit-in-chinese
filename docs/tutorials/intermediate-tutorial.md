@@ -30,8 +30,8 @@ hide_title: true
 - [`todos` reducer 函数](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/reducers/todos.js) 通过复制嵌套的 JS 对象和数组来 "手工" 进行 immutable 更新
 - [`actions` 文件](https://github.com/reduxjs/redux/blob/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/actions/index.js)
   中，有几个纯手写的 action creator 函数，同时 action type 字符串在 actions 文件和 reducer 文件中重复出现
-- 项目代码结构用的是 ["类型文件夹"("folder-by-type") 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
-- React 组件用的是一种严格版本的 ["容器/展示"模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来编写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
+- 项目代码结构用的是 ["类型文件夹" ("folder-by-type") 结构](https://redux.js.org/faq/code-structure#what-should-my-file-structure-look-like-how-should-i-group-my-action-creators-and-reducers-in-my-project-where-should-my-selectors-go)， `actions` 和 `reducers` 由不同的文件组成
+- React 组件用的是一种严格版本的 ["容器/展示" 模式 ("container/presentational" pattern)](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) 来编写的, 其中 ["展示"组件放置于一个文件夹当中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/components)，而 [定义 Redux 连接逻辑的"容器"组件则在另一个文件中](https://github.com/reduxjs/redux/tree/9c9a4d2a1c62c9dbddcbb05488f8bd77d24c81de/examples/todos/src/containers)
 - 若干代码并没有遵某些 Redux 所推荐的"最佳实践"模式。在演示的过程中，我们会仔细观察一些具体的例子
 
 一方面，这是一个小小的示例应用。它的意图是说明实际中一起使用 React 和 Redux 的基础知识，并不是一定要在一个全面的生产的应用中作为"正确的方式"来使用。另一方面，大多数人会使用他们在文档和示例中看到的模式，这里面肯定有改进的空间。
@@ -40,12 +40,12 @@ hide_title: true
 
 ### 在项目中添加 Redux工具包
 
-由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用"绝对引入路径"方法。
+由于原 todos 示例在 Redux 代码仓库中，我们可以先拷贝 Redux "todos" 源码到的一个全新的 Create-React-App 项目中，然后再把 Prettier 添加到项目，以确保项目代码能保持一致的格式。另外，项目中还有一个 [jsconfig.json](https://code.visualstudio.com/docs/languages/jsconfig) 文件，以便我们能够使用 `/src` 文件夹作为根文件夹，来使用 "绝对引入路径" 方法。
 
 > - [首次提交](https://github.com/reduxjs/rtk-convert-todos-example/commit/a8e0a9a9d77b9dcd9e881079e7cca449084ca7b1)
 > - [添加 jsconfig.json 来支持绝对引入](https://github.com/reduxjs/rtk-convert-todos-example/commit/b866e205b9ebece84367f11d2faabc557bd08e23)
 
-在基础教程中，我们只是作为一个独立的 script 标签链接到 Redux Toolkit。单身，在一个典型的应用中，你需要将 RTK 作为一个包引用添加到你的项目。你可以使用 NPM 或者 Yarn
+在基础教程中，我们只是作为一个独立的 script 标签链接到 Redux Toolkit。然而，在一个典型的应用中，你需要将 RTK 作为一个包引用添加到你的项目。你可以使用 NPM 或者 Yarn
 任意一种包管理器：
 
 ```bash
@@ -201,7 +201,7 @@ export default todosSlice.reducer
 
 这里没有 `default` 处理函数。`createSlice` 生成的 reducer 会通过返回当前的状态，自动处理其他的 action types，所以我们不用自己列出来。
 
-#### "可变" 更新逻辑
+#### "可变" ("mutable") 更新逻辑
 
 注意到 `addTodo` 正在调用 `state.push()` 。 通常情况下，这是很糟糕的，因为 [`array.push()` 函数改变了已有的数组](https://doesitmutate.xyz/#push)，并且还有 **[Redux reducers _一定不能_ 修改状态!](https://redux.js.org/basics/reducers#handling-actions)**
 
@@ -391,9 +391,9 @@ export default combineReducers({
 
 ### 更新 Add Todo 组件
 
-如果我们重新加载应用，我们应该能看到 `state.todos` 还是一个空数组。但是，如果我们点击 "Add Todo"， 不会有任何响应。我们仍旧在派发 type 为 `'ADD_TODO'` 的 actions，然而我们的 todos 切片是在寻找一个 type 为 `'todos/addTodo'` 的 action。我们需要引入正确的 action creator，并且在 `AddTodo.js` 文件中使用它。
+如果我们重新加载应用，我们应该能看到 `state.todos` 还是一个空数组。但是，如果我们点击 "Add Todo"，不会有任何响应。我们仍然在派发 type 为 `'ADD_TODO'` 的 action ，然而我们的 todos 切片是在寻找一个 type 为 `'todos/addTodo'` 的 action。我们需要引入正确的 action creator，并且在 `AddTodo.js` 文件中使用它。
 
-趁此机会，我们可以说说几个关于 `AddTodo` 编写方面存在的问题。首先，它目前使用的是 React 中的 "callback ref" ，以读取当你点击 "Add Todo"时输入框的当前 text 的值。这是奏效的，但是处理表单字段的标准 “React 做法“ 是利用 ”可控输入“ 模式，其中当前表单字段的值是存到组件的状态中的。
+趁此机会，我们可以说说几个关于 `AddTodo` 编写方面存在的问题。首先，它目前使用的是 React 中的 "callback ref" ，以读取当你点击 "Add Todo" 时输入框的当前 text 的值。这是奏效的，但是处理表单字段的标准 “React 做法“ 是利用 ”可控输入“ 模式，其中当前表单字段的值是存到组件的状态中的。
 
 第二，被连接的组件正接受 `dispatch` 作为一个属性 prop。正如所料，这依然奏效，但是常规的连接做法是
 [给 `connect` 传入 action creator 函数](https://react-redux.js.org/using-react-redux/connect-mapdispatch)，然后通过调用被作为 props 的函数，从而派发 actions。

@@ -178,7 +178,7 @@ createReducer(0, {
 })
 ```
 
-遗憾的是，由于对象的键名是唯一的字符串，使用这个 API 的话 TypeScript 并不能为你作出类型推断，也不能验证 action types 的合法性：
+遗憾的是，由于对象的键 key 是唯一的字符串，使用这个 API 的话 TypeScript 并不能为你作出类型推断，也不能验证 action types 的合法性：
 
 ```typescript
 {
