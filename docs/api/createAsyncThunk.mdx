@@ -9,7 +9,7 @@ hide_title: true
 
 ## 概览
 
-一个函数，其接收一个 Redux action type 字符串和一个应当返回 promise 对象的回调函数。根据传入的 action type 的前缀，它会生成关于 promise 生命周期的 action types，并且返回一个会运行 promise 回调函数、且根据返回的 promise 派发生命周期 actions 的 thunk action creator。
+一个函数，其接受一个 Redux action type 字符串和一个应当返回 promise 对象的回调函数。根据传入的 action type 的前缀，它会生成关于 promise 生命周期的 action types，并且返回一个会运行 promise 回调函数、且根据返回的 promise 派发生命周期 actions 的 thunk action creator。
 
 这么做把处理异步请求生命周期的标准推荐做法抽象出来了。
 
@@ -56,9 +56,9 @@ dispatch(fetchUserById(123))
 
 ### `type`
 
-A string that will be used to generate additional Redux action type constants, representing the lifecycle of an async request:
+一个用于生成额外 Redux action type 常数、代表着一个异步请求生命周期的字符串。
 
-For example, a `type` argument of `'users/requestStatus'` will generate these action types:
+例如，`'users/requestStatus'` 的 `type` 参数会生成如下的 action types：
 
 - `pending`: `'users/requestStatus/pending'`
 - `fulfilled`: `'users/requestStatus/fulfilled'`
@@ -66,29 +66,30 @@ For example, a `type` argument of `'users/requestStatus'` will generate these ac
 
 ### `payloadCreator`
 
-A callback function that should return a promise containing the result of some asynchronous logic. It may also return a value synchronously. If there is an error, it should either return a rejected promise containing an `Error` instance or a plain value such as a descriptive error message or otherwise a resolved promise with a `RejectWithValue` argument as returned by the `thunkAPI.rejectWithValue` function.
+一个回调函数，起应当返回一个包含异步逻辑处理结果的 Promise 对象。它也有可能同步地返回一个值。如果产生了错误，它要么应当返回一个被 rejected 的带有 `Error` 实例的 Promise，要么返回一个比如像描述错误的信息的普通值，亦或者返回一个 resolved 的 Promise，其带有一个 `RejectWithValue` 参数，如 `thunkAPI.rejectWithValue` 的返回值一样。
 
-The `payloadCreator` function can contain whatever logic you need to calculate an appropriate result. This could include a standard AJAX data fetch request, multiple AJAX calls with the results combined into a final value, interactions with React Native `AsyncStorage`, and so on.
+`payloadCreator` 可以包含任何需要计算一个合适结果的逻辑。这包括一个标准的 AJAX 数据请求、多个会把结果结合到一起的 AJAX 调用、与 React Native 的 `AsyncStorage` 进行互动等等。
 
-The `payloadCreator` function will be called with two arguments:
+`payloadCreator` 有两个参数：
 
-- `arg`: a single value, containing the first parameter that was passed to the thunk action creator when it was dispatched. This is useful for passing in values like item IDs that may be needed as part of the request. If you need to pass in multiple values, pass them together in an object when you dispatch the thunk, like `dispatch(fetchUsers({status: 'active', sortBy: 'name'}))`.
-- `thunkAPI`: an object containing all of the parameters that are normally passed to a Redux thunk function, as well as additional options:
-  - `dispatch`: the Redux store `dispatch` method
-  - `getState`: the Redux store `getState` method
-  - `extra`: the "extra argument" given to the thunk middleware on setup, if available
-  - `requestId`: a unique string ID value that was automatically generated to identify this request sequence
-  - `signal`: an [`AbortController.signal` object](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal) that may be used to see if another part of the app logic has marked this request as needing cancelation.
-  - `rejectWithValue`: rejectWithValue is a utility function that you can `return` in your action creator to return a rejected response with a defined payload. It will pass whatever value you give it and return it in the payload of the rejected action.
+- `arg`: 一个单值，当派发 thunk action creator 时，该值包含传入到 payloadCreator 的第一个参数。对于传入像 ID 这样会被用作请求的一部分来的操作来说，是很有用的。如果你需要传入多个值，当你派发 thunk 的时候，把它们作为一个对象整体传入，例如 `dispatch(fetchUsers({status: 'active', sortBy: 'name'}))` 。
 
-The logic in the `payloadCreator` function may use any of these values as needed to calculate the result.
+- `thunkAPI`: 一个包含所有通常会被传入到 a Redux thunk 函数的参数的对象，其还有其他的选项：
+  - `dispatch`: Redux store 的 `dispatch` 方法
+  - `getState`: Redux store 的 `getState` 方法
+  - `extra`: 被传入到设置阶段 thunk 中间件的 ”额外参数“，如果有的话
+  - `requestId`: 一个被自动生成去识别请求顺序的唯一字符串 ID 值
+  - `signal`: 一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal) ，其有可能被用于检查是否某部分应用逻辑已经把该请求标记为需要取消
+  - `rejectWithValue`: rejectWithValue 是一个可以在你的 action creator `return` 以返回一个带有定义好 payload 的 rejected 响应的工具函数。它会把任何你给它的值进行传递，并且在 rejected 的 action payload 返回该值。
 
-### Options
+任何上述表示的值，都可以在有需要的时候被用到 `payloadCreator` 的逻辑中，进行结果的计算。
 
-An object with the following optional fields:
+### 选项
 
-- `condition`: a callback that can be used to skip execution of the payload creator and all action dispatches, if desired. See [Canceling Before Execution](#canceling-before-execution) for a complete description.
-- `dispatchConditionRejection`: if `condition()` returns `false`, the default behavior is that no actions will be dispatched at all. If you still want a "rejected" action to be dispatched when the thunk was canceled, set this flag to `true`.
+一个带有如下可选字段的逻辑：
+
+- `condition`: 一个可以用于跳过 payload creator 执行和所有 action 派发的回调。查看[Canceling Before Execution](#canceling-before-execution) 获取完整的描述。
+- `dispatchConditionRejection`: 如果 `condition()` 返回 `false`，默认的行为是没有任何的 actions 会被派发。如果当 thunk 被取消时，你仍然想派发一个 "rejected" action 的话，把这个值设置成 `true`。
 
 ## Return Value
 

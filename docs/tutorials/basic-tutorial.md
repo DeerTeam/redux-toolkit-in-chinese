@@ -9,7 +9,7 @@ hide_title: true
 
 欢迎使用 Redux工具包 ！这个教程将为你展示 Redux工具包（也可以简称 RTK） 所包含的基础功能。
 
-本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) and [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux工具包 与传统的 Redux 代码在用法上的不同点。
+本教程需要你已经熟悉了 Redux 库的基本概念，也就是你已经可以配合 React 使用 Redux 了。如果你还不熟悉，你可以先花点时间阅读一下 [Redux 文档](https://redux.js.org) 和 [React-Redux 文档](https://react-redux.js.org) 。在这里主要聚焦于 Redux工具包 与传统的 Redux 代码在用法上的不同点。
 
 ## 介绍：编写一个计数应用
 

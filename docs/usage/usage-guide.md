@@ -686,7 +686,7 @@ dispatch(fetchUserById(123))
 
 Thunk action creator 接受一个参数，它将作为第一个参数被传递给你的 payload creator 回调。
 
-Payload creator 还会接收一个 `thunkAPI` 对象，其中包含通常会传递给标准 Redux thunk 函数的参数，以及自动生成的唯一随机请求ID字符串和一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal)：
+Payload creator 还会受一个 `thunkAPI` 对象，其中包含通常会传递给标准 Redux thunk 函数的参数，以及自动生成的唯一随机请求ID字符串和一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal)：
 
 ```ts
 interface ThunkAPI {

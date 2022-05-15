@@ -9,17 +9,17 @@ hide_title: true
 
 在 [基础教程](./basic-tutorial.md) 中，你已经看到了 Redux工具包 中包含的主要的 API 函数，以及一些为什么和如何使用它们的简短的例子。你也可以看到你能够不使用 React、NPM、Webpack 或者任何构建工具，在一个 HTML 页面的 script 标签就能使用 Redux 和 RTK。
 
-在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换，以便使用 RTK。
+在这个教程中，你将看到在一个简单的 React 应用中如何使用这些 API。具体点说，是我们把这些 [原 Redux "todos" 示例应用](https://redux.js.org/introduction/examples#todos) 进行转换以使用 RTK。
 
 我们将会介绍几个概念:
 
 - 如何将 "纯 Redux" 代码转换为使用 RTK 代码
-- 如何在一个典型的 React+Redux 应用中使用 RTK
+- 如何在一个典型的 React + Redux 应用中使用 RTK
 - 如何使用 RTK 里一些更强大的特性来简化你的 Redux 代码
 
-另外，尽管接下来的并不仅针对于 RTK，我们也会研究几种能改进你的 React-Redux 代码的方法。
+另外，尽管接下来的并不针对于 RTK，我们也会研究几种能改进你的 React-Redux 代码的方法。
 
-本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有特殊意义的、独立的代码提交的链接，将像如下高亮的引用块显示：
+本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-convert-todos-example](https://github.com/reduxjs/rtk-convert-todos-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有其作用的独立提交的链接，将像如下高亮的引用块显示：
 
 > - 这里是提交信息
 
@@ -66,7 +66,7 @@ yarn add @reduxjs/toolkit
 
 正如 "counter" 示例一样，我们可以使用 RTK 的 `configureStore` 去替换纯 Redux 的 `createStore` 函数。这一步会为我们把 Redux DevTools Extension 自动设置好。
 
-这里看到的只是一些简单的变化。我们更新 `src/index.js`，以引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住， `configureStore` 接收一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
+这里看到的只是一些简单的变化。我们更新 `src/index.js`，以引入 `configureStore` 而非 `createStore`，并且把函数调用替换掉。请记住， `configureStore` 接受一个带有具名字段的选项对象作为参数，因此我们将其作为一个名为 `reducer` 的对象字段进行传入 ，而不是直接给 `rootReducer` 传入第一个参数。
 
 > - [转换成使用 configureStore 的 store 设置代码](https://github.com/reduxjs/rtk-convert-todos-example/commit/cdfc15edbd82beda9ef0521aa191574b6cc7695a)
 

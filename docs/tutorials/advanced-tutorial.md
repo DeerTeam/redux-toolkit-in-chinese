@@ -7,7 +7,7 @@ hide_title: true
 
 # 高级教程: Redux工具包 实践
 
-在[中级教程](./intermediate-tutorial.md)中，你看到了如何在一个典型的基本 React 应用中使用 Redux工具包，同时还有如何把已有的纯 Redux 代码进行转换，以便使用 RTK。 另外，你还看到了如何在 reducer 函数中编写“可变的”immutable 更新代码，以及如何编写一个为了生成 action payload 的 “prepare 回调函数“。
+在[中级教程](./intermediate-tutorial.md)中，你看到了如何在一个典型的基本 React 应用中使用 Redux工具包，同时还有如何把已有的纯 Redux 代码进行转换以使用 RTK。 另外，你还看到了如何在 reducer 函数中编写“可变的”immutable 更新代码，以及如何编写一个为了生成 action payload 的 “prepare 回调函数“。
 
 在本教程中，你将会看到如何在一个比 todo 列表更大的“实际”应用中使用 Redux工具包。本教程会展示几个概念：
 
@@ -21,7 +21,7 @@ hide_title: true
 >
 > 此外，本教程并不意味着你 _必须_ 把 React 应用的逻辑完全地转换成 Redux 的逻辑。[这取决于你如何选择哪些状态应当留在 React 组件中，哪些应该放到 Redux 里](https://redux.js.org/faq/organizing-state#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-setstate)。教程的示例仅仅向你展示 _能以什么方式_ 把逻辑换成 Redux 逻辑，如果你选择这么做的话。
 
-本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-github-issues-example](https://github.com/reduxjs/rtk-github-issues-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有特殊意义的、独立的代码提交的链接，将像如下高亮的引用块显示：
+本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-github-issues-example](https://github.com/reduxjs/rtk-github-issues-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有其作用的独立提交的链接，将像如下高亮的引用块显示：
 
 > - 这里是提交信息
 

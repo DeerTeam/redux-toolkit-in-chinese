@@ -454,7 +454,7 @@ const wrappedSlice = createGenericSlice({
 
 在大部分常见的使用案例中，你不应该为 `createAsyncThunk` 的调用本身显式地指定任何类型。
 
-像对待其他的函数一样，仅需要为 `createAsyncThunk` 的 `payloadCreator` 参数，提供其第一个参数的类型，这样生成的 thunk 会接收到相同的入参类型。
+像对待其他的函数一样，仅需要为 `createAsyncThunk` 的 `payloadCreator` 参数，提供其第一个参数的类型，这样生成的 thunk 会接受到相同的入参类型。
 
 `payloadCreator` 的返回值类型也会被反映到所有生成的 action types 当中。
 
