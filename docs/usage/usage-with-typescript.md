@@ -474,7 +474,7 @@ const fetchUserById = createAsyncThunk(
 )
 
 // `fetchUserById` 的参数被自动推断成`number` 类型
-// 并且派发由此产生的 thunkAction，会返回一个 action 的 Promise
+// 并且派发由此产生的 thunkAction，会返回一个 action 的 promise
 // 其类型被正确定义为 "fulfilled" 或者 "rejected"  
 const lastReturnedAction = await store.dispatch(fetchUserById(3))
 ```
