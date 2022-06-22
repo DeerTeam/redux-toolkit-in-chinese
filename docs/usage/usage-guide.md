@@ -11,11 +11,11 @@ Redux 核心库有意地不要求你按照它的方式使用它。它让你自�
 
 在某些情况下，这是很好的，它富有灵活性，但灵活性并不总是必须的。有时，我们只是希望以最简单可行的方式上手，并具有一些良好的默认行为，开箱即用。 或者，可能你在开发一个比较大的应用并发现自己在写一些类似的代码，你希望能够减少必须手写的代码量。
 
-如[快速开始](../introduction/quick-start.md)这个页面所述，Redux 工具包的目标是帮助简化常见的 Redux 使用案例。它并非旨在为你可能需要使用 Redux 做的所有事情提供一个完整的解决方案，但是它应该尽可能使很多 Redux 相关的代码变得更简单（或者在一些情况下，完全消除手写代码）。
+如[快速开始](../introduction/quick-start.md)这个页面所述，Redux工具包 的目标是帮助简化常见的 Redux 使用案例。它并非旨在为你可能需要使用 Redux 做的所有事情提供一个完整的解决方案，但是它应该尽可能使很多 Redux 相关的代码变得更简单（或者在一些情况下，完全消除手写代码）。
 
-Redux 工具包导出了可以在应用中使用的几个单独的功能，并添加对 Redux 常用的软件包的依赖。这使你可以决定如何在自己的应用中使用它们，不管是全新项目还是更新大型的已有项目。
+Redux工具包导出了可以在应用中使用的几个单独的功能，并添加对 Redux 常用的软件包的依赖。这使你可以决定如何在自己的应用中使用它们，不管是全新项目还是更新大型的已有项目。
 
-让我们来看看 Redux 工具包帮助改善 Redux 相关代码的一些方法。
+让我们来看看 Redux工具包 帮助改善 Redux 相关代码的一些方法。
 
 ## 设置 Store
 
@@ -107,7 +107,7 @@ const store = configureStore({
 
 请注意，这只适用于一级的 reducer。如果想要嵌套 reducer，则需要自行调用 `combineReducers` 来处理嵌套。
 
-如果需要自定义 store 设置，你可以传递其他配置项。这是使用 Redux 工具包的热重载的例子：
+如果需要自定义 store 设置，你可以传递其他配置项。这是使用 Redux工具包 的热重载的例子：
 
 ```js
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
@@ -147,7 +147,7 @@ export default function configureAppStore(preloadedState) {
 
 ### 使用 `createReducer` 简化 Reducer
 
-由于“查找表”的办法很流行，于是 Redux 工具包就包含了一个类似于 Redux 文档中所展示的 `createReducer` 函数。但是，我们的 `createReducer` 因其更具特殊“魔法”的效果而使它更好。它内置地使用了 [Immer](https://github.com/mweststrate/immer) 库，能让你“改变”了某些数据的代码实际上是在不变地应用更新。这使得不可能意外地改变 reducer 里的 state。
+由于“查找表”的办法很流行，于是 Redux工具包就包含了一个类似于 Redux 文档中所展示的 `createReducer` 函数。但是，我们的 `createReducer` 因其更具特殊“魔法”的效果而使它更好。它内置地使用了 [Immer](https://github.com/mweststrate/immer) 库，能让你“改变”了某些数据的代码实际上是在不变地应用更新。这使得不可能意外地改变 reducer 里的 state。
 
 通常，任何使用 `switch` 语句的 Redux reducer 都可以直接转换为使用 `createReducer`。每个 switch 里的 `case` 会变成传递给 `createReducer` 的对象的 key 。Immutable 的更新逻辑（例如展开对象或者复制数组）能直接转换为 "mutation"。也可以保持 immutable 更新原样，并返回更新后的副本。
 
@@ -257,7 +257,7 @@ const reducerObject = {
 
 ### 使用 `createReducer` 的注意事项
 
-尽管 Redux 工具包的 createReducer 函数确实很有帮助，但请记住：
+尽管 Redux工具包 的 createReducer 函数确实很有帮助，但请记住：
 
 - “mutative” 代码仅在 `createReducer` 函数内部正常工作
 - Immer 不会让您混合“改变”草稿状态并返回新的状态值
@@ -281,7 +281,7 @@ function addTodo(text) {
 
 ### 使用 `createAction` 定义 Action Creators
 
-手写 action creator 可能会很乏味。Redux 工具包提供了一个名为 `createAction` 的函数，它仅生成一个使用给定的 action type 的 action creator，并将参数转换为 `payload` 字段。
+手写 action creator 可能会很乏味。Redux工具包 提供了一个名为 `createAction` 的函数，它仅生成一个使用给定的 action type 的 action creator，并将参数转换为 `payload` 字段。
 
 ```js
 const addTodo = createAction('ADD_TODO')
@@ -293,7 +293,7 @@ addTodo({ text: 'Buy milk' })
 
 ### 使用 Action Creators 作为 Action Types
 
-Redux reducer 需要寻找特定的 action type 来确定如何更新其状态。通常，这是通过分别定义 action type 字符串和 action creator 函数来完成的。Redux 工具包的 `createAction` 函数使用了一些技巧来简化此过程。
+Redux reducer 需要寻找特定的 action type 来确定如何更新其状态。通常，这是通过分别定义 action type 字符串和 action creator 函数来完成的。Redux工具包 的 `createAction` 函数使用了一些技巧来简化此过程。
 
 首先，`createAction` 会覆盖它生成的 action creator 的 `toString()` 方法。**这意味着 action creator 本身可以在某些地方用作 "action type" 引用**，比如提供给 `createReducer` 的键。
 
@@ -342,11 +342,11 @@ const reducer = (state = {}, action) => {
 }
 ```
 
-如果你将 Redux 工具包和 TypeScript 一起使用，请注意，将 action creator 作为 object 的 key 时，TypeScript 编译器可能不接受隐式的 `toString()` 转换。
+如果你将 Redux工具包 和 TypeScript 一起使用，请注意，将 action creator 作为 object 的 key 时，TypeScript 编译器可能不接受隐式的 `toString()` 转换。
 
-## 创建 State 分片
+## 创建 State 切片
 
-Redux state 通常组织为 “分片（slice）”, 由传递给 `combineReducers` 的 reducer 定义:
+Redux state 通常组织为 “切片（slice）”, 由传递给 `combineReducers` 的 reducer 定义:
 
 ```js
 import { combineReducers } from 'redux'
@@ -359,13 +359,13 @@ const rootReducer = combineReducers({
 })
 ```
 
-在这个例子中，`users` 和 `posts` 都会被视为 “分片”，这两个 reducer：
+在这个例子中，`users` 和 `posts` 都会被视为 “切片”，这两个 reducer：
 
 - “拥有”状态，包括初始值
 - 定义状态如何更新
 - 定义了哪些 action 将导致状态更新
 
-通常，分片的 reducer 函数是在自己的文件中定义的，并在其他文件中定义 action creator。由于两个函数都需要引用相同的 action type，因此通常会定义第三个文件中定义它们，然后在前面所说的两个地方中引用：
+通常，切片的 reducer 函数是在自己的文件中定义的，并在其他文件中定义 action creator。由于两个函数都需要引用相同的 action type，因此通常会定义第三个文件中定义它们，然后在前面所说的两个地方中引用：
 
 ```js
 // postsConstants.js
@@ -434,9 +434,9 @@ export default function postsReducer(state = initialState, action) {
 
 这简化了事情，因为我们不需要多个文件，并且可以删掉 action type 常量的多余引入。但是我们仍须手动编写 action type 和 action creator。
 
-### 使用 `createSlice` 简化分片
+### 使用 `createSlice` 简化切片
 
-为了简化此过程，Redux 工具包包含一个 `createSlice` 函数，该函数可以基于你提供的 reducer 函数名自动化生成 action type 和 action creator。
+为了简化此过程，Redux工具包 包含一个 `createSlice` 函数，该函数可以基于你提供的 reducer 函数名自动化生成 action type 和 action creator。
 
 这里是一个使用 `createSlice` 的 posts 的例子：
 
@@ -489,9 +489,9 @@ console.log(createPost({ id: 123, title: 'Hello World' }))
 // {type : "posts/createPost", payload : {id : 123, title : "Hello World"}}
 ```
 
-### 导出和使用分片
+### 导出和使用切片
 
-大多数时候，你会需要定义一个分片，并导出其 action creator 和 reducer。推荐的作法是使用ES6解构和导出语法：
+大多数时候，你会需要定义一个切片，并导出其 action creator 和 reducer。推荐的作法是使用ES6解构和导出语法：
 
 ```js
 const postsSlice = createSlice({
@@ -512,19 +512,19 @@ export const { createPost, updatePost, deletePost } = actions
 export default reducer
 ```
 
-如果愿意，你也可以直接导出分片对象本身。
+如果愿意，你也可以直接导出切片对象本身。
 
-以这种方式定义的分片，在概念上与用于定义和导出 action creator 和 reducer 的 ["Redux Ducks" 模式](https://github.com/erikras/ducks-modular-redux)非常相似。但是，在导入和导出分片时，需要注意几个潜在的缺点。
+以这种方式定义的切片，在概念上与用于定义和导出 action creator 和 reducer 的 ["Redux Ducks" 模式](https://github.com/erikras/ducks-modular-redux)非常相似。但是，在导入和导出切片时，需要注意几个潜在的缺点。
 
-首先，**Redux action type 并不意味着单个分片是排他的**。从概念上说，每个分片 reducer “拥有”自己的 Redux 状态，但是它应该能够监听任何 action type 并适当地更新其状态。例如，许多不同的分片可能会希望通过清除数据或者重置到初始状态值来响应“用户注销”的操作。在设置 state 形态和创建分片的时候，请留意这一点。
+首先，**Redux action type 并不意味着单个切片是排他的**。从概念上说，每个切片 reducer “拥有”自己的 Redux 状态，但是它应该能够监听任何 action type 并适当地更新其状态。例如，许多不同的切片可能会希望通过清除数据或者重置到初始状态值来响应“用户注销”的操作。在设置 state 形态和创建切片的时候，请留意这一点。
 
-其次，**JS 模块在两个模块相互引用的时候可能有“循环引用”的问题**。这可能会导致引入 undefined，很可能使那些需要导入的代码崩溃。特别是在“鸭子”或者分片的情况下，如果在两个不同的文件中定义的分片都希望响应另一个文件中定义的 action，则这种情况就会发生。
+其次，**JS 模块在两个模块相互引用的时候可能有“循环引用”的问题**。这可能会导致引入 undefined，很可能使那些需要导入的代码崩溃。特别是在“鸭子”或者切片的情况下，如果在两个不同的文件中定义的切片都希望响应另一个文件中定义的 action，则这种情况就会发生。
 
 这个 CodeSandbox 示例演示了这个问题：
 
 <iframe src="https://codesandbox.io/embed/rw7ppj4z0m" style={{ width: '100%', height: '500px', border: 0, borderRadius: '4px', overflow: 'hidden' }} sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-如果遇到这种情况，则需要以避免循环引用的方式重构代码。这通常需要将共享代码提取到一个单独的通用文件中，两个模块均可以引入和使用。在这种情况下，你可以在单独的文件中用 `createAction` 定义一些常用的 action type，将这些 action creator 引入到每个分片文件中，并用 `extraReducers` 参数进行处理。
+如果遇到这种情况，则需要以避免循环引用的方式重构代码。这通常需要将共享代码提取到一个单独的通用文件中，两个模块均可以引入和使用。在这种情况下，你可以在单独的文件中用 `createAction` 定义一些常用的 action type，将这些 action creator 引入到每个切片文件中，并用 `extraReducers` 参数进行处理。
 
 [JS里如何解决循环依赖的问题](https://medium.com/visual-development/how-to-fix-nasty-circular-dependency-issues-once-and-for-all-in-javascript-typescript-a04c987cf0de)包含其他信息及示例可以帮助解决此问题。
 
@@ -553,19 +553,19 @@ Redux 有多种异步 middleware，每种 middleware 都可以让你以不同的
 
 **我们建议 [使用 Redux Thunk middleware 作为标准方法](https://github.com/reduxjs/redux-thunk)**，因为它能满足大多典型用例（比如基础 AJAX 数据获取）。另外，thunk 所使用的 `async/await` 语法使其更易于阅读。
 
-**Redux 工具包的 `configureStore` 函数[默认情况下会自动设置 thunk middleware](../api/getDefaultMiddleware.mdx)**，因此你可以立即开始将 thunk 编写为应用代码的一部分。
+**Redux工具包 的 `configureStore` 函数[默认情况下会自动设置 thunk middleware](../api/getDefaultMiddleware.mdx)**，因此你可以立即开始将 thunk 编写为应用代码的一部分。
 
-### 在分片中定义异步逻辑
+### 在切片中定义异步逻辑
 
-Redux 工具包当前不提供任何特殊的 API 或语法来编写 thunk 函数。 特别是, **不能将它们定义为 `createSlice()` 调用的一部分**。您必须将它们与 reducer 逻辑分开编写，与使用普通 Redux 代码完全相同。
+Redux工具包 当前不提供任何特殊的 API 或语法来编写 thunk 函数。 特别是, **不能将它们定义为 `createSlice()` 调用的一部分**。您必须将它们与 reducer 逻辑分开编写，与使用普通 Redux 代码完全相同。
 
 Thunk 通常会派发普通 action，比如 `dispatch(dataLoaded(response.data))`。
 
 许多 Redux 应用都使用“按照类型分文件夹”的方法组织其代码。在这种结构下，通常在 "action" 文件中与普通 action creator 一起定义 thunk action creator。
 
-因为我们没有单独的 "action" 文件，**所以将这些 thunk 直接编写在“分片”文件中是有意义的**。这样，他们就可以从分片中访问简单的 action creator，并且能够很容易地找到 thunk 函数所在位置。
+因为我们没有单独的 "action" 文件，**所以将这些 thunk 直接编写在“切片”文件中是有意义的**。这样，他们就可以从切片中访问简单的 action creator，并且能够很容易地找到 thunk 函数所在位置。
 
-典型的包含 thunk 的分片文件是这样的：
+典型的包含 thunk 的切片文件是这样的：
 
 ```js
 // 首先，通过 `createSlice` 定义 reducer 和 action creator
@@ -686,7 +686,7 @@ dispatch(fetchUserById(123))
 
 Thunk action creator 接受一个参数，它将作为第一个参数被传递给你的 payload creator 回调。
 
-Payload creator 还会接收一个 `thunkAPI` 对象，其中包含通常会传递给标准 Redux thunk 函数的参数，以及自动生成的唯一随机请求ID字符串和一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal)：
+Payload creator 还会受一个 `thunkAPI` 对象，其中包含通常会传递给标准 Redux thunk 函数的参数，以及自动生成的唯一随机请求ID字符串和一个 [`AbortController.signal` 对象](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal)：
 
 ```ts
 interface ThunkAPI {
@@ -779,7 +779,7 @@ export const slice = createSlice({
 
 ### 使用 `createEntityAdapter` 规范化
 
-Redux 工具包的 `createEntityAdapter` API 提供了一种标准化的方式，可以通过获取集合并将其设置为 `{ ids: [], entities: {} }` 的形式，将数据存储在分片中。连同此预定义的 state 形态，它生成了一组知道如何处理数据的 reducer 函数和选择器。
+Redux工具包 的 `createEntityAdapter` API 提供了一种标准化的方式，可以通过获取集合并将其设置为 `{ ids: [], entities: {} }` 的形式，将数据存储在切片中。连同此预定义的 state 形态，它生成了一组知道如何处理数据的 reducer 函数和选择器。
 
 ```js
 import {
@@ -1096,7 +1096,7 @@ ReactDOM.render(
 )
 ```
 
-更多讨论可查看 [Redux 工具包 #121: 如何使用 Redux-Persist?](https://github.com/reduxjs/redux-toolkit/issues/121) 和 [Redux-Persist #988: 不可序列化值错误](https://github.com/rt2zz/redux-persist/issues/988#issuecomment-552242978)。
+更多讨论可查看 [Redux工具包 #121: 如何使用 Redux-Persist?](https://github.com/reduxjs/redux-toolkit/issues/121) 和 [Redux-Persist #988: 不可序列化值错误](https://github.com/rt2zz/redux-persist/issues/988#issuecomment-552242978)。
 
 ### 使用 React-Redux-Firebase
 

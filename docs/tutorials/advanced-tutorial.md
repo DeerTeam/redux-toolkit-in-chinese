@@ -7,29 +7,29 @@ hide_title: true
 
 # 高级教程: Redux工具包 实践
 
-In the [中级教程](./intermediate-tutorial.md), you saw how to use Redux Toolkit in a typical basic React app, as well as how to convert some existing plain Redux code to use RTK instead. You also saw how to write "mutative" immutable updates in reducer functions, and how to write a "prepare callback" to generate an action payload.
+在[中级教程](./intermediate-tutorial.md)中，你看到了如何在一个典型的基本 React 应用中使用 Redux工具包，同时还有如何把已有的纯 Redux 代码进行转换以使用 RTK。 另外，你还看到了如何在 reducer 函数中编写“可变的”immutable 更新代码，以及如何编写一个为了生成 action payload 的 “prepare 回调函数“。
 
-In this tutorial, you'll see how to use Redux Toolkit as part of a larger "real world" app that is bigger than a todo list example. This tutorial will show several concepts:
+在本教程中，你将会看到如何在一个比 todo 列表更大的“实际”应用中使用 Redux工具包。本教程会展示几个概念：
 
-- How to convert a "plain React" app to use Redux
-- How async logic like data fetching fits into RTK
-- How to use RTK with TypeScript
+- 如何将一个”纯 React“应用转化以使用 Redux
+- 异步逻辑，例如获取数据，是如何融入到 RTK 中的
+- 如何结合 TypeScript 来使用 RTK
 
-In the process, we'll look at a few examples of TypeScript techniques you can use to improve your code, and we'll see how to use the new [React-Redux hooks APIs](https://react-redux.js.org/api/hooks) as an alternative to [the traditional `connect` API](https://react-redux.js.org/api/connect).
+在此过程中，我们探究几个使用了 Typescript 技术编写的例子的，以提高你的代码质量，同时我们还会看到如何使用新的 [React-Redux hooks APIs](https://react-redux.js.org/api/hooks) , 作为[传统的 `connect` API](https://react-redux.js.org/api/connect)的另一个替代品。
 
-> **Note**: This is not a complete tutorial on how to use TypeScript in general or with Redux specifically, and the examples shown here do not try to achieve 100% complete type safety. For further information, please refer to community resources such as the [React TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet) and the [React/Redux TypeScript Guide](https://github.com/piotrwitek/react-redux-typescript-guide).
+> **注意**: 本教程并不是关于 TypeScript 通用或者在 Redux 中特定使用方式的完整教程，且这里演示的示例并没有达到 100% 的类型安全。想要获取更多信息，请查阅社区的资源，例如 [React TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet) 和 [React/Redux TypeScript Guide](https://github.com/piotrwitek/react-redux-typescript-guide)。
 >
-> In addition, this tutorial does not mean you _must_ convert your React app logic completely to Redux. [It's up to you to decide what state should live in React components, and what should be in Redux](https://redux.js.org/faq/organizing-state#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-setstate). This is just an example of how you _could_ convert logic to use Redux if you choose to.
+> 此外，本教程并不意味着你 _必须_ 把 React 应用的逻辑完全地转换成 Redux 的逻辑。[这取决于你如何选择哪些状态应当留在 React 组件中，哪些应该放到 Redux 里](https://redux.js.org/faq/organizing-state#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-setstate)。教程的示例仅仅向你展示 _能以什么方式_ 把逻辑换成 Redux 逻辑，如果你选择这么做的话。
 
-The complete source code for the converted application from this tutorial is available at [github.com/reduxjs/rtk-github-issues-example](https://github.com/reduxjs/rtk-github-issues-example). We'll be walking through the conversion process as shown in this repo's history. Links to meaningful individual commits will be highlighted in quote blocks, like this:
+本教程中，实现整个应用的完整源代码可以从 [github.com/reduxjs/rtk-github-issues-example](https://github.com/reduxjs/rtk-github-issues-example) 获得。我们将逐步解释整个转换的过程，正如仓库里的历史记录所展示一样。有其作用的独立提交的链接，将像如下高亮的引用块显示：
 
-> - Commit message here
+> - 这里是提交信息
 
-## Reviewing the Starting Example Application
+## 回顾示例应用开始过程
 
-The example application for this tutorial is a Github Issues viewer app. It allows the user to enter the names of a Github org and repository, fetch the current list of open issues, page through the issues list, and view the contents and comments of a specific issue.
+本教程的示例应用是一个 Github Issues 查找应用。它可以让用输入 Github 里面的某一个组织及其仓库的名字、获取现有的 open issues 列表、分页浏览 issues 列表，以及查看每一条具体 issue 的内容和评论。
 
-The starting commit for this application is a plain React implementation that uses function components with hooks for state and side effects like data fetching. The code is already written in TypeScript, and the styling is done via CSS Modules.
+这个应用的的第一次提交是一个纯 React 的实现，其中用到了带有负责管理状态和副作用（例如获取数据等）的 hooks 的函数式组件。代码已经使用了 TypeScript 编写，并且样式是通过 CSS Modules 完成的。
 
 Let's start by viewing the original plain React app in action:
 
@@ -40,9 +40,9 @@ Let's start by viewing the original plain React app in action:
      sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
 
-### React Codebase Source Overview
+### React 代码库源码概览 
 
-The codebase is already laid out in a "feature folder" structure, The main pieces are:
+代码仓库已经使用了“功能文件夹”结构编写，主要组成部分有：
 
 - `/api`: fetching functions and TS types for the Github Issues API
 - `/app`: main `<App>` component

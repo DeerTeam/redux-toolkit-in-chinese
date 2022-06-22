@@ -7,21 +7,21 @@ hide_title: true
 
 # `getDefaultMiddleware`
 
-Returns an array containing the default list of middleware.
+返回包含一个默认中间件列表的数组
 
-## Intended Usage
+## 预期用法
 
-By default, [`configureStore`](./configureStore.mdx) adds some middleware to the Redux store setup automatically.
+默认情况下，[`configureStore`](./configureStore.mdx) 自动把中间件加到 Redux store 设置中。
 
 ```js
 const store = configureStore({
   reducer: rootReducer
 })
 
-// Store has middleware added, because the middleware list was not customized
+// 中间件被加到 Store，因为中间件列表不是自定义的。
 ```
 
-If you want to customize the list of middleware, you can supply an array of middleware functions to `configureStore`:
+如果你想自定义中间件列表，你可以为 `configureStore` 提供一个中间件函数数组：
 
 ```js
 const store = configureStore({
@@ -29,14 +29,12 @@ const store = configureStore({
   middleware: [thunk, logger]
 })
 
-// Store specifically has the thunk and logger middleware applied
+// Store 在此有 thunk 和 logger 中间件 
 ```
 
-However, when you supply the `middleware` option, you are responsible for defining _all_ the middleware you want added
-to the store. `configureStore` will not add any extra middleware beyond what you listed.
+然而，当你提供了 `middleware` 选项，你要为定义  _所有_ 你想要添加到 store 的中间件负责。`configureStore` 不会添加任何额外超出被列出的中间件。
 
-`getDefaultMiddleware` is useful if you want to add some custom middleware, but also still want to have the default
-middleware added as well:
+如果你想添加自定义的中间件，`getDefaultMiddleware` 会派得上用场，但是你仍然想要默认中间件被添加进来：
 
 ```ts
 // file: reducer.ts noEmit
@@ -57,14 +55,14 @@ const store = configureStore({
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger)
 })
 
-// Store has all of the default middleware added, _plus_ the logger middleware
+// Store 包含所有被添加进来的默认中间价，再 _加上_ logger 中间件
 ```
 
-It is preferrable to use the chainable `.concat(...)` and `.prepend(...)` methods of the returned `MiddlewareArray` instead of the array spread operator, as the latter can lose valuable type information under some circumstances.
+使用 `.concat(...)` 和 `.prepend(...)` 这种链式调用方法是而不是数组扩展运算符是更优的选择，因为后者会再某些情况下会丢失重要的类型信息。
 
-## getDefaultMiddleware import
+## getDefaultMiddleware 导入
 
-While the callback notation with `configureStore` shown in the last example is the recommended way of using `getDefaultMiddleware`, it can also be imported to be used independently from 'configureStore':
+尽在上一个例子中所示的 `configureStore` 回调表示法是使用 `getDefaultMiddleware` 的最佳方案，它也可以独立于 'configureStore' 被单独导入使用：
 
 ```ts
 // file: reducer.ts noEmit
@@ -83,52 +81,44 @@ interface State {
 const middlewares = getDefaultMiddleware<State>()
 ```
 
-The benefit of using the callback notation is that the `State` type is already pre-bound, which might prevent circular type references when trying to specify generics by hand.
+使用回调表示法的好处是 `State` 类型已经被提前绑定了，因此可能能避免在手动指定泛型的时候的循环类型引用。
 
-## Included Default Middleware
+## 被包含的默认中间件
 
-### Development
+### 开发环境
 
-One of the goals of Redux Toolkit is to provide opinionated defaults and prevent common mistakes. As part of that,
-`getDefaultMiddleware` includes some middleware that are added **in development builds of your app only** to
-provide runtime checks for two common issues:
+Redux工具包 的其中一个目标是提供有自己想法的默认设置和避免常见的错误。作为其中的一部分，`getDefaultMiddleware` 包括了一些**只在开发过程中加入**的中间件，以提供两种常见问题的运行时检查方案：
 
-- [Immutability check middleware](./immutabilityMiddleware.mdx): deeply compares
-  state values for mutations. It can detect mutations in reducers during a dispatch, and also mutations that occur between
-  dispatches (such as in a component or a selector). When a mutation is detected, it will throw an error and indicate the key
-  path for where the mutated value was detected in the state tree. (Forked from [`redux-immutable-state-invariant`](https://github.com/leoasis/redux-immutable-state-invariant).)
+- [Immutability check middleware](./immutabilityMiddleware.mdx): 深度对比 mutations 的状态值。它可以检测到派发过程中 reducers 的 mutations，还有发生在若干派发之间的 mutations （例如在组件或者 selector里）。当某个 mutation 被检测到时，它会抛出一个错误并且会提示该 mutated 的值在状态树里的关键路径 (Forked from [`redux-immutable-state-invariant`](https://github.com/leoasis/redux-immutable-state-invariant))。
 
-- [Serializability check middleware](./serializabilityMiddleware.mdx): a custom middleware created specifically for use in Redux Toolkit. Similar in
-  concept to `immutable-state-invariant`, but deeply checks your state tree and your actions for non-serializable values
-  such as functions, Promises, Symbols, and other non-plain-JS-data values. When a non-serializable value is detected, a
-  console error will be printed with the key path for where the non-serializable value was detected.
+- [Serializability check middleware](./serializabilityMiddleware.mdx): 一个专门为 Redux工具包 创建的自定义中间件。与 `immutable-state-invariant` 概念类似，但是深度检查状态树以及针对不可被序列化的值，例如函数，Promises，Symbols 和其他非 JS 数值的操作。当一个不可被序列化的值被检测到的时候，控制台会打印出一个错误，带有该不可被序列化值的关键路径。
 
-In addition to these development tool middleware, it also adds [`redux-thunk`](https://github.com/reduxjs/redux-thunk)
-by default, since thunks are the basic recommended side effects middleware for Redux.
+除了这些开发环境的中间件工具意外，它也默认添加了 [`redux-thunk`](https://github.com/reduxjs/redux-thunk)，因为 thunks 是 Redux 的推荐处理副作用的中间件。
 
-Currently, the return value is:
+现在的返回值是：
 
 ```js
 const middleware = [thunk, immutableStateInvariant, serializableStateInvariant]
 ```
 
-### Production
+### 生产环境
 
-Currently, the return value is:
+现在的返回值是:
 
 ```js
 const middleware = [thunk]
 ```
 
-## Customizing the Included Middleware
+## 自定义被包含的中间件 
 
-`getDefaultMiddleware` accepts an options object that allows customizing each middleware in two ways:
+`getDefaultMiddleware` 接收一个能用两种方式自定义中间件的选项对象：
 
-- Each middleware can be excluded the result array by passing `false` for its corresponding field
-- Each middleware can have its options customized by passing the matching options object for its corresponding field
+- 每一个中间件能把结果数组排除掉，通过传递响应的字段一个 `false` 值
 
-This example shows excluding the serializable state check middleware, and passing a specific value for the thunk
-middleware's "extra argument":
+- 通过传递相应字段的选项对象，每一个中间件能够自定义自己的选项
+
+
+这个例子展示了如何排除序列化状态检查中间件，还有给 thunk 中间件的 “额外参数” 传递一个具体的值：
 
 ```ts
 // file: reducer.ts noEmit
@@ -167,11 +157,11 @@ interface ThunkOptions<E = any> {
 }
 
 interface ImmutableStateInvariantMiddlewareOptions {
-  // See "Immutability Middleware" page for definition
+  // 查阅 "Immutability Middleware" 页面获取定义解释
 }
 
 interface SerializableStateInvariantMiddlewareOptions {
-  // See "Serializability Middleware" page for definition
+  // 查阅 "Serializability Middleware" 页面获取定义解释
 }
 
 interface GetDefaultMiddlewareOptions {
